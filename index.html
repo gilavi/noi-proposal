@@ -69,6 +69,28 @@ p { margin: 0; }
 .bg-price, .t-price { background: var(--g-price); }
 .bg-rights, .t-rights { background: var(--g-rights); }
 .bg-faq, .t-faq { background: var(--g-faq); }
+.t-demo { background: linear-gradient(140deg, #3a2405 0%, #8a5a12 55%, #f2a93b 100%); }
+a.nav-item { text-decoration: none; }
+
+/* Behind the window, on wide screens: a dim wallpaper of a few soft glows in the current section's colours, drifting very slowly
+   and changing hue with the screen, over a faint dot grid. It stays far darker than the window, so it never pulls the eye. */
+@property --wa { syntax: '<color>'; inherits: true; initial-value: #74288c; }
+@property --wb { syntax: '<color>'; inherits: true; initial-value: #b5397a; }
+.wall { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1.6px) 0 0 / 26px 26px; transition: --wa 1.4s ease, --wb 1.4s ease; }
+.wall i { position: absolute; border-radius: 50%; opacity: 0.36; animation: wallDrift 64s ease-in-out infinite alternate; }
+.wall i:nth-child(1) { width: 72vmax; height: 72vmax; left: -24vmax; top: -28vmax; background: radial-gradient(closest-side, var(--wa), transparent); }
+.wall i:nth-child(2) { width: 64vmax; height: 64vmax; right: -22vmax; bottom: -30vmax; background: radial-gradient(closest-side, var(--wb), transparent); animation-duration: 80s; animation-direction: alternate-reverse; }
+.wall i:nth-child(3) { width: 34vmax; height: 34vmax; right: 2vmax; top: 6vh; opacity: 0.18; background: radial-gradient(closest-side, var(--wb), transparent); animation-duration: 56s; }
+.wall i:nth-child(4) { width: 28vmax; height: 28vmax; left: 4vmax; bottom: -8vmax; opacity: 0.16; background: radial-gradient(closest-side, var(--wa), transparent); animation-duration: 70s; animation-direction: alternate-reverse; }
+@keyframes wallDrift { from { transform: translate(-3vmax, -2vmax) scale(0.96); } to { transform: translate(3vmax, 2vmax) scale(1.06); } }
+[data-pane="scope"] .wall { --wa: #5a2fc4; --wb: #35188e; }
+[data-pane="plan"] .wall { --wa: #0e655f; --wb: #198a67; }
+[data-pane="steps"] .wall { --wa: #7a1d4f; --wb: #bf3a62; }
+[data-pane="safety"] .wall { --wa: #0a5873; --wb: #1390a8; }
+[data-pane="team"] .wall { --wa: #3b2d96; --wb: #6740bd; }
+[data-pane="price"] .wall { --wa: #973c13; --wb: #d4691f; }
+[data-pane="rights"] .wall { --wa: #5e4a0e; --wb: #9c7a1f; }
+[data-pane="faq"] .wall { --wa: #273a63; --wb: #3b5889; }
 
 /* Press feedback shared by buttons and tiles: a ripple from the pointer, and a soft light that follows it */
 .rip { position: relative; overflow: hidden; }
@@ -507,6 +529,8 @@ svg text { pointer-events: none; }
   /* Narrower side margins (still clear of the dots), a smaller icon, and denser CV and price cards,
      so every screen fits above the footer on a 1280×800 window. */
   .pane { padding-left: 40px; padding-right: 44px; padding-bottom: 18px; }
+  .side { gap: 18px; }
+  .groups { gap: 16px; }
   .hero { width: clamp(52px, 7vh, 76px); margin-bottom: 12px; }
   #pane-team .lead { margin-top: 8px; }
   .crew { margin-top: 12px; gap: 12px; }
@@ -542,6 +566,7 @@ svg text { pointer-events: none; }
   .shell { display: block; height: auto; min-height: 100vh; border-radius: 0; overflow: visible; box-shadow: none; }
   .bgs { position: fixed; }
   .dots { display: none; }
+  .wall { display: none; }
   .side {
     position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
     flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; overflow: visible;
@@ -612,6 +637,7 @@ svg text { pointer-events: none; }
   </div>
 </div>
 
+<div class="wall" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="frame">
   <div class="shell">
     <div class="bgs" aria-hidden="true">
@@ -650,6 +676,10 @@ svg text { pointer-events: none; }
           <button type="button" class="nav-item rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><span data-i18n="nav.price">Цена</span><span class="nv" id="nvPrice">$120 000</span></button>
           <button type="button" class="nav-item rip" data-pane="rights"><span class="icon t-rights"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="#fff"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.8"/></svg></span><span data-i18n="nav.rights">Права</span><span class="nv"></span></button>
           <button type="button" class="nav-item rip" data-pane="faq"><span class="icon t-faq"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5h10a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5H9.5L6 17v-2.5H5A2.5 2.5 0 0 1 2.5 12V6A2.5 2.5 0 0 1 5 3.5z" fill="#fff"/></svg></span><span data-i18n="nav.faq">Вопросы</span><span class="nv" id="nvFaq">8</span></button>
+        </div>
+        <div class="group">
+          <div class="group-h" data-i18n="g.demo">Демо</div>
+          <a class="nav-item rip" href="https://gilavi.github.io/noi-proposal/demo/" target="_blank" rel="noopener"><span class="icon t-demo"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="10.5" rx="2" fill="#fff"/><path d="M8.6 6.4l4 2.35-4 2.35z" fill="#8a5a12"/><rect x="6.5" y="15.4" width="7" height="1.6" rx="0.8" fill="#fff"/></svg></span><span data-i18n="nav.demo">Интерфейс NOI</span><span class="nv" aria-hidden="true">↗</span></a>
         </div>
       </nav>
       <div class="side-foot">
@@ -1029,10 +1059,12 @@ const EN = {
   'g.offer': 'Proposal',
   'g.project': 'Project',
   'g.terms': 'Terms',
+  'g.demo': 'Demo',
   'nav.overview': 'Overview',
   'nav.scope': 'Scope',
   'nav.plan': 'Plan',
   'nav.steps': 'Steps',
+  'nav.demo': 'NOI interface',
   'st.lead': 'A demo every two weeks. We start the next step only after you’ve checked the last one.',
   'st.aria': 'Steps by phase',
   'sd.get': 'What you get',
@@ -1571,6 +1603,7 @@ function showPane(id, dir) {
   if (!PANES.includes(id)) id = 'overview';
   const changed = id !== state.pane;
   state.pane = id;
+  document.documentElement.dataset.pane = id;
   PANES.forEach(p => { document.getElementById('pane-' + p).hidden = p !== id; });
   const pane = document.getElementById('pane-' + id);
   pane.classList.remove('in-down', 'in-up');
