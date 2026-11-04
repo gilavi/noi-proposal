@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NOI — interface demo</title>
+<title>NOI — демо интерфейса</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230e0f11'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' letter-spacing='1' fill='%23f2a93b'%3ENOI%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@ svg { width: 16px; height: 16px; flex: none; }
 .rail a:hover { color: var(--ink); background: rgba(255, 255, 255, 0.04); }
 .rail a.on { color: var(--amber); background: var(--amber-wash); }
 .rail .sp { flex: 1; min-height: 12px; }
-.side { background: var(--panel); border-right: 1px solid var(--line); padding: 16px 12px 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+.side { background: var(--panel); border-right: 1px solid var(--line); padding: 16px 12px 14px; position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
 .side h2 { font-size: 15px; margin: 0 0 4px; }
 .side .who { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
 .dev { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 3px 9px; margin-bottom: 12px; }
@@ -256,33 +256,153 @@ svg { width: 16px; height: 16px; flex: none; }
   .top .btn span.lbl { display: none; }
 }
 
-/* The investor tour: an intro card, a caption card for each stop, and a soft ring around what the stop is about. */
-.intro { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(5, 6, 8, 0.6); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: fadeIn 0.3s ease; }
-.intro-card { width: min(540px, 100%); display: grid; gap: 14px; padding: 30px 30px 26px; border-radius: 22px; background: var(--panel); border: 1px solid var(--line-2); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55); animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.intro-card .logo { margin: 0; font-size: 20px; }
-.intro-card h1 { margin: 0; font-size: 30px; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; }
-.intro-card p { margin: 0; color: var(--ink-2); font-size: 15px; }
-.intro-pts { display: grid; gap: 10px; margin: 4px 0 6px; }
-.intro-pts > div { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 12px; color: var(--ink-2); }
-.intro-pts i { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--amber-wash); color: var(--amber); }
-.intro-pts b { color: var(--ink); }
-.intro-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+/* The investor tour: a spotlight that glides from stop to stop, a caption card anchored beside it and pointing at it,
+   and a title card to open and to close. The page underneath keeps running live. */
+.tour { position: fixed; inset: 0; z-index: 45; pointer-events: none; animation: fadeIn 0.35s ease; }
+.tour.away { display: none; }
+.tour.out { opacity: 0; transition: opacity 0.3s ease; }
+.tour-block { position: absolute; inset: 0; pointer-events: auto; }
+.tour-spot { position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; border-radius: 16px; box-shadow: 0 0 0 200vmax rgba(6, 7, 9, 0.7); will-change: transform; }
+.tour-spot::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 1.5px rgba(242, 169, 59, 0.95), 0 0 0 6px rgba(242, 169, 59, 0.12), 0 0 46px 4px rgba(242, 169, 59, 0.22); animation: spotGlow 2.8s ease-in-out infinite; }
+@keyframes spotGlow { 50% { box-shadow: 0 0 0 1.5px rgba(242, 169, 59, 0.7), 0 0 0 10px rgba(242, 169, 59, 0.05), 0 0 64px 8px rgba(242, 169, 59, 0.15); } }
+.tour-card { position: absolute; left: 0; top: 0; width: 376px; pointer-events: auto; display: grid; gap: 13px; padding: 14px; border-radius: 23px; background: #1b1c21; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 28px 70px rgba(0, 0, 0, 0.6); color: var(--ink); will-change: transform; }
+.tour-card.enter { animation: cardIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.tour-card.nudge { animation: cardNudge 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes cardIn { from { opacity: 0; scale: 0.96; } }
+@keyframes cardNudge { 35% { scale: 1.03; } 70% { scale: 0.995; } }
+.tc-arrow { position: absolute; width: 14px; height: 14px; background: #1b1c21; border: 1px solid rgba(255, 255, 255, 0.12); transform: rotate(45deg); display: none; animation: fadeIn 0.25s ease; }
+.tour-card[data-side="right"] .tc-arrow { display: block; left: -9px; top: calc(var(--a, 40px) - 8px); border-top: 0; border-right: 0; }
+.tour-card[data-side="left"] .tc-arrow { display: block; right: -9px; top: calc(var(--a, 40px) - 8px); border-bottom: 0; border-left: 0; }
+.tour-card[data-side="bottom"] .tc-arrow { display: block; top: -9px; left: calc(var(--a, 40px) - 8px); border-bottom: 0; border-right: 0; }
+.tour-card[data-side="top"] .tc-arrow { display: block; bottom: -9px; left: calc(var(--a, 40px) - 8px); border-top: 0; border-left: 0; }
+.tc-top { position: relative; display: flex; align-items: center; gap: 11px; padding-right: 34px; }
+.tc-ico { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 9px; color: var(--c, var(--amber)); background: color-mix(in srgb, var(--c, var(--amber)) 15%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c, var(--amber)) 30%, transparent); }
+.tc-ico svg { width: 18px; height: 18px; }
+.tc-eye { display: grid; gap: 2px; min-width: 0; }
+.tc-eye b { font-size: 10.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--c, var(--amber)); }
+.tc-eye span { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tc-x { position: absolute; top: -7px; right: -7px; width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.06); color: var(--ink-2); cursor: pointer; transition: background 0.15s ease, color 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tc-x:hover { background: rgba(255, 255, 255, 0.12); color: var(--ink); transform: rotate(90deg); }
+.tc-x svg { width: 15px; height: 15px; }
+.tc-body { display: grid; gap: 8px; }
+.tc-body h3 { margin: 0; font-size: 19.5px; line-height: 1.2; font-weight: 800; letter-spacing: -0.018em; text-wrap: balance; }
+.tc-body p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+.tc-watch { display: flex; align-items: flex-start; gap: 10px; margin-top: 2px; padding: 9px 12px; border-radius: 12px; background: rgba(242, 169, 59, 0.09); box-shadow: inset 0 0 0 1px rgba(242, 169, 59, 0.18); color: #f3c47a; font-size: 12.5px; font-weight: 600; line-height: 1.45; }
+.tc-watch i { flex: none; width: 7px; height: 7px; margin-top: 6px; border-radius: 50%; background: var(--amber); animation: livePulse 1.8s ease-out infinite; }
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(242, 169, 59, 0.4); } 70%, 100% { box-shadow: 0 0 0 7px rgba(242, 169, 59, 0); } }
+.tc-body > * { animation: tcIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.tc-body > :nth-child(2) { animation-delay: 0.06s; }
+.tc-body > :nth-child(3) { animation-delay: 0.12s; }
+@keyframes tcIn { from { opacity: 0; transform: translateY(7px); } }
+.tc-segs { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 5px; margin: 1px 0 -2px; }
+.tc-seg { position: relative; height: 14px; padding: 0; border: 0; background: none; cursor: pointer; }
+.tc-seg::before, .tc-seg i { position: absolute; left: 0; top: 5px; height: 4px; border-radius: 2px; }
+.tc-seg::before { content: ""; right: 0; background: rgba(255, 255, 255, 0.12); transition: background 0.15s ease; }
+.tc-seg i { width: 0; background: var(--amber); }
+.tc-seg.done i, .tc-seg.on i { width: 100%; }
+.tour.playing .tc-seg.on i { width: var(--p, 0%); }
+.tc-seg:hover::before { background: rgba(255, 255, 255, 0.26); }
+.tc-seg span { position: absolute; bottom: calc(100% + 6px); left: 50%; translate: -50% 4px; padding: 4px 8px; border-radius: 7px; background: #2b2d34; color: var(--ink); font-size: 11.5px; font-weight: 700; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); transition: opacity 0.15s ease, translate 0.2s ease; }
+.tc-seg:hover span { opacity: 1; translate: -50% 0; }
+.tc-seg:first-child span { left: 0; translate: 0 4px; }
+.tc-seg:last-child span { left: auto; right: 0; translate: 0 4px; }
+.tc-seg:first-child:hover span, .tc-seg:last-child:hover span { translate: 0 0; }
+.tc-foot { display: flex; align-items: center; gap: 8px; }
+.tc-n { min-width: 42px; font-size: 12.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tc-n b { color: var(--ink); font-weight: 800; }
+.tc-play { flex: none; width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink-2); cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease; }
+.tc-play:hover { color: var(--ink); border-color: rgba(242, 169, 59, 0.5); }
+.tc-play svg { width: 13px; height: 13px; }
+.tc-play svg polygon, .tc-play svg rect, .tour-btn svg polygon, .ic-btns svg polygon { fill: currentColor; }
+.tour.playing .tc-play { background: var(--amber-wash); border-color: rgba(242, 169, 59, 0.55); color: var(--amber); }
+.tc-foot .btn { padding: 8px 13px; font-size: 13px; }
+.tc-foot .btn svg { width: 15px; height: 15px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tc-foot .btn.primary:hover { filter: brightness(1.07); }
+.tc-foot .btn.primary:hover svg { transform: translateX(2px); }
+.tc-foot .btn:not(.primary):not(:disabled):hover { border-color: rgba(255, 255, 255, 0.26); }
+.tc-foot .btn:not(.primary):not(:disabled):hover svg { transform: translateX(-2px); }
+.tc-foot .btn:disabled { opacity: 0.35; cursor: default; }
+.tour-btn svg { width: 13px; height: 13px; }
+.tour-card :focus-visible, .intro :focus-visible, .lang :focus-visible { outline: 2px solid rgba(242, 169, 59, 0.75); outline-offset: 2px; }
+.tour-card .btn.primary:focus-visible, .intro .btn.primary:focus-visible { outline-color: rgba(255, 216, 160, 0.9); }
+body.touring .content { padding-bottom: calc(48px + var(--tour-pad, 0px)); }
+
+/* Opening and closing title cards. */
+.intro { position: fixed; inset: 0; z-index: 50; display: flex; padding: 20px; overflow-y: auto; background: rgba(5, 6, 8, 0.62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); animation: fadeIn 0.3s ease; }
+.intro-card { position: relative; margin: auto; background: var(--panel); border: 1px solid var(--line-2); box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6); animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
 @keyframes fadeIn { from { opacity: 0; } }
-@keyframes popIn { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
-.tour-card { position: fixed; right: 24px; bottom: 24px; z-index: 40; width: min(380px, calc(100vw - 32px)); display: grid; gap: 9px; padding: 18px 18px 16px; border-radius: 18px; background: rgba(22, 23, 27, 0.96); border: 1px solid var(--line-2); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.tour-card.in { animation: popIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.tour-dots { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-right: 34px; }
-.tour-dots i { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); transition: background 0.3s ease; }
-.tour-dots i.on { background: var(--amber); }
-.tour-n { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.tour-card h3 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
-.tour-card p { margin: 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
-.tour-btns { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-.tour-x { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.06); color: var(--ink-2); font: 600 18px/1 var(--font); cursor: pointer; }
-.tour-x:hover { background: rgba(255, 255, 255, 0.12); color: var(--ink); }
-.tour-focus { outline: 2px solid var(--amber); outline-offset: 6px; animation: focusRing 2.6s ease-in-out infinite; }
-.tour-focus:not(.device) { border-radius: 14px; }
-@keyframes focusRing { 50% { outline-offset: 10px; outline-color: rgba(242, 169, 59, 0.5); } }
+@keyframes popIn { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+.intro-card.wide { width: min(940px, 100%); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); overflow: hidden; border-radius: 26px; }
+.ic-hero { position: relative; isolation: isolate; display: grid; align-content: start; gap: 18px; padding: 34px 34px 30px; }
+.ic-hero::before { content: ""; position: absolute; z-index: -1; width: 460px; height: 460px; left: -170px; top: -210px; background: radial-gradient(closest-side, rgba(242, 169, 59, 0.2), rgba(242, 169, 59, 0)); }
+.ic-hero::after { content: ""; position: absolute; z-index: -1; width: 380px; height: 380px; right: -190px; bottom: -220px; background: radial-gradient(closest-side, rgba(165, 139, 240, 0.12), rgba(165, 139, 240, 0)); }
+.ic-brand { display: flex; align-items: center; gap: 12px; }
+.ic-mark { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: linear-gradient(140deg, #f7bd5c, #e8892b); color: #1a1205; font-weight: 800; font-size: 13px; letter-spacing: 0.1em; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 12px 30px rgba(242, 169, 59, 0.3); }
+.ic-hero h1 { margin: 0; font-size: 36px; line-height: 1.06; font-weight: 800; letter-spacing: -0.028em; text-wrap: balance; }
+.ic-hero > p { margin: -4px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+.ic-pts { display: grid; gap: 11px; }
+.ic-pts > div { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 12px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); }
+.ic-pts i { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--amber-wash); color: var(--amber); }
+.ic-pts i svg { width: 17px; height: 17px; }
+.ic-pts b { color: var(--ink); }
+.ic-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
+.ic-btns .btn svg { width: 15px; height: 15px; }
+.ic-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.ic-keys span { margin-right: 8px; }
+kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px; background: var(--panel-2); border: 1px solid var(--line-2); border-bottom-width: 2px; font: 700 11px var(--font); color: var(--ink-2); }
+.ic-route { display: grid; align-content: start; gap: 2px; padding: 28px 22px 24px; background: rgba(255, 255, 255, 0.018); border-left: 1px solid var(--line); }
+.ic-route h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 8px 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.ic-route h2 span { font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.ic-stop { display: grid; grid-template-columns: 20px 34px minmax(0, 1fr) 16px; align-items: center; gap: 11px; padding: 7px 8px; border: 0; border-radius: 12px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background 0.15s ease; }
+.ic-stop:hover { background: rgba(255, 255, 255, 0.05); }
+.ic-stop .n { font-size: 11.5px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ic-stop .t, .ic-recap .t { position: relative; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 28%, transparent); }
+.ic-stop:not(:last-child) .t::after { content: ""; position: absolute; left: 50%; top: calc(100% + 3px); width: 1px; height: 8px; background: var(--line-2); }
+.ic-stop .t svg, .ic-recap .t svg { width: 17px; height: 17px; }
+.ic-stop b, .ic-recap b { display: block; font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.ic-stop small, .ic-recap small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--muted); }
+.ic-stop > svg { width: 16px; height: 16px; color: var(--muted); opacity: 0; transform: translateX(-4px); transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ic-stop:hover > svg { opacity: 1; transform: none; }
+.intro-card.end { width: min(660px, 100%); display: grid; gap: 20px; padding: 30px; border-radius: 26px; overflow: hidden; isolation: isolate; }
+.intro-card.end::before { content: ""; position: absolute; z-index: -1; width: 420px; height: 420px; left: -150px; top: -220px; background: radial-gradient(closest-side, rgba(242, 169, 59, 0.18), rgba(242, 169, 59, 0)); }
+.ic-done { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px; background: linear-gradient(140deg, #f7bd5c, #e8892b); color: #1a1205; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 12px 30px rgba(242, 169, 59, 0.3); }
+.ic-done svg { width: 26px; height: 26px; stroke-width: 2.6; }
+.ic-head { display: grid; gap: 8px; }
+.ic-head h1 { margin: 0; font-size: 32px; line-height: 1.1; font-weight: 800; letter-spacing: -0.025em; }
+.ic-head p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+.ic-recap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ic-recap button { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 11px; padding: 9px 10px; border-radius: 13px; border: 1px solid var(--line); background: var(--panel-2); color: inherit; font: inherit; text-align: left; cursor: pointer; transition: border-color 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ic-recap button:hover { border-color: rgba(242, 169, 59, 0.4); transform: translateY(-1px); }
+.ic-recap b { font-size: 13px; line-height: 1.3; }
+.ic-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.ic-cta .btn svg { width: 16px; height: 16px; }
+.btn.ghost { background: none; border-color: transparent; color: var(--ink-2); }
+.btn.ghost:hover { color: var(--ink); background: rgba(255, 255, 255, 0.05); }
+.btn.offer { position: relative; isolation: isolate; overflow: hidden; border: 0; color: #fff; background: linear-gradient(140deg, #35196a 0%, #74288c 55%, #b5397a 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 26px rgba(116, 40, 140, 0.45); transition: filter 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.btn.offer::after { content: ""; position: absolute; top: -30%; bottom: -30%; left: 0; width: 40%; z-index: -1; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0)); transform: translateX(-160%) skewX(-18deg); animation: offerShine 5.5s ease-in-out infinite; }
+.btn.offer:hover { filter: brightness(1.08); transform: translateY(-1px); }
+@media (max-width: 760px) {
+  .tour-card { left: 10px; right: 10px; top: auto; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); width: auto; gap: 11px; padding: 13px; border-radius: 22px; }
+  .tc-arrow { display: none !important; }
+  .tc-top { gap: 10px; }
+  .tc-ico { width: 32px; height: 32px; }
+  .tc-eye span { display: none; }
+  .tc-body { gap: 6px; }
+  .tc-body h3 { font-size: 17px; }
+  .tc-body p { font-size: 13px; line-height: 1.5; }
+  .tc-watch { padding: 7px 10px; font-size: 12px; }
+  .tc-seg span { display: none; }
+  .intro { padding: 12px; }
+  .intro-card.wide { grid-template-columns: minmax(0, 1fr); border-radius: 22px; }
+  .ic-hero { gap: 14px; padding: 24px 20px 20px; }
+  .ic-hero h1 { font-size: 27px; }
+  .ic-keys { display: none; }
+  .ic-route { padding: 14px 12px 16px; border-left: 0; border-top: 1px solid var(--line); }
+  .intro-card.end { gap: 16px; padding: 22px 18px; border-radius: 22px; }
+  .ic-head h1 { font-size: 26px; }
+  .ic-recap { grid-template-columns: minmax(0, 1fr); }
+  .ic-cta .grow { display: none; }
+}
 .flash { animation: flash 1.2s ease; }
 @keyframes flash { 0%, 35% { color: #7fe0b0; } }
 .tb.flash { animation: tbPop 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -291,31 +411,39 @@ svg { width: 16px; height: 16px; flex: none; }
 .tcard.done { opacity: 0.5; }
 .cat .it strong { margin-top: 2px; font-size: 16px; font-variant-numeric: tabular-nums; }
 .order .ln b { font-variant-numeric: tabular-nums; }
-@media (max-width: 900px) {
-  .tour-card { left: 12px; right: 12px; bottom: 12px; width: auto; }
-  .intro-card { padding: 22px; }
-  .intro-card h1 { font-size: 24px; }
-}
 
 /* One sidebar: six groups of the screens that tell the story, and everything else under All screens. */
 .s-brand { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 8px 2px; }
 .s-brand .logo { margin: 0; font-size: 16px; }
 .s-sec { display: grid; gap: 1px; }
-.s-sec h4 { margin: 0 0 3px; padding: 0 8px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
-.s-sec a, .s-all { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 9px; color: var(--ink-2); text-decoration: none; font-size: 13px; font-weight: 600; transition: background 0.15s ease, color 0.15s ease; }
+.s-sec h4 { margin: 0 0 2px; padding: 0 8px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.s-sec a, .s-all { display: flex; align-items: center; gap: 10px; padding: 4px 8px; border-radius: 9px; color: var(--ink-2); text-decoration: none; font-size: 13px; font-weight: 600; transition: background 0.15s ease, color 0.15s ease; }
 .s-sec a svg, .s-all svg { width: 16px; height: 16px; color: var(--muted); transition: color 0.15s ease; }
 .s-sec a:hover, .s-all:hover { background: rgba(255, 255, 255, 0.05); color: var(--ink); }
 .s-sec a.on, .s-all.on { background: var(--amber-wash); color: var(--ink); }
 .s-sec a.on svg, .s-all.on svg { color: var(--amber); }
-.s-foot { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); }
+.s-nav { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 7px; margin: 0 -4px; padding: 0 4px; overflow-y: auto; scrollbar-width: none; }
+.s-nav::-webkit-scrollbar { display: none; }
+.s-foot { flex: none; display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
 .s-all i { margin-left: auto; padding: 0 7px; border: 1px solid var(--line-2); border-radius: 999px; font-style: normal; font-size: 11px; color: var(--muted); }
 
-/* Back to the offer: always at hand, bottom left of the screen area, in the same tab. */
-.back-offer { position: fixed; left: 252px; bottom: 20px; z-index: 35; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px 10px 12px; border-radius: 999px; background: rgba(22, 23, 27, 0.92); border: 1px solid var(--line-2); color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 700; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease; }
-.back-offer svg { width: 16px; height: 16px; color: var(--amber); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.back-offer:hover { border-color: rgba(242, 169, 59, 0.5); transform: translateY(-2px); }
-.back-offer:hover svg { transform: translateX(-3px); }
-.content { padding-bottom: 96px; }
+/* Back to the offer: a shiny card in the offer's own purple-to-pink at the foot of the sidebar, with the offer's NOI mark,
+   a glossy top and a light that sweeps across now and then. On a phone it floats at the bottom as a pill. */
+.to-offer, .back-offer { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center; gap: 11px; color: #ffffff; text-decoration: none; background: linear-gradient(140deg, #35196a 0%, #74288c 55%, #b5397a 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 26px rgba(116, 40, 140, 0.45); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, filter 0.25s ease; }
+.to-offer { margin-bottom: 6px; padding: 11px 12px; border-radius: 14px; }
+.to-offer::before, .back-offer::before { content: ""; position: absolute; inset: 0 0 52% 0; z-index: -1; background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0)); }
+.to-offer::after, .back-offer::after { content: ""; position: absolute; top: -30%; bottom: -30%; left: 0; width: 40%; z-index: -1; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0)); transform: translateX(-160%) skewX(-18deg); animation: offerShine 5.5s ease-in-out infinite; }
+@keyframes offerShine { 0%, 55% { transform: translateX(-160%) skewX(-18deg); } 85%, 100% { transform: translateX(340%) skewX(-18deg); } }
+.to-offer:hover, .back-offer:hover { filter: brightness(1.08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 14px 32px rgba(181, 57, 122, 0.5); }
+.to-offer:hover { transform: translateY(-2px); }
+.to-tile { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: rgba(255, 255, 255, 0.16); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+.to-tile svg { width: 22px; height: 22px; }
+.to-txt { display: grid; gap: 1px; min-width: 0; }
+.to-txt b { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 800; white-space: nowrap; }
+.to-txt b svg { width: 15px; height: 15px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.to-offer:hover .to-txt b svg, .back-offer:hover .to-txt b svg { transform: translateX(-3px); }
+.to-txt small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: rgba(255, 255, 255, 0.78); }
+.back-offer { display: none; }
 
 /* Tonight: a twelve-column dashboard of live panels. */
 .dash { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; }
@@ -410,12 +538,84 @@ svg { width: 16px; height: 16px; flex: none; }
 @media (max-width: 900px) {
   .w4, .w6, .w8 { grid-column: span 12; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .back-offer { left: 12px; bottom: 12px; }
-  body.touring .back-offer { display: none; }
-  .app.open ~ .back-offer { display: none; }
+  .back-offer { display: flex; position: fixed; z-index: 35; left: 50%; bottom: 14px; transform: translateX(-50%); padding: 8px 18px 8px 8px; border-radius: 999px; }
+  .back-offer:hover { transform: translateX(-50%) translateY(-2px); }
+  .back-offer .to-tile { width: 32px; height: 32px; border-radius: 50%; }
+  .back-offer .to-tile svg { width: 18px; height: 18px; }
+  .back-offer .to-txt small { display: none; }
+  .content { padding-bottom: 88px; }
+  body.touring .back-offer, .app.open ~ .back-offer { display: none; }
   .panel.w6 .tbl { font-size: 12px; }
   .panel.w6 { overflow-x: auto; }
 }
+
+/* All screens, and the icon beside each screen's heading. */
+.ptile { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 32%, transparent); }
+.ptile svg { width: 22px; height: 22px; }
+.hrow { display: flex; align-items: flex-start; gap: 14px; }
+.hrow .ptile { width: 42px; height: 42px; margin-top: 1px; border-radius: 12px; }
+.sum-tiles .tile small { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+.map-filter { margin: -4px 0 14px; }
+.map-filter .fchip { display: inline-flex; align-items: center; gap: 7px; background: none; font-family: var(--font); cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease; }
+.map-filter .fchip:not(.on):hover { border-color: rgba(255, 255, 255, 0.3); color: var(--ink); }
+.map-filter .fchip.on { background: var(--ink); }
+.map-filter .fchip i { font-style: normal; font-size: 11px; font-weight: 800; opacity: 0.6; }
+.plist { display: grid; gap: 14px; }
+.prod { display: grid; gap: 12px; padding: 18px; }
+.prod[hidden] { display: none; }
+.prod-h { display: flex; align-items: center; gap: 14px; }
+.pmeta { display: grid; flex: 1; gap: 2px; min-width: 0; }
+.pmeta b { font-size: 16px; font-weight: 800; }
+.pwho { font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+.pfacts { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.pdev { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+.pdev svg { width: 13px; height: 13px; }
+.pcount { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.pnote { margin: 0; max-width: 820px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.pscr { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+.pscr a { display: grid; align-content: start; gap: 4px; min-height: 76px; padding: 11px 12px; border-radius: 11px; background: var(--panel-2); border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color 0.15s ease, background 0.15s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.pscr a:hover { border-color: color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 7%, var(--panel-2)); transform: translateY(-1px); }
+.pscr .st { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.pscr .st b { font-size: 13.5px; font-weight: 700; line-height: 1.3; }
+.pscr .st em { flex: none; padding: 2px 7px; border-radius: 999px; background: var(--amber-wash); color: var(--amber); font-size: 10.5px; font-style: normal; font-weight: 800; white-space: nowrap; }
+.pscr .sd { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; line-height: 1.45; color: var(--muted); }
+@media (max-width: 900px) {
+  .prod { padding: 14px; }
+  .prod-h { flex-wrap: wrap; }
+  .pfacts { width: 100%; justify-content: flex-start; padding-left: 58px; }
+  .pscr { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .ptile { width: 40px; height: 40px; }
+}
+
+/* Language switch: Russian or English, in the top bar and on the opening card. */
+.lang { position: relative; flex: none; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); }
+.lang button { position: relative; z-index: 1; min-width: 30px; padding: 4px 8px; border: 0; background: none; color: var(--muted); font: 800 11px var(--font); letter-spacing: 0.06em; cursor: pointer; transition: color 0.2s ease; }
+.lang button:hover { color: var(--ink-2); }
+.lang[data-on="ru"] button[data-lang="ru"], .lang[data-on="en"] button[data-lang="en"] { color: var(--ink); }
+.lang i { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 7px; background: var(--panel-2); box-shadow: inset 0 0 0 1px var(--line-2), 0 1px 2px rgba(0, 0, 0, 0.3); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.lang[data-on="en"] i { transform: translateX(100%); }
+.ic-brand .lang { background: rgba(255, 255, 255, 0.04); }
+@media (max-width: 520px) { .top .club { display: none; } }
+.panel:has(> .donut-wrap) { container-type: inline-size; }
+@container (max-width: 330px) {
+  .donut-wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 10px; }
+  .donut-wrap > div { width: 100%; }
+}
+@media (max-width: 1440px) { .dash .tbl th, .dash .tbl td { padding-left: 7px; padding-right: 7px; } }
+.dash .w6.panel { overflow-x: auto; }
+/* Every panel on Tonight leads to its full screen: tiles, headings, rows and status cards are links. */
+a.kpi, a.zone, a.srv, a.trow, a.mgr, .sys > a { color: inherit; text-decoration: none; }
+a.kpi { transition: border-color 0.15s ease, background 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+a.kpi:hover { border-color: rgba(242, 169, 59, 0.4); background: var(--panel-2); transform: translateY(-2px); }
+.ph-h h3 a { display: inline-flex; align-items: center; gap: 4px; color: inherit; text-decoration: none; transition: color 0.15s ease; }
+.ph-h h3 a svg { width: 14px; height: 14px; color: var(--muted); transition: transform 0.2s ease, color 0.15s ease; }
+.ph-h h3 a:hover, .ph-h h3 a:hover svg { color: var(--amber); }
+.ph-h h3 a:hover svg { transform: translateX(2px); }
+a.zone, a.srv, a.trow, a.mgr { margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 8px; transition: background 0.15s ease; }
+a.zone:hover, a.srv:hover, a.trow:hover, a.mgr:hover { background: rgba(255, 255, 255, 0.045); }
+.sys > a { display: grid; gap: 3px; padding: 12px 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); font-size: 12.5px; color: var(--muted); transition: border-color 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.sys > a:hover { border-color: rgba(242, 169, 59, 0.4); transform: translateY(-2px); }
+.alert a.btn.sm:hover { border-color: rgba(242, 169, 59, 0.55); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -427,8 +627,63 @@ svg { width: 16px; height: 16px; flex: none; }
     <main class="content" id="content"></main>
   </div>
 </div>
-<a class="back-offer" id="backOffer" href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><span>Back to the offer</span></a>
+<a class="back-offer" id="backOffer" href="../index.html"><span class="to-tile"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><span class="to-txt"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to the offer</b><small>NOI build proposal</small></span></a>
+<script id="ru-dict">
+// Russian for every English string the demo shows: exact text → translation.
+const RU = {"#A-2201":"#A-2201","#A-2202":"#A-2202","#A-2203":"#A-2203","#A-2204":"#A-2204","#B-0919":"#B-0919","#B-0920":"#B-0920","#B-0921":"#B-0921","#P-2291":"#P-2291","$1.5k":"$1.5k","$12.5k":"$12.5k","$260 left · manager Anna K.":"Осталось $260 · менеджер Анна К.","$3k":"$3k","$4.5k":"$4.5k",".xlsx or .csv":".xlsx или .csv","1 Nov 2026":"1 нояб 2026","1 hour":"1 час","1 late":"1 опаздывает","1 missed · 9 matched to guests":"1 пропущен · 9 привязаны к гостям","10 min":"10 мин","12 Nov":"12 нояб","12 Oct":"12 окт","12 calls tonight":"12 звонков сегодня","14 of 22 tables":"14 из 22 столов","15 min":"15 мин","19 Nov":"19 нояб","19 Oct":"19 окт","2 Oct":"2 окт","2 days ago":"2 дня назад","2 guests":"2 гостя","2 h":"2 ч","2 hours":"2 часа","2 min ago · Irina P. is nearest":"2 мин назад · ближе всех Ирина П.","2 on a break":"2 на перерыве","20:00–06:00 · Karaoke":"20:00–06:00 · Караоке","20:00–06:00 · Main hall":"20:00–06:00 · Основной зал","20:00–06:00 · VIP":"20:00–06:00 · VIP","211 of 214 lines match":"211 из 214 строк совпадают","211 of 214 match tonight":"211 из 214 совпали сегодня","24 Oct":"24 окт","28 Oct":"28 окт","29 Oct":"29 окт","29 Oct 03:00":"29 окт 03:00","3 guests":"3 гостя","3 payouts to approve":"3 выплаты на согласование","3 services · shift 20:00–06:00":"3 услуги · смена 20:00–06:00","30 Oct":"30 окт","30 Oct 03:00":"30 окт 03:00","30 min":"30 мин","31 Oct":"31 окт","34 people tonight":"34 человека сегодня","35 min · was due at 20:00":"35 мин · ожидалась к 20:00","37% done":"37% пройдено","4 bookings · 15 guests":"4 брони · 15 гостей","4 guests":"4 гостя","4 h":"4 ч","4 services · shift 20:00–06:00":"4 услуги · смена 20:00–06:00","5 guests":"5 гостей","5 min":"5 мин","5 open":"5 открытых","5 services · shift 20:00–06:00":"5 услуг · смена 20:00–06:00","6 free right now":"6 свободных сейчас","6 ready":"6 готовы","6 services · shift 20:00–06:00":"6 услуг · смена 20:00–06:00","60 min":"60 мин","64% of the floor":"64% зала","7 right now":"7 сейчас","8 months":"8 месяцев","A":"А","AK":"АК","AL":"АЛ","API response time":"Время ответа API","Accruals":"Начисления","Accrued":"Начислено","Action log":"Журнал действий","Active":"Активно","Active services":"Активные услуги","Add candidate":"Добавить кандидата","Add club":"Добавить клуб","Add guest":"Добавить гостя","Add note":"Добавить заметку","Add person":"Добавить сотрудника","Add shift":"Добавить смену","Add to queue":"Добавить в очередь","Admin":"Администрирование","Air conditioning, VIP 2":"Кондиционер, VIP 2","Alina":"Алина","Alina called to the stage":"Алину вызвали на сцену","All":"Все","All roles":"Все роли","All screens":"Все экраны","Allowed combinations":"Допустимые сочетания","Amount":"Сумма","Amount ▾":"Сумма ▾","Anna K.":"Анна К.","Applied":"Отклики","Approve payouts":"Согласовывать выплаты","Approved":"Согласовано","Approved payout":"Согласование выплаты","Arrival":"Приход","Arrivals":"Приход и уход","Arrived":"Пришли","Arriving now":"Сейчас прибывают","Art cash desk":"Арт-касса","Ask for a swap":"Попросить замену","Ask for a swap, a vacation or sick leave.":"Заявка на замену, отпуск или больничный.","Attach a photo":"Прикрепите фото","Attach a photo of the sick note":"Прикрепите фото больничного","Attendance":"Посещаемость","Average check":"Средний чек","Back to the offer":"К предложению","Back up now":"Создать копию","Backup today at 03:00":"Резервная копия сегодня в 03:00","Backups":"Резервные копии","Balance":"Баланс","Bar":"Бар","Bar 4 · Hostesses 3 · Security 6 · Salon 2 · Cash desk 2":"Бар 4 · Хостес 3 · Охрана 6 · Салон 2 · Касса 2","Bar and art cash desk":"Бар и арт-касса","Bar stock":"Закупки бара","Bar · from 20:00":"Бар · с 20:00","Bar: ice to VIP 2":"Бар: лёд в VIP 2","Base rate":"Базовая ставка","Beauty salon":"Салон красоты","Black":"Чёрная","Black heels":"Чёрные туфли","Bonuses":"Бонусы","Bonuses $420":"Бонусы $420","Booked":"Бронь","Bookings":"Брони","Bookings with the hair and make-up stylists.":"Запись к парикмахерам и визажистам.","Bookings, next 2 hours":"Брони на ближайшие 2 часа","Break":"Перерыв","Breaks":"Перерывы","Broken chair, K3":"Сломан стул, K3","By day":"По дням","By hour":"По часам","By spend":"По тратам","C":"К","CPU":"Процессор","Call":"Звонок","Call back":"Перезвонить","Call staff to a table or the stage, and send messages.":"Вызов сотрудников к столу или на сцену и сообщения.","Call to table T7 · Mila":"Вызов к столу T7 · Мила","Call to the stage · Vera":"Вызов на сцену · Вера","Call to the stage, shown full screen.":"Вызов на сцену во весь экран.","Calls":"Звонки","Calls and reminders.":"Вызовы и напоминания.","Cancel":"Отмена","Candidates from application to hiring.":"Кандидаты от отклика до приёма в штат.","Card":"Карта","Card payment $340 at the cash desk":"Оплата картой $340 на кассе","Card payment $420 at the cash desk":"Оплата картой $420 на кассе","Cards":"Карты","Cash":"Наличные","Cash $4,320 · card $8,160":"Наличные $4,320 · карта $8,160","Cash desk":"Касса","Cash payment $180 at the cash desk":"Оплата наличными $180 на кассе","Cash-register shifts":"Кассовые смены","Cashier":"Кассир","Cashless":"Безналичные","Casting":"Кастинг","Casting candidates":"Кандидаты на кастинг","Change":"Заменить","Change history":"История изменений","Changed pay terms":"Изменение условий работы","Check":"Проверка","Check 2":"2 на проверку","Check errors (3)":"Проверить ошибки (3)","Checked":"Проверено","Choose":"Выбрать","City":"Город","Cleaning":"В чистке","Close the shift automatically at 07:00":"Автоматически закрывать смену в 07:00","Closed":"Закрыто","Closed shift":"Закрытие смены","Club":"Клуб","Club departments":"Службы клуба","Club manager and floor managers":"Управляющая и менеджеры зала","Club name":"Название клуба","Club settings":"Настройки клуба","Clubs":"Клубы","Clubs in the system, each with its own data and rules.":"Клубы в системе: у каждого свои данные и правила.","Comment":"Комментарий","Compare NOI with R-Keeper, line by line.":"Построчная сверка NOI с R-Keeper.","Computer":"Компьютер","Confirmed":"Подтверждена","Connect":"Подключить","Connected":"Подключено","Connections to R-Keeper, Mango Office and HandFlow.":"Подключения к R-Keeper, Mango Office и HandFlow.","Contact":"Контакт","Corridor":"Коридор","Costume room":"Костюмерная","Costume stock: issued, returned and in cleaning.":"Учёт костюмов: выданные, возвращённые и в чистке.","Costumes":"Костюмы","Counted":"Посчитано","Currency":"Валюта","Custom":"Свой период","Cycle":"Цикл","D":"Д","DJ":"DJ","DJ console":"Пульт DJ","Dancer, 23":"Танцовщица, 23","Dancer, 25":"Танцовщица, 25","Date":"Дата","Dates":"Даты","Debts":"Долги","Debts due this week":"Долги к погашению на этой неделе","Declined":"Отклонено","Deductions":"Удержания","Deductions and fines":"Удержания и штрафы","Default":"По умолчанию","Demo Club":"Demo Club","Denis V.":"Денис В.","Department":"Служба","Departments":"Службы","Departure":"Уход","Deposit":"Депозит","Deposit added at T18 · $300":"Депозит внесён за T18 · $300","Deposit left":"Остаток депозита","Deposit paid":"Депозит внесён","Deposits":"Депозиты","Describe what happened":"Опишите, что произошло","Devices":"Устройства","Diana":"Диана","Diana started a sit-down at T3 · $90":"Диана начала посиделку за T3 · $90","Diana · T3":"Диана · T3","Discount":"Скидка","Disk":"Диск","Disk space":"Место на диске","Document":"Документ","Documents":"Документы","Done":"Готово","Drop an Excel file here":"Перетащите сюда файл Excel","Due 3 Nov":"До 3 нояб","Due 5 Nov":"До 5 нояб","Due 6 Nov":"До 6 нояб","Duration":"Длительность","E":"Е","Each performer sets her status with one tap.":"Каждая артистка ставит свой статус одним касанием.","Each person sees their own shifts.":"Каждый видит свои смены.","Earned this month":"Заработано за месяц","Earnings":"Заработок","Edit":"Изменить","Edit pay terms":"Изменять условия работы","Edit the queue":"Изменять очередь","Edited the queue":"Изменение очереди","Elena R.":"Елена Р.","Email or login":"Email или логин","Employee":"Сотрудник","Employee profile":"Карточка сотрудника","End":"Завершить","Ending soon":"Заканчиваются","Enter your 4-digit PIN":"Введите PIN из 4 цифр","Entrance":"Вход","Entry":"Вход","Europe/Moscow":"Европа/Москва","Eva":"Ева","Eva · T12":"Ева · T12","Eva, Lana":"Ева, Лана","Every cash and cashless payment, linked to a service or an order.":"Все наличные и безналичные платежи с привязкой к услуге или заказу.","Every employee, on their own phone":"Каждый сотрудник — на своём телефоне","Every guest, with visits, spend and loyalty card.":"Все гости: визиты, траты и карта лояльности.","Every service running right now, with its timer.":"Все услуги, которые идут сейчас, с таймерами.","Everyone who works at the club: performers, managers and departments.":"Все, кто работает в клубе: артистки, менеджеры и службы.","Everything happening in the club tonight, on one screen.":"Всё, что происходит в клубе сегодня, на одном экране.","Everything security notes during the shift.":"Всё, что охрана отмечает за смену.","Everything that happens, as it happens":"Все события в реальном времени","Excel import":"Загрузка из Excel","Expected":"Ожидалось","Expected tonight":"Ожидаются сегодня","Expenses":"Расходы","Expenses by category":"Расходы по категориям","Export":"Экспорт","Export to Excel":"Экспорт в Excel","Extend":"Продлить","Extension · 15 min":"Продление · 15 мин","Family":"Семейные обстоятельства","Feather boa":"Боа из перьев","Feeling unwell":"Плохое самочувствие","Finance":"Финансы","Finance and the owner":"Финансовый отдел и владелец","Finance office":"Финансовый отдел","Find by name or scan a badge":"Найдите по имени или отсканируйте бейдж","Fitting":"Примерка","Floor":"Зал","Forgot your password?":"Забыли пароль?","Free":"Свободно","Fri":"Пт","Fri 13 Nov":"Пт 13 нояб","Fri 30 Oct":"Пт 30 окт","Fri 6":"Пт 6","Fri 6 Nov":"Пт 6 нояб","Friday, 6 Nov ·":"Пятница, 6 ноября ·","From":"С","From HandFlow":"Из HandFlow","G":"Г","Go":"Перейти","Goes to the R-Keeper art cash desk":"Пробивается в арт-кассе R-Keeper","Gold":"Золотая","Gold card":"Золотая карта","Group private":"Групповой приват","Group private started at VIP 4 · $200":"Групповой приват начался в VIP 4 · $200","Guest":"Гость","Guest #0551":"Гость #0551","Guest #0551 arrived · VIP 1":"Гость #0551 пришёл · VIP 1","Guest #0763":"Гость #0763","Guest #0899":"Гость #0899","Guest #0987":"Гость #0987","Guest #0987 · ask about extending":"Гость #0987 · предложить продление","Guest #1042":"Гость #1042","Guest #1042, VIP":"Гость #1042, VIP","Guest #1110":"Гость #1110","Guest #1110 seated at T12 · 5 guests":"Гость #1110 сел за T12 · 5 гостей","Guest #1204":"Гость #1204","Guest #1318":"Гость #1318","Guest asked to leave T9":"Гостя за T9 попросили уйти","Guest debts":"Долги гостей","Guest profile":"Карточка гостя","Guests":"Гости","Guests in the club":"Гости в клубе","Guests seated":"Гости за столом","Gulyat":"Гулять","Gulyat 1 h":"Гулять 1 ч","HR":"Кадры","HR & casting":"Кадры и кастинг","HR and the casting team":"Отдел кадров и кастинг","Hair 1":"Парикмахер 1","Hair 2":"Парикмахер 2","Hall at a glance":"Загрузка залов","Hall map":"Схема зала","Halls":"Залы","Hand over":"Передать","HandFlow":"HandFlow","Hem the red dress":"Подшить красное платье","Hired":"Приняты","History":"История","Hostess":"Хостес","Hostess seated Guest #1204 at T15":"Хостес посадила гостя #1204 за T15","Hostess · from 20:00":"Хостес · с 20:00","Hostess, 21":"Хостес, 21","Hostess: guests at the door":"Хостес: гости у входа","How the stage runs tonight.":"Как сегодня работает сцена.","I":"И","IP":"ИП","Import 214 rows":"Загрузить 214 строк","In progress":"В работе","In stock":"В наличии","In work":"В работе","In · 19:50":"Пришла · 19:50","In · 19:51":"Пришла · 19:51","In · 19:52":"Пришла · 19:52","Incidents":"Инциденты","Income":"Доходы","Income & expenses":"Доходы и расходы","Income and expenses by category.":"Доходы и расходы по категориям.","Incoming":"Входящий","Incoming calls, with the caller matched to a guest card.":"Входящие звонки с карточкой гостя по номеру звонящего.","Individual terms":"Индивидуальные условия","Instagram":"Instagram","Integrations":"Интеграции","Interview":"Собеседование","Irina P.":"Ирина П.","Issue card":"Выдать карту","Issue item":"Выдать вещь","Issued":"Выдано","Issued to":"Кому выдано","Item":"Вещь","I’m coming":"Иду","K":"К","K2":"K2","Karaoke":"Караоке","Kira":"Кира","Kira is late":"Кира опаздывает","Kletka":"Клетка","Kletka 1":"Клетка 1","Kletka 1 extended by 30 min · $250":"Клетка 1 продлена на 30 мин · $250","Kletka 2 ends in 4 min":"Клетка 2 закончится через 4 мин","Kletka 30":"Клетка 30","L":"Л","Lamp out at T5":"Не горит лампа у T5","Lana":"Лана","Lana, Nika · VIP 4":"Лана, Ника · VIP 4","Last Friday · $10,510 by now, $19,060 by close":"Прошлая пятница · $10,510 к этому часу, $19,060 к закрытию","Last backup":"Последняя копия","Last call 21:38":"Последний звонок в 21:38","Last sync 21:40":"Последняя синхронизация в 21:40","Last visit":"Последний визит","Late":"Опоздание","Late 1":"Опаздывает 1","Late 35 min":"Опоздание 35 мин","Late arrivals":"Опоздания","Leaving":"Ухожу","Left":"Осталось","Live":"Онлайн","Live activity":"Лента событий","Live map of the karaoke hall.":"Схема караоке-зала в реальном времени.","Live map of the main hall: who sits where and what is happening at each table.":"Схема основного зала в реальном времени: кто где сидит и что происходит за каждым столом.","Load data from Excel and match the columns.":"Загрузка данных из Excel и сопоставление столбцов.","Logs":"Логи","Loyalty & deposits":"Лояльность и депозиты","Loyalty cards, discounts and guest deposits.":"Карты лояльности, скидки и депозиты гостей.","M":"М","Main":"Основной","Main hall":"Основной зал","Make-up 1":"Визажист 1","Make-up 2":"Визажист 2","Manage users":"Управлять пользователями","Manager":"Менеджер","Manager CRM":"CRM менеджера","Managers":"Менеджеры","Mango Office":"Mango Office","Margin":"Маржа","Maria T.":"Мария Т.","Mark in":"Отметить приход","Mark out":"Отметить уход","Mark staff arriving and leaving.":"Отметка прихода и ухода сотрудников.","Marketing":"Маркетинг","Mask":"Маска","Match":"Совпало","Match the columns":"Сопоставление столбцов","Maya":"Майя","Menu":"Меню","Message":"Сообщение","Messages":"Сообщения","Messages from managers and departments.":"Сообщения от менеджеров и служб.","Method":"Способ","Method ▾":"Способ ▾","Mila":"Мила","Mila called to the stage":"Милу вызвали на сцену","Mine":"Мои","Mismatch":"Расхождение","Mismatches":"Расхождения","Missed":"Пропущенный","Missing":"Не найдено","Missing in R-Keeper":"Нет в R-Keeper","Mode: two poles":"Режим: два пилона","Mon":"Пн","Mon 2":"Пн 2","Money":"Деньги","Money in and out at a glance.":"Приход и расход денег на одном экране.","Monitoring":"Мониторинг","Month":"Месяц","Moscow":"Москва","Move guests":"Пересадить","Move on automatically when the timer ends":"Автоматически переключать, когда таймер закончится","My shifts":"Мои смены","My status":"Мой статус","NEXT":"ДАЛЕЕ","NOI":"NOI","NOI build proposal":"Предложение NOI","Name":"Имя","Need 2 minutes":"Нужно 2 минуты","Needs an API key":"Нужен API-ключ","Needs attention":"Требует внимания","New":"Новые","New booking":"Новая бронь","New call":"Новый вызов","New caller":"Новый номер","New order":"Новый заказ","New package":"Новый пакет","New pay sheet":"Новая ведомость","New request":"Новая заявка","New sequin top":"Новый топ с пайетками","New service":"Новая услуга","Next":"Следующая","Next week":"Следующая неделя","Night":"Ночь","Nika":"Ника","Normal":"Норма","Not connected":"Не подключено","Note":"Заметка","Note ▾":"Заметка ▾","Notes":"Заметки","Notifications":"Уведомления","November":"Ноябрь","November so far":"С начала ноября","Now":"Сейчас","Now, 21:42":"Сейчас, 21:42","OK":"OK","OS":"ОС","Oleg S.":"Олег С.","Olga M.":"Ольга М.","On a break 2":"На перерыве 2","On a break: Zara, Maya":"На перерыве: Зара, Майя","On hold":"На паузе","On stage":"На сцене","On stage 1":"На сцене 1","On stage now":"Сейчас на сцене","On stage ·":"На сцене ·","On stage · pole 1":"На сцене · пилон 1","On time":"Вовремя","One employee: documents, schedule, pay terms and history.":"Карточка сотрудника: документы, график, условия работы и история.","One guest: visits, purchases, calls and notes from managers.":"Карточка гостя: визиты, покупки, звонки и заметки менеджеров.","One pole: 10-minute performance":"Один пилон: выступление 10 минут","Online":"Онлайн","Online · CPU 23%":"Онлайн · процессор 23%","Open":"Открыто","Open bill":"Открыть счёт","Open shift":"Открыть смену","Opened":"Открыто","Opening and closing each cash-register shift, with the cash count.":"Открытие и закрытие каждой кассовой смены со сверкой наличных.","Optional":"Необязательно","Order · Table 7":"Заказ · Стол 7","Other":"Прочее","Outgoing":"Исходящий","Overview":"Обзор","Owner":"Владелец","P":"В","PAUSE":"ПАУЗА","Package":"Пакет","Packages & prices":"Пакеты и цены","Paid":"Оплачено","Partly paid":"Частично оплачено","Party":"Персон","Password":"Пароль","Past":"Прошедшие","Pavel G.":"Павел Г.","Pay terms":"Условия работы","Payment":"Оплата","Payment date ▾":"Дата оплаты ▾","Payments":"Платежи","Payout":"Выплата","Payouts":"Выплаты","Payouts and pay sheets, protected from paying twice.":"Выплаты и ведомости с защитой от двойной выплаты.","Payouts due":"К выплате","Pending":"Ожидает","People":"Персонал","People involved":"Участники","Per shift":"За смену","Percentage splits":"Распределение процентов","Performer":"Артистка","Performer or department":"Артистка или служба","Performer queue":"Очередь артисток","Performer · from 20:00":"Артистка · с 20:00","Performers":"Артистки","Performers on shift":"Артистки на смене","Performers · 18":"Артистки · 18","Performers, on a shared tablet backstage":"Артистки — на общем планшете за кулисами","Performers’ tablet":"Планшет артисток","Period":"Период","Person":"Сотрудник","Person ▾":"Сотрудник ▾","Phone":"Телефон","Phone calls":"Телефонные звонки","Photo":"Фото","Place":"Место","Please return the red bodysuit by Friday":"Пожалуйста, верните красное боди до пятницы","Pole 1 and pole 2":"Пилон 1 и пилон 2","Pole 1 · set 2 of 2":"Пилон 1 · такт 2 из 2","Pole 2 · in 0:45":"Пилон 2 · через 0:45","Preview":"Предпросмотр","Price":"Цена","Private":"Приват","Private · 15 min":"Приват · 15 мин","Private, 12:30 left":"Приват, осталось 12:30","Privates":"Приваты","Products":"Продукты","Promoter":"Промоутер","Purchases":"Покупки","Put on tab":"В долг","Quick sign-in on a shared tablet":"Быстрый вход на общем планшете","R":"З","R-Keeper":"R-Keeper","R-Keeper check":"Сверка с R-Keeper","R-Keeper check: 2 mismatches":"Сверка с R-Keeper: 2 расхождения","R-Keeper sync":"Синхронизация R-Keeper","R-Keeper synced · 214 lines checked":"R-Keeper синхронизирован · проверено 214 строк","R-Keeper synced · all lines match":"R-Keeper синхронизирован · все строки совпадают","R-Keeper: 2 lines to check":"R-Keeper: 2 строки на проверку","RESUME":"ПРОДОЛЖИТЬ","RUB":"RUB","Rate":"Ставка","Rates, shares, bonuses and deductions for one person.":"Ставки, доли, бонусы и удержания для одного сотрудника.","Ready":"Готова","Ready 6":"Готовы 6","Reason":"Причина","Recalculate":"Пересчитать","Red bodysuit":"Красное боди","Referral":"По рекомендации","Regulars":"Постоянные","Rent":"Аренда","Repair a corset":"Починить корсет","Reports":"Отчёты","Reports for a shift, a month or any period, with export to Excel.":"Отчёты за смену, месяц или любой период с экспортом в Excel.","Request":"Заявка","Requests":"Заявки","Requests to the service team.":"Заявки в сервисный отдел.","Restore":"Восстановить","Result":"Результат","Returned":"Возвращено","Revenue":"Выручка","Revenue by hour":"Выручка по часам","Revenue by hour, tonight against last Friday":"Выручка по часам в сравнении с прошлой пятницей","Revenue by service":"Выручка по услугам","Revenue mix":"Структура выручки","Revenue mix tonight":"Структура выручки сегодня","Revenue this month":"Выручка за месяц","Revenue tonight":"Выручка сегодня","Review":"Проверить","Ria":"Рия","Role":"Роль","Roles":"Роли","Roles & access":"Роли и доступ","Roles & permissions":"Роли и права доступа","Rotation":"Ротация","Running":"Идёт","S":"С","START":"СТАРТ","Salaries":"Зарплаты","Salon":"Салон","Salon, costume room, tailoring, hostesses and service":"Салон, костюмерная, ателье, хостес и сервис","Salon: Kira is ready":"Салон: Кира готова","Sample data":"Демо-данные","Sat":"Сб","Sat 24 Oct":"Сб 24 окт","Sat 31 Oct":"Сб 31 окт","Sat 7":"Сб 7","Sat 7 Nov":"Сб 7 нояб","Save":"Сохранить","Save incident":"Сохранить инцидент","Save terms":"Сохранить условия","Schedule":"График","Schedules":"Графики","Screens":"Экраны","Search":"Поиск","Seat guest":"Посадить гостя","Seat guests":"Посадить гостей","Seated":"Занято","Second club":"Второй клуб","Security":"Охрана","Security at the staff entrance":"Охрана на служебном входе","Security log":"Журнал охраны","Security post":"Пост охраны","See reports":"Видеть отчёты","See the hall map":"Видеть схему зала","Send call":"Отправить вызов","Send request":"Отправить заявку","Sequin dress":"Платье с пайетками","Server":"Сервер","Server & backups":"Сервер и копии","Server status, backups and updates.":"Состояние сервера, резервные копии и обновления.","Service":"Услуга","Service / order":"Услуга / заказ","Service requests":"Заявки в сервис","Service running":"Идёт услуга","Service timers":"Таймеры услуг","Services":"Услуги","Services $1,520":"Услуги $1,520","Services running":"Услуги в работе","Services, packages and prices.":"Услуги, пакеты и цены.","Set length":"Длительность такта","Settings":"Настройки","Settings for the whole club.":"Настройки всего клуба.","Share":"Доля","Share + bonus":"Доля + бонус","Share of services":"Доля с услуг","Shared tablet backstage: the current rotation in large type.":"Общий планшет за кулисами: текущая ротация крупно.","Shift":"Смена","Shift #310 closed":"Смена #310 закрыта","Shift #310 since 20:00":"Смена #310 с 20:00","Shift 20:00–06:00":"Смена 20:00–06:00","Shift ends":"Конец смены","Shift over":"Смена окончена","Shift reminder":"Напоминание о смене","Shift report":"Отчёт за смену","Shift schedule":"График смен","Shift schedules for the month.":"Графики смен на месяц.","Shift starts":"Начало смены","Shifts":"Смены","Shifts this month":"Смен за месяц","Sick leave":"Больничный","Sign in":"Войти","Sign in with a password, or with a quick PIN on shared tablets.":"Вход по паролю или по быстрому PIN-коду на общих планшетах.","Sign-in":"Вход","Silver":"Серебряная","Since":"В клубе с","Sit-down":"Посиделка","Sit-down 30":"Посиделка 30","Sit-down 60":"Посиделка 60","Sit-down · 30 min":"Посиделка · 30 мин","Sit-downs":"Посиделки","Size":"Размер","Sofia":"София","Sofia · VIP 2":"София · VIP 2","Soon":"Скоро","Source":"Источник","Spend":"Траты","Spend tonight":"Траты сегодня","Spill at the bar":"Лужа у бара","St Petersburg":"Санкт-Петербург","Staff":"Сотрудники","Staff app":"Приложение сотрудника","Staff calls":"Вызовы сотрудников","Staff on shift":"Сотрудники на смене","Stage":"Сцена","Stage call":"Вызов на сцену","Stage console":"Пульт сцены","Stage mode":"Режим сцены","Stage modes":"Режимы сцены","Start":"Начало","Start a new service.":"Запуск новой услуги.","Start performer services and take payment for them.":"Запуск и оплата услуг артисток.","Start service":"Начать услугу","Start services":"Запускать услуги","Status":"Статус","Sum":"Сумма","Sun":"Вс","Sun 8":"Вс 8","Swap":"Замена","Swap asked":"Запрос замены","Swap requests, vacations and sick leave.":"Заявки на замены, отпуска и больничные.","Swap with":"С кем замена","Swaps":"Замены","Swaps & leave":"Замены и отпуска","Sync now":"Синхронизировать","Synced 23:40":"Синхронизирован в 23:40","T1":"T1","T10":"T10","T11":"T11","T12":"T12","T13":"T13","T14":"T14","T15":"T15","T16":"T16","T17":"T17","T18":"T18","T19":"T19","T2":"T2","T20":"T20","T21":"T21","T22":"T22","T3":"T3","T4":"T4","T5":"T5","T6":"T6","T7":"T7","T8":"T8","T9":"T9","Table":"Стол","Table 4 booked for 00:30":"Стол 4 забронирован на 00:30","Table 7":"Стол 7","Table 7: deposit running low":"Стол 7: депозит заканчивается","Table bookings for tonight and the waiting list for free tables.":"Брони столов на сегодня и лист ожидания свободных столов.","Table, stage or room":"Стол, сцена или комната","Tables taken":"Занятые столы","Tablet":"Планшет","Tailoring":"Ателье","Tailoring orders, from request to fitting.":"Заказы ателье: от заявки до примерки.","Take in a black suit":"Ушить чёрный костюм","Take payment":"Принять оплату","Take the tour":"Пройти тур","Tap your name":"Нажмите на своё имя","Ten products on one system, with sample data. Open any screen.":"Десять продуктов в одной системе на демо-данных. Откройте любой экран.","The DJ runs the stage from here.":"Отсюда DJ управляет сценой.","The DJ, on a tablet in the booth":"DJ — на планшете в DJ-будке","The cashier at the art cash desk":"Кассир на арт-кассе","The hostess view: greeting guests at the door and seating them.":"Экран хостес: встреча гостей у входа и рассадка.","The owner and the system admin":"Владелец и системный администратор","The stage rotation: who is next, who is on a break and who is with a guest.":"Ротация на сцене: кто выходит следующей, кто на перерыве и кто с гостем.","Then":"Потом","This month":"Этот месяц","This week":"Эта неделя","Thu":"Чт","Thu 5":"Чт 5","Time":"Время","Time zone":"Часовой пояс","Timers":"Таймеры","Timers for every running service, with extend and end.":"Таймеры всех идущих услуг: продление и завершение.","Timing":"Тайминг","Tina":"Тина","To":"По","To approve":"На согласовании","To pay":"К выплате","Today":"Сегодня","Today 03:00":"Сегодня 03:00","Tomorrow":"Завтра","Tonight":"Сегодня","Tonight against last Friday":"Сравнение с прошлой пятницей","Tonight · $12,480 so far":"Сегодня · уже $12,480","Top tables tonight":"Топ столов сегодня","Top up":"Пополнить","Total":"Итого","Total spend":"Всего потрачено","Totals for the shift: guests, services and payments.":"Итоги смены: гости, услуги и платежи.","Transfer":"Перевод","Travel":"Поездка","Trial":"Стажировка","Trial passed":"Стажировка пройдена","Tue":"Вт","Tue 10 Nov":"Вт 10 нояб","Tue 27 Oct":"Вт 27 окт","Tue 3":"Вт 3","Two poles · 5-minute sets":"Два пилона · такты по 5 минут","Two poles: 5-minute sets, 10-minute cycle":"Два пилона: такты 5 минут, цикл 10 минут","Type":"Тип","Type here":"Введите текст","Unpaid and partly paid services.":"Неоплаченные и частично оплаченные услуги.","Up next":"Далее","Upcoming":"Предстоящие","Update to 1.4.3":"Обновить до 1.4.3","Updated":"Обновлено","Urgent":"Срочно","V":"В","VIP":"VIP","VIP 1":"VIP 1","VIP 2":"VIP 2","VIP 2 topped up its deposit · $500":"VIP 2: депозит пополнен · $500","VIP 3":"VIP 3","VIP 3 asked for a manager":"VIP 3 просит менеджера","VIP 3 opens at 22:00 tonight":"VIP 3 сегодня открывается в 22:00","VIP 4":"VIP 4","VIP 5":"VIP 5","VIP 6":"VIP 6","VIP areas":"VIP-зоны","VIP rooms":"VIP-комнаты","VIP rooms and booths, with what is running in each.":"VIP-комнаты и ложи: что идёт в каждой.","Vacation":"Отпуск","Vacation 12–19 Nov approved":"Отпуск 12–19 нояб согласован","Valid from":"Действует с","Vera":"Вера","Vera called to the stage":"Веру вызвали на сцену","Vera started a private at T7 · $120":"Вера начала приват за T7 · $120","Vera · T7":"Вера · T7","Vera, your status":"Вера, ваш статус","Vera, you’re next":"Вера, вы следующая","Version":"Версия","Visits":"Визиты","Waiting list":"Лист ожидания","Waitress, 22":"Официантка, 22","Walk-in":"С улицы","Warn the next performer 1 minute before":"Предупреждать следующую артистку за 1 минуту","Watch":"Внимание","Website":"Сайт","Wed":"Ср","Wed 4":"Ср 4","Week":"Неделя","Week 1":"Неделя 1","Week 2":"Неделя 2","Week 3":"Неделя 3","Week 4":"Неделя 4","What I earned this shift and this month.":"Мой заработок за смену и за месяц.","What each person has earned from services and rates.":"Начисления каждому сотруднику по услугам и ставкам.","What happened":"Что произошло","Where":"Куда","Which services can run at the same time.":"Какие услуги можно совмещать.","Who":"Кого","Who can see and do what.":"Кто что видит и что может делать.","Who changed what, and when, across the whole system.":"Кто, что и когда изменил во всей системе.","Who changed whose terms, and when.":"Кто, кому и когда менял условия.","Who gets what share of each service.":"Кто какую долю получает с каждой услуги.","Who works which night this week.":"Кто в какую ночь работает на этой неделе.","With a guest":"С гостем","With guests":"С гостями","With guests 8":"С гостями 8","With the club":"В клубе","Write up an incident.":"Оформление инцидента.","XS":"XS","Yana":"Яна","Yana · T9":"Яна · T9","Yesterday":"Вчера","Yesterday 03:00":"Вчера 03:00","Your October payout is ready":"Ваша выплата за октябрь готова","Your shift starts in 2 hours":"Ваша смена начнётся через 2 часа","Your slot moved to 18:30":"Ваша запись перенесена на 18:30","Your swap with Mila is approved":"Ваша замена с Милой согласована","You’re next on pole 2":"Вы следующая на пилоне 2","Zara":"Зара","Zara · Kletka 1":"Зара · Клетка 1","average 24 min":"в среднем 24 мин","for Vera":"для Веры","free":"свободно","in 14 min":"через 14 мин","in 19 min":"через 19 мин","in 24 min":"через 24 мин","in 29 min":"через 29 мин","in 4 min":"через 4 мин","in 9 min":"через 9 мин","manager · Karaoke":"менеджер · Караоке","manager · Main hall":"менеджер · Основной зал","manager · VIP rooms":"менеджер · VIP-комнаты","moved Mila to #2":"Мила перемещена на #2","name@club":"name@club","of 140 capacity":"из 140 мест","per table tonight":"на стол сегодня","pole 1 · in":"пилон 1 · через","pole 2 · in":"пилон 2 · через","private":"приват","tonight":"сегодня","vs $10,510 last Friday":"$10,510 в прошлую пятницу","· 2 guests":"· 2 гостя","· 2.10 GB":"· 2.10 ГБ","· 2.15 GB":"· 2.15 ГБ","· 2.20 GB":"· 2.20 ГБ","· 2.25 GB":"· 2.25 ГБ","· 3 guests":"· 3 гостя","· 4 guests":"· 4 гостя","· Anna K. · 2 guests":"· Анна К. · 2 гостя","· Anna K. · 3 guests":"· Анна К. · 3 гостя","· Day off":"· Выходной","· Irina P. · 4 guests":"· Ирина П. · 4 гостя","· Irina P. · 6 guests":"· Ирина П. · 6 гостей","· Karaoke K3":"· Караоке K3","· Oleg S. · 5 guests":"· Олег С. · 5 гостей","· Shift 20:00–04:00":"· Смена 20:00–04:00","· Shift 20:00–06:00":"· Смена 20:00–06:00","· Shift 22:00–06:00":"· Смена 22:00–06:00","· Table 12":"· Стол 12","· Table 4":"· Стол 4","· Table 7, 3 guests":"· Стол 7, 3 гостя","· VIP 2":"· VIP 2","· pole 1 · set 2 of 2":"· пилон 1 · такт 2 из 2"};
+</script>
 <script>
+// Language: Russian unless the link asks for English (?lang=en).
+let lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ru';
+const tx = p => p[lang === 'ru' ? 1 : 0];
+const TITLE = ['NOI — interface demo', 'NOI — демо интерфейса'];
+// English is the source. In Russian every text on the page is looked up in RU the moment it appears (exact text),
+// thousands get a space instead of a comma, and a few live phrases are built by rule. Switching back restores English.
+const ruPlural = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
+const RU_RULES = [
+  [/^(\d+) guests?$/, (m, n) => n + ' ' + ruPlural(+n, 'гость', 'гостя', 'гостей')],
+  [/^(\d+) min$/, (m, n) => n + ' мин'],
+  [/^in (\d+) min$/, (m, n) => 'через ' + n + ' мин'],
+];
+const ruNum = t => t.replace(/(\d),(?=\d{3}(?!\d))/g, '$1 ');
+function ruText(t, el) {
+  const k = t.replace(/\s+/g, ' ').trim();
+  if (!k || !/[A-Za-z\d]/.test(k)) return t;
+  // Single letters and initials are translated only in avatars; elsewhere (sizes, codes) they stay as they are.
+  if (/^[A-Z]{1,2}$/.test(k) && !(el && el.closest && el.closest('.av, .avatar'))) return t;
+  let v = RU[k];
+  if (v === undefined) for (const [re, f] of RU_RULES) { const m = k.match(re); if (m) { v = f(...m); break; } }
+  v = ruNum(v === undefined ? k : v);
+  return v === k ? t : t.match(/^\s*/)[0] + v + t.match(/\s*$/)[0];
+}
+function trNode(n) {
+  if (n.nodeType === 3) {
+    if (n.__ru === n.nodeValue) return;
+    const v = ruText(n.nodeValue, n.parentElement);
+    if (v !== n.nodeValue) { n.__en = n.nodeValue; n.nodeValue = v; }
+    n.__ru = n.nodeValue;
+    return;
+  }
+  if (n.nodeType !== 1 || n.nodeName === 'SCRIPT' || n.nodeName === 'STYLE') return;
+  for (const a of ['title', 'aria-label', 'placeholder']) {
+    const v = n.getAttribute(a);
+    if (v == null) continue;
+    const r = ruText(v);
+    if (r !== v) { (n.__enAttr = n.__enAttr || {})[a] = v; n.setAttribute(a, r); }
+  }
+  for (const c of n.childNodes) trNode(c);
+}
+function unNode(n) {
+  if (n.nodeType === 3) { if (n.__en !== undefined && n.__ru === n.nodeValue) n.nodeValue = n.__en; delete n.__en; delete n.__ru; return; }
+  if (n.nodeType !== 1) return;
+  if (n.__enAttr) { for (const a in n.__enAttr) n.setAttribute(a, n.__enAttr[a]); delete n.__enAttr; }
+  for (const c of n.childNodes) unNode(c);
+}
+const ruWatch = new MutationObserver(list => {
+  if (lang !== 'ru') return;
+  for (const m of list) { if (m.type === 'characterData') trNode(m.target); else m.addedNodes.forEach(trNode); }
+});
+const langSwitch = () => `<div class="lang" role="group" aria-label="${tx(['Language', 'Язык'])}" data-on="${lang}"><button data-lang="ru" aria-pressed="${lang === 'ru'}">RU</button><button data-lang="en" aria-pressed="${lang === 'en'}">EN</button><i></i></div>`;
 const ICON = {"layout-dashboard": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\" /></svg>", "disc-3": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M6 12c0-1.7.7-3.2 1.8-4.2\" /> <circle cx=\"12\" cy=\"12\" r=\"2\" /> <path d=\"M18 12c0 1.7-.7 3.2-1.8 4.2\" /></svg>", "tablet": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\" ry=\"2\" /> <line x1=\"12\" x2=\"12.01\" y1=\"18\" y2=\"18\" /></svg>", "shield": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /></svg>", "wallet": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\" /> <path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\" /></svg>", "chart-column": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 3v16a2 2 0 0 0 2 2h16\" /> <path d=\"M18 17V9\" /> <path d=\"M13 17V5\" /> <path d=\"M8 17v-3\" /></svg>", "users": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <path d=\"M16 3.128a4 4 0 0 1 0 7.744\" /> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" /></svg>", "building-2": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 12h4\" /> <path d=\"M10 8h4\" /> <path d=\"M14 21v-3a2 2 0 0 0-4 0v3\" /> <path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\" /> <path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\" /></svg>", "smartphone": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\" /> <path d=\"M12 18h.01\" /></svg>", "settings": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\" /> <circle cx=\"12\" cy=\"12\" r=\"3\" /></svg>", "map": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z\" /> <path d=\"M15 5.764v15\" /> <path d=\"M9 3.236v15\" /></svg>", "chevron-left": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m15 18-6-6 6-6\" /></svg>", "chevron-right": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\" /></svg>", "menu": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\" /> <path d=\"M4 12h16\" /> <path d=\"M4 19h16\" /></svg>", "search": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m21 21-4.34-4.34\" /> <circle cx=\"11\" cy=\"11\" r=\"8\" /></svg>", "plus": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\" /> <path d=\"M12 5v14\" /></svg>", "monitor": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\" /> <line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\" /> <line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\" /></svg>"};
 
 /* ---------------------------------------------------------------- structure ---- */
@@ -610,6 +865,9 @@ Object.assign(ICON, {
   'server': ic('<rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/>'),
   'layout-grid': ic('<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>'),
 });
+// Back to the offer lands on the screen the visitor came from, in the same language.
+const FROM = (new URLSearchParams(location.search).get('from') || '').replace(/[^a-z]/g, '');
+const backHref = () => { const h = [lang === 'en' ? 'en' : '', FROM].filter(Boolean).join('-'); return '../index.html' + (h ? '#' + h : ''); };
 const MENU = [
   ['Overview', [['crm-dashboard', 'Tonight', 'layout-dashboard']]],
   ['Floor', [['crm-floor', 'Hall map', 'map'], ['crm-bookings', 'Bookings', 'calendar-check'], ['crm-guests', 'Guests', 'users']]],
@@ -629,7 +887,7 @@ const spark = (pts, color) => {
   const xy = pts.map((v, i) => (i / (pts.length - 1) * 100).toFixed(1) + ',' + (25 - (v - mn) / (mx - mn || 1) * 21).toFixed(1)).join(' ');
   return `<svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,28 ${xy} 100,28" fill="${color}" fill-opacity="0.13"/><polyline points="${xy}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
 };
-const head = (title, note) => `<div class="ph-h"><h3>${title}</h3><span>${note}</span></div>`;
+const head = (title, note, to) => `<div class="ph-h"><h3>${to ? `<a href="#${to}">${title}${ICON['chevron-right']}</a>` : title}</h3><span>${note}</span></div>`;
 
 // Revenue by hour: tonight's bars against last Friday's line, and last Friday's later hours as a dashed forecast.
 function revChart() {
@@ -676,53 +934,53 @@ function addFeed(feed) {
 }
 
 function liveDash() {
-  const kpi = ([label, value, attr, delta, note, pts, color]) => `<div class="kpi"><div class="kpi-h"><span>${label}</span></div><div class="kpi-v"><b ${attr}>${value}</b>${delta ? `<em>▲ ${delta}</em>` : ''}</div><small>${note}</small>${spark(pts, color)}</div>`;
+  const kpi = ([label, value, attr, delta, note, pts, color, to]) => `<a class="kpi" href="#${to}"><div class="kpi-h"><span>${label}</span></div><div class="kpi-v"><b ${attr}>${value}</b>${delta ? `<em>▲ ${delta}</em>` : ''}</div><small>${note}</small>${spark(pts, color)}</a>`;
   const kpis = [
-    ['Revenue tonight', '$12,480', 'data-money', '18%', 'vs $10,510 last Friday', [2, 4, 5, 7, 9, 12, 14, 17, 19, 22], AMBER],
-    ['Guests in the club', '86', 'data-count', '12%', 'of 140 capacity', [8, 20, 34, 48, 61, 70, 77, 82, 86], GREEN],
-    ['Tables taken', '14 / 22', '', '', '64% of the floor', [3, 6, 8, 10, 12, 13, 14, 14], BLUE],
-    ['Average check', '$310', '', '6%', 'per table tonight', [262, 270, 284, 291, 300, 296, 305, 310], AMBER],
-    ['Services running', '7', '', '', 'average 24 min', [2, 3, 5, 4, 6, 8, 7, 7], VIOLET],
-    ['Performers on shift', '18', '', '', '6 free right now', [14, 16, 17, 18, 18, 18, 18], GREEN],
+    ['Revenue tonight', '$12,480', 'data-money', '18%', 'vs $10,510 last Friday', [2, 4, 5, 7, 9, 12, 14, 17, 19, 22], AMBER, 'finance-overview'],
+    ['Guests in the club', '86', 'data-count', '12%', 'of 140 capacity', [8, 20, 34, 48, 61, 70, 77, 82, 86], GREEN, 'crm-guests'],
+    ['Tables taken', '14 / 22', '', '', '64% of the floor', [3, 6, 8, 10, 12, 13, 14, 14], BLUE, 'crm-floor'],
+    ['Average check', '$310', '', '6%', 'per table tonight', [262, 270, 284, 291, 300, 296, 305, 310], AMBER, 'crm-reports'],
+    ['Services running', '7', '', '', 'average 24 min', [2, 3, 5, 4, 6, 8, 7, 7], VIOLET, 'cash-timers'],
+    ['Performers on shift', '18', '', '', '6 free right now', [14, 16, 17, 18, 18, 18, 18], GREEN, 'crm-queue'],
   ];
   const mix = [['Services', 5740, AMBER], ['Bar', 3870, BLUE], ['Deposits', 1870, VIOLET], ['Entry', 1000, GREEN]];
   const zones = [['Main hall', 9, 12, ['busy', 'svc', 'busy', 'free', 'busy', 'busy', 'svc', 'busy', 'res', 'busy', 'busy', 'free']],
     ['Karaoke', 3, 6, ['busy', 'free', 'svc', 'res', 'busy', 'free']], ['VIP rooms', 2, 4, ['svc', 'busy', 'free', 'free']]];
   const srv = [['Private', 'Vera', 'T7', 12, 40], ['Sit-down 30', 'Diana', 'T3', 4, 85], ['Gulyat 1 h', 'Sofia', 'VIP 2', 38, 35], ['Kletka 30', 'Zara', 'Kletka 1', 21, 30],
     ['Sit-down 60', 'Eva', 'T12', 51, 15], ['Group private', 'Lana, Nika', 'VIP 4', 2, 92], ['Sit-down 30', 'Yana', 'T9', 17, 43]];
-  const alerts = [['r', 'Table 7: deposit running low', '$260 left · manager Anna K.', 'Top up'], ['a', 'Kletka 2 ends in 4 min', 'Guest #0987 · ask about extending', 'Extend'],
-    ['r', 'Kira is late', '35 min · was due at 20:00', 'Call'], ['b', 'VIP 3 asked for a manager', '2 min ago · Irina P. is nearest', 'Go'], ['a', 'R-Keeper: 2 lines to check', '211 of 214 match tonight', 'Review']];
+  const alerts = [['r', 'Table 7: deposit running low', '$260 left · manager Anna K.', 'Top up', 'crm-floor'], ['a', 'Kletka 2 ends in 4 min', 'Guest #0987 · ask about extending', 'Extend', 'cash-timers'],
+    ['r', 'Kira is late', '35 min · was due at 20:00', 'Call', 'security-checkin'], ['b', 'VIP 3 asked for a manager', '2 min ago · Irina P. is nearest', 'Go', 'crm-vip'], ['a', 'R-Keeper: 2 lines to check', '211 of 214 match tonight', 'Review', 'finance-reconcile']];
   const tables = [['VIP 2', 'Irina P.', 6, 2860], ['T7', 'Anna K.', 3, 1240], ['T12', 'Oleg S.', 5, 1180], ['VIP 4', 'Irina P.', 4, 1050], ['T3', 'Anna K.', 2, 720]];
   const crew = [['On stage', 1, AMBER], ['With guests', 8, VIOLET], ['Ready', 6, GREEN], ['On a break', 2, BLUE], ['Late', 1, RED]];
   const books = [['00:15', 'Guest #1204', 4, 'T15', 'Website', 'Confirmed', 'g'], ['00:30', 'Guest #0551', 2, 'VIP 1', 'Promoter', 'Deposit paid', 'b'],
-    ['01:00', 'Guest #1318', 6, 'T18', 'Call', 'Confirmed', 'g'], ['01:30', 'Guest #0899', 3, 'K2', 'Website', 'Waiting list', 'a']];
+    ['01:00', 'Guest #1318', 6, 'T18', 'Phone', 'Confirmed', 'g'], ['01:30', 'Guest #0899', 3, 'K2', 'Website', 'Waiting list', 'a']];
   const feed = [['23:41', 'a', 'Vera started a private at T7 · $120'], ['23:39', 'g', 'Guest #1110 seated at T12 · 5 guests'], ['23:38', 'g', 'Card payment $340 at the cash desk'],
     ['23:36', 'v', 'Alina called to the stage'], ['23:34', 'b', 'VIP 2 topped up its deposit · $500'], ['23:31', 'b', 'R-Keeper synced · 214 lines checked']];
-  const sys = [['R-Keeper', 'Check 2', 'a', 'Synced 23:40', '211 of 214 lines match'], ['Cash desk', 'Open', 'g', 'Shift #310 since 20:00', 'Cash $4,320 · card $8,160'],
-    ['Mango Office', 'OK', 'g', '12 calls tonight', '1 missed · 9 matched to guests'], ['Server', 'OK', 'g', 'Online · CPU 23%', 'Backup today at 03:00']];
+  const sys = [['R-Keeper', 'Check 2', 'a', 'Synced 23:40', '211 of 214 lines match', 'finance-reconcile'], ['Cash desk', 'Open', 'g', 'Shift #310 since 20:00', 'Cash $4,320 · card $8,160', 'finance-shifts'],
+    ['Mango Office', 'OK', 'g', '12 calls tonight', '1 missed · 9 matched to guests', 'crm-calls'], ['Server', 'OK', 'g', 'Online · CPU 23%', 'Backup today at 03:00', 'admin-system']];
   const shift = Math.round((night.min - 20 * 60) / 600 * 100);
   const maxT = Math.max(...tables.map(t => t[3]));
   return `<div class="dash">`
     + `<div class="w12 dash-head"><span class="live-pill"><i></i>Live</span><span>Friday, 6 Nov · <b data-now>${hhmm(night.min)}</b></span><span>Shift 20:00–06:00</span><span class="shift"><i style="width:${shift}%"></i></span><span>${shift}% done</span></div>`
     + `<div class="w12 kpis">${kpis.map(kpi).join('')}</div>`
-    + `<div class="w8 panel">${head('Revenue by hour', 'Tonight against last Friday')}${revChart()}<div class="lg"><span><i style="background:${AMBER}"></i>Tonight · $12,480 so far</span><span><i class="dash-line"></i>Last Friday · $10,510 by now, $19,060 by close</span></div></div>`
-    + `<div class="w4 panel">${head('Revenue mix', 'Tonight')}<div class="donut-wrap">${donut(mix)}<div>${mix.map(([n, v, c]) => `<div class="mrow"><i style="background:${c}"></i><span>${n}</span><b>$${v.toLocaleString('en-US')}</b><em>${Math.round(v / 12480 * 100)}%</em></div>`).join('')}</div></div></div>`
-    + `<div class="w4 panel">${head('Hall at a glance', '14 of 22 tables')}${zones.map(([n, t, of]) => `<div class="zone"><span>${n}</span><b>${t} / ${of}</b><div class="bar"><i style="width:${Math.round(t / of * 100)}%"></i></div></div>`).join('')}`
+    + `<div class="w8 panel">${head('Revenue by hour', 'Tonight against last Friday', 'crm-reports')}${revChart()}<div class="lg"><span><i style="background:${AMBER}"></i>Tonight · $12,480 so far</span><span><i class="dash-line"></i>Last Friday · $10,510 by now, $19,060 by close</span></div></div>`
+    + `<div class="w4 panel">${head('Revenue mix', 'Tonight', 'finance-overview')}<div class="donut-wrap">${donut(mix)}<div>${mix.map(([n, v, c]) => `<div class="mrow"><i style="background:${c}"></i><span>${n}</span><b>$${v.toLocaleString('en-US')}</b><em>${Math.round(v / 12480 * 100)}%</em></div>`).join('')}</div></div></div>`
+    + `<div class="w4 panel">${head('Hall at a glance', '14 of 22 tables', 'crm-floor')}${zones.map(([n, t, of]) => `<a class="zone" href="#${{ 'Main hall': 'crm-floor', 'Karaoke': 'crm-karaoke', 'VIP rooms': 'crm-vip' }[n]}"><span>${n}</span><b>${t} / ${of}</b><div class="bar"><i style="width:${Math.round(t / of * 100)}%"></i></div></a>`).join('')}`
       + `<div class="dots">${zones.map(([n, , , d]) => `<div><small>${n.split(' ')[0]}</small>${d.map(k => `<i class="${k}"></i>`).join('')}</div>`).join('')}</div>`
       + `<div class="legend"><span><i style="background:var(--green)"></i>Free</span><span><i style="background:var(--amber)"></i>Seated</span><span><i style="background:var(--blue)"></i>Booked</span><span><i style="background:var(--violet)"></i>Service</span></div></div>`
-    + `<div class="w4 panel">${head('Stage', 'Two poles · 5-minute sets')}<div class="stage-now"><div><span class="mut">On stage · pole 1</span><b class="big-name" data-stage="0">Alina</b></div><div class="clock" data-clock>03:42</div></div>`
+    + `<div class="w4 panel">${head('Stage', 'Two poles · 5-minute sets', 'crm-queue')}<div class="stage-now"><div><span class="mut">On stage · pole 1</span><b class="big-name" data-stage="0">Alina</b></div><div class="clock" data-clock>03:42</div></div>`
       + rows([1, 2, 3].map(k => `<span><span class="mut">${k === 1 ? 'Next' : 'Then'}</span> <b data-stage="${k}">${N[k]}</b></span><span class="mut">pole ${k % 2 ? 2 : 1} · in <span data-in="${(k - 1) * 300}">${mmss(222 + (k - 1) * 300)}</span></span>`))
       + `<div class="chips mt8">${chip('6 ready', 'g')}${chip('2 on a break', 'b')}${chip('1 late', 'r')}</div></div>`
-    + `<div class="w4 panel">${head('Services running', '7 right now')}${srv.map(([n, p, t, m, pct]) => { const left = m * 60 + (m * 13) % 60; return `<div class="srv"><div class="srv-h"><b>${n}</b><span class="mut">${p} · ${t}</span><span class="tn" data-left="${left}" data-total="${Math.round(left / (1 - pct / 100))}">${mmss2(left)}</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>`; }).join('')}</div>`
-    + `<div class="w4 panel">${head('Needs attention', '5 open')}${alerts.map(([k, t, d, a]) => `<div class="alert"><span class="dot ${k}"></span><div><b>${t}</b><small>${d}</small></div><span class="btn sm">${a}</span></div>`).join('')}</div>`
-    + `<div class="w4 panel">${head('Top tables tonight', 'By spend')}${tables.map(([t, m, g, v], i) => `<div class="trow"><span class="rk">${i + 1}</span><span><b>${t}</b> <small>· ${m} · ${g} guests</small></span><b>$${v.toLocaleString('en-US')}</b><div class="bar"><i style="width:${Math.round(v / maxT * 100)}%"></i></div></div>`).join('')}</div>`
-    + `<div class="w4 panel">${head('Staff on shift', '34 people tonight')}<span class="mut">Performers · 18</span><div class="stack">${crew.map(([, n, c]) => `<i style="flex:${n};background:${c}"></i>`).join('')}</div>`
+    + `<div class="w4 panel">${head('Services running', '7 right now', 'cash-timers')}${srv.map(([n, p, t, m, pct]) => { const left = m * 60 + (m * 13) % 60; return `<a class="srv" href="#cash-timers"><div class="srv-h"><b>${n}</b><span class="mut">${p} · ${t}</span><span class="tn" data-left="${left}" data-total="${Math.round(left / (1 - pct / 100))}">${mmss2(left)}</span></div><div class="bar"><i style="width:${pct}%"></i></div></a>`; }).join('')}</div>`
+    + `<div class="w4 panel">${head('Needs attention', '5 open')}${alerts.map(([k, t, d, a, to]) => `<div class="alert"><span class="dot ${k}"></span><div><b>${t}</b><small>${d}</small></div><a class="btn sm" href="#${to}">${a}</a></div>`).join('')}</div>`
+    + `<div class="w4 panel">${head('Top tables tonight', 'By spend', 'crm-floor')}${tables.map(([t, m, g, v], i) => `<a class="trow" href="#${t.startsWith('VIP') ? 'crm-vip' : 'crm-floor'}"><span class="rk">${i + 1}</span><span><b>${t}</b> <small>· ${m} · ${g} guests</small></span><b>$${v.toLocaleString('en-US')}</b><div class="bar"><i style="width:${Math.round(v / maxT * 100)}%"></i></div></a>`).join('')}</div>`
+    + `<div class="w4 panel">${head('Staff on shift', '34 people tonight', 'hr-staff')}<span class="mut">Performers · 18</span><div class="stack">${crew.map(([, n, c]) => `<i style="flex:${n};background:${c}"></i>`).join('')}</div>`
       + `<div class="legend">${crew.map(([n, v, c]) => `<span><i style="background:${c}"></i>${n} ${v}</span>`).join('')}</div>`
-      + `<div class="mt8">${[['AK', 'Anna K.', 'Main hall'], ['IP', 'Irina P.', 'VIP rooms'], ['OS', 'Oleg S.', 'Karaoke']].map(([a, n, z]) => `<div class="mgr"><span class="av">${a}</span><b>${n}</b><span class="mut">manager · ${z}</span></div>`).join('')}</div>`
+      + `<div class="mt8">${[['AK', 'Anna K.', 'Main hall'], ['IP', 'Irina P.', 'VIP rooms'], ['OS', 'Oleg S.', 'Karaoke']].map(([a, n, z]) => `<a class="mgr" href="#hr-profile"><span class="av">${a}</span><b>${n}</b><span class="mut">manager · ${z}</span></a>`).join('')}</div>`
       + `<p class="mut mt8">Bar 4 · Hostesses 3 · Security 6 · Salon 2 · Cash desk 2</p></div>`
-    + `<div class="w6 panel">${head('Bookings, next 2 hours', '4 bookings · 15 guests')}<table class="tbl"><thead><tr><th>Time</th><th>Guest</th><th>Party</th><th>Table</th><th>Source</th><th>Status</th></tr></thead><tbody>${books.map(([t, g, n, tb, src, st, k]) => `<tr><td>${t}</td><td>${g}</td><td>${n}</td><td>${tb}</td><td>${src}</td><td>${chip(st, k)}</td></tr>`).join('')}</tbody></table></div>`
-    + `<div class="w6 panel">${head('Live activity', 'Everything that happens, as it happens')}<div class="feed">${feed.map(([t, k, x]) => `<div class="frow"><span class="mut tn">${t}</span><span class="dot ${k}"></span><span>${x}</span></div>`).join('')}</div></div>`
-    + `<div class="w12 sys">${sys.map(([n, st, k, a, b]) => `<div><div class="sp-b"><b>${n}</b>${chip(st, k)}</div><span>${a}</span><span>${b}</span></div>`).join('')}</div>`
+    + `<div class="w6 panel">${head('Bookings, next 2 hours', '4 bookings · 15 guests', 'crm-bookings')}<table class="tbl"><thead><tr><th>Time</th><th>Guest</th><th>Party</th><th>Table</th><th>Source</th><th>Status</th></tr></thead><tbody>${books.map(([t, g, n, tb, src, st, k]) => `<tr><td>${t}</td><td>${g}</td><td>${n}</td><td>${tb}</td><td>${src}</td><td>${chip(st, k)}</td></tr>`).join('')}</tbody></table></div>`
+    + `<div class="w6 panel">${head('Live activity', 'Everything that happens, as it happens', 'admin-audit')}<div class="feed">${feed.map(([t, k, x]) => `<div class="frow"><span class="mut tn">${t}</span><span class="dot ${k}"></span><span>${x}</span></div>`).join('')}</div></div>`
+    + `<div class="w12 sys">${sys.map(([n, st, k, a, b, to]) => `<a href="#${to}"><div class="sp-b"><b>${n}</b>${chip(st, k)}</div><span>${a}</span><span>${b}</span></a>`).join('')}</div>`
     + `</div>`;
 }
 
@@ -905,20 +1163,55 @@ const $ = id => document.getElementById(id);
 function side(p, activeId) {
   const link = ([id, title, icon]) => `<a href="#${id}" class="${id === activeId ? 'on' : ''}">${ICON[icon]}<span>${title}</span></a>`;
   $('side').innerHTML = `<div class="s-brand"><span class="logo">NOI</span>${chip('Sample data')}</div>`
-    + MENU.map(([title, items]) => `<div class="s-sec"><h4>${title}</h4>${items.map(link).join('')}</div>`).join('')
-    + `<div class="s-foot"><a class="s-all${activeId === 'map' ? ' on' : ''}" href="#map">${ICON['layout-grid']}<span>All screens</span><i>${UNIQUE}</i></a></div>`;
+    + `<div class="s-nav" role="navigation" aria-label="Screens">${MENU.map(([title, items]) => `<div class="s-sec"><h4>${title}</h4>${items.map(link).join('')}</div>`).join('')}</div>`
+    + `<div class="s-foot"><a class="to-offer" href="${backHref()}"><span class="to-tile"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><span class="to-txt"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to the offer</b><small>NOI build proposal</small></span></a>`
+    + `<a class="s-all${activeId === 'map' ? ' on' : ''}" href="#map">${ICON['layout-grid']}<span>All screens</span><i>${UNIQUE}</i></a></div>`;
 }
 function topbar(crumb) {
-  const on = tour.at >= 0;
-  $('top').innerHTML = `<button class="btn menu-btn" id="menuBtn" aria-label="Menu">${ICON.menu}</button><div class="crumb">${crumb}</div><span class="grow"></span><span class="club">Demo Club</span>`
-    + `<button class="btn primary" id="tourBtn" data-tour="${on ? 'resume' : 'start'}">${on ? 'Tour · ' + (tour.at + 1) + ' / ' + TOUR.length : 'Take the tour'}</button>`;
+  $('top').innerHTML = `<button class="btn menu-btn" id="menuBtn" aria-label="Menu">${ICON.menu}</button><div class="crumb">${crumb}</div><span class="grow"></span><span class="club">Demo Club</span>` + langSwitch() + tourBtn();
 }
+// All screens: one row per product, with its mark, who uses it and on what, and every screen as a chip.
+const PCOLOR = { crm: '#f2a93b', dj: '#a58bf0', tablet: '#e879a6', security: '#5aa1f0', cash: '#4cc38a', finance: '#4cc38a', hr: '#5aa1f0', depts: '#e879a6', app: '#a58bf0', admin: '#9aa0aa' };
+const PNOTE = {
+  crm: ['The workplace for the club manager and floor managers: queue, guests, tables, services, shifts.', 'Рабочее место управляющей и менеджеров зала: очередь, гости, столы, услуги, смены.'],
+  dj: ['A separate screen the DJ uses to run the stage.', 'Отдельный экран для DJ: управление сценой.'],
+  tablet: ['A shared tablet with the current rotation and each performer’s status.', 'Общий планшет: текущая ротация и статусы артисток.'],
+  security: ['Marking arrivals and departures, and the security log.', 'Отметка прихода и ухода, журнал охраны.'],
+  cash: ['Starting and taking payment for performer services, timers, debts.', 'Запуск и оплата услуг артисток, таймеры, долги.'],
+  finance: ['Payments, accruals, payouts, reports, Excel import.', 'Платежи, начисления, выплаты, отчёты, загрузка из Excel.'],
+  hr: ['Staff, casting, schedules, pay terms.', 'Сотрудники, кастинг, графики, условия работы.'],
+  depts: ['Salon, costume room, tailoring, security, hostesses, service.', 'Салон, костюмерная, ателье, охрана, хостес, сервис.'],
+  app: ['Shifts, requests, messages and earnings on each employee’s own phone.', 'Смены, заявки, сообщения и заработок — в телефоне у каждого сотрудника.'],
+  admin: ['Sign-in, roles and permissions, clubs, integrations, the action log and the server.', 'Вход, роли и права, клубы, интеграции, журнал действий и сервер.'],
+};
+const plural = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
+const nScreens = n => n + ' ' + (lang === 'ru' ? plural(n, 'экран', 'экрана', 'экранов') : n === 1 ? 'screen' : 'screens');
+let mapDev = 'all';
 function renderMap() {
   side(null, 'map'); topbar('<b>All screens</b>');
-  $('content').innerHTML = `<div class="head"><h1>One system for the whole club</h1><p>Every product and screen in NOI, with sample data. Click any screen to open it.</p></div>`
-    + `<div class="tiles sum-tiles">${[['Products', PRODUCTS.length], ['Screens', UNIQUE], ['Devices', 3], ['Roles', 7]].map(([l, v]) => `<div class="tile"><span>${l}</span><b>${v}</b></div>`).join('')}</div>`
-    + `<div class="map">${PRODUCTS.map(p => `<div class="mcard"><h3>${ICON[p.icon]}${p.name}</h3><p>${p.who} · ${DEV[p.device][1].toLowerCase()}</p>${p.nav.map(([k, t, ref]) => `<a href="#${p.id}-${k}"><span>${t}</span></a>`).join('')}</div>`).join('')}</div>`;
+  const sum = [[['Products', 'Продукты'], PRODUCTS.length, ['From the floor to finance', 'От зала до финансов']], [['Screens', 'Экраны'], UNIQUE, ['Every one of them opens', 'Каждый открывается']],
+    [['Devices', 'Устройства'], 3, ['Computer, tablet and phone', 'Компьютер, планшет и телефон']], [['Roles', 'Роли'], 7, ['From the owner to the DJ', 'От владельца до DJ']]];
+  const devs = ['all', 'desktop', 'tablet', 'phone'].map(d => [d, d === 'all' ? tx(['All', 'Все']) : DEV[d][1], PRODUCTS.filter(p => d === 'all' || p.device === d).length]);
+  $('content').innerHTML = `<div class="head"><h1>All screens</h1><p>Ten products on one system, with sample data. Open any screen.</p></div>`
+    + `<div class="tiles sum-tiles">${sum.map(([l, v, n]) => `<div class="tile"><span>${tx(l)}</span><b>${v}</b><small>${tx(n)}</small></div>`).join('')}</div>`
+    + `<div class="toolbar map-filter">${devs.map(([d, l, n]) => `<button class="fchip${d === mapDev ? ' on' : ''}" data-dev="${d}">${l}<i>${n}</i></button>`).join('')}</div>`
+    + `<div class="plist">${PRODUCTS.map(p => {
+      const items = p.nav.map(([k, t, ref]) => ({ id: p.id + '-' + k, t, d: SCREENS[ref || p.id + '-' + k].d }));
+      return `<section class="panel prod" data-device="${p.device}"${mapDev === 'all' || mapDev === p.device ? '' : ' hidden'} style="--c:${PCOLOR[p.id]}">`
+        + `<div class="prod-h"><span class="ptile">${ICON[p.icon]}</span><div class="pmeta"><b>${p.name}</b><span class="pwho">${p.who}</span></div>`
+        + `<div class="pfacts"><span class="pdev">${ICON[DEV[p.device][0]]}${DEV[p.device][1]}</span><span class="pcount">${nScreens(items.length)}</span></div></div>`
+        + `<p class="pnote">${tx(PNOTE[p.id])}</p>`
+        + `<div class="pscr">${items.map(x => { const k = TOUR.findIndex(st => st.id === x.id); return `<a href="#${x.id}"><span class="st"><b>${x.t}</b>${k < 0 ? '' : `<em>${tx(['Tour', 'Тур'])} · ${k + 1}</em>`}</span><span class="sd">${x.d}</span></a>`; }).join('')}</div></section>`;
+    }).join('')}</div>`;
 }
+// The device filter on All screens.
+document.addEventListener('click', e => {
+  const b = e.target.closest('.map-filter [data-dev]');
+  if (!b) return;
+  mapDev = b.dataset.dev;
+  document.querySelectorAll('.map-filter .fchip').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.prod[data-device]').forEach(x => { x.hidden = mapDev !== 'all' && x.dataset.device !== mapDev; });
+});
 function render(n) {
   const p = PRODUCTS.find(x => x.id === n.pid);
   const s = SCREENS[n.ref];
@@ -926,7 +1219,8 @@ function render(n) {
   topbar(`${p.name} <span>/</span> <b>${n.title}</b>`, NAV.indexOf(n));
   let body = TPL[s.t](s);
   if (p.device !== 'desktop') body = `<div class="device ${p.device}"><div class="screen">${body}</div></div>`;
-  $('content').innerHTML = `<div class="head"><h1>${n.title}</h1><p>${s.d}</p></div>${body}`;
+  const mine = MENU.flatMap(g => g[1]).find(x => x[0] === n.id);
+  $('content').innerHTML = `<div class="head hrow"><span class="ptile" style="--c:${PCOLOR[p.id]}">${ICON[mine ? mine[2] : p.icon]}</span><div><h1>${n.title}</h1><p>${s.d}</p></div></div>${body}`;
 }
 function route() {
   const h = location.hash.replace(/^#/, '');
@@ -942,11 +1236,12 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('input, textarea')) return;
   if (e.key === 'Escape' && document.querySelector('.intro')) { closeModal(); return; }
-  if (tour.at >= 0) {
-    if (e.key === 'Enter' && e.target.closest && e.target.closest('button, a')) return;
-    if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); tourStep(1); }
-    else if (e.key === 'ArrowLeft') tourStep(-1);
+  if (tour.at >= 0 && !tour.away) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('button, a')) return;
+    if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tourStep(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); tourStep(-1); }
     else if (e.key === 'Escape') tourEnd(false);
+    else if (e.code === 'KeyP') tourPlay(!tour.play);
     return;
   }
   const idx = NAV.findIndex(x => x.id === location.hash.replace(/^#/, ''));
@@ -980,8 +1275,8 @@ function paintStage(moved) {
   document.querySelectorAll('[data-clock]').forEach(el => { el.textContent = mmss2(stage.left); });
   document.querySelectorAll('[data-in]').forEach(el => { el.textContent = mmss(stage.left + +el.dataset.in); });
   document.querySelectorAll('[data-stage]').forEach(el => {
-    const name = N[(stage.at + +el.dataset.stage) % N.length];
-    if (el.textContent !== name) { el.textContent = name; if (moved) flash(el); }
+    const name = N[(stage.at + +el.dataset.stage) % N.length], shown = lang === 'ru' && RU[name] ? RU[name] : name;
+    if (el.textContent !== shown) { el.textContent = name; if (moved) flash(el); }
   });
 }
 
@@ -1031,107 +1326,368 @@ setInterval(() => {
 }, 1000);
 
 /* ---------------------------------------------------------------- investor tour ---- */
-// Eight stops through the screens that tell the story, each with a caption and a ring around what it is about.
-const TOUR = [
-  { id: 'crm-dashboard', focus: '.kpis', title: 'The whole night on one screen',
-    text: 'The owner sees the club as it happens: revenue against last Friday, the floor, the stage, every running service and what needs attention, all live.' },
-  { id: 'crm-floor', focus: '.room', title: 'A live map of every table',
-    text: 'Managers see who sits where, what is running at each table and what it has spent, and act straight from the map.' },
-  { id: 'dj-console', focus: '.device .cols2', clock: 12, title: 'The stage runs itself',
-    text: 'The rotation builds itself. Watch the clock: when the set ends, the next performer goes on and every screen in the club moves with it.' },
-  { id: 'cash-timers', focus: '.tcards', title: 'Every minute is billed',
-    text: 'Each paid service runs on a timer, with a warning before it ends, so nothing runs over unpaid.' },
-  { id: 'cash-register', focus: '.order', title: 'One tap to start and charge',
-    text: 'The cashier starts a service and takes payment in one place. Every sale goes straight to R-Keeper, the club’s till.' },
-  { id: 'finance-reconcile', focus: '.tiles', title: 'Money that checks itself',
-    text: 'Every night NOI reconciles itself with the till, line by line. A mismatch shows up the same night, not at the end of the month.' },
-  { id: 'app-earnings', focus: '.device', title: 'Every employee in their pocket',
-    text: 'Shifts, swap requests and earnings on each person’s own phone: fewer calls to managers, fewer arguments about pay.' },
-  { id: 'map', focus: '.map', title: 'One system, ten products',
-    text: 'From the floor to finance, HR and security: ten products on one platform, ready to run several clubs, each with its own data and rules.' },
-];
-const tour = { at: -1 };
+// Eight stops. A spotlight glides from one to the next, the caption card sits beside it and points at it, and the page
+// underneath keeps running live. → or Space for the next stop, ← back, P to play automatically, Esc to leave.
+Object.assign(ICON, {
+  'play': ic('<polygon points="6 3 20 12 6 21 6 3"/>'),
+  'pause': ic('<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>'),
+  'arrow-right': ic('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'),
+  'arrow-left': ic('<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>'),
+  'x': ic('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),
+  'check': ic('<path d="M20 6 9 17l-5-5"/>'),
+  'rotate-ccw': ic('<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>'),
+});
 
+const TOUR = [
+  { id: 'crm-dashboard', focus: '.kpis', icon: 'layout-dashboard', short: ['Tonight', 'Сегодня'],
+    title: ['The whole night on one screen', 'Вся ночь на одном экране'],
+    text: ['The owner sees the club as it happens: revenue against last Friday, the floor, the stage, every running service and what needs attention.',
+      'Владелец видит клуб в моменте: выручку в сравнении с прошлой пятницей, зал, сцену, все идущие услуги и то, что требует внимания.'],
+    watch: ['Revenue and the guest count tick up as money comes in.', 'Выручка и число гостей растут по мере оплат.'] },
+  { id: 'crm-floor', focus: '.room', icon: 'map', short: ['Hall map', 'Схема зала'],
+    title: ['A live map of every table', 'Живая схема зала'],
+    text: ['Managers see who sits where, what is running at each table and how much it has spent, and act straight from the map.',
+      'Менеджеры видят, кто где сидит, что идёт за каждым столом и сколько уже потрачено, — и действуют прямо со схемы.'],
+    watch: ['Free tables fill up as the hostess seats guests.', 'Свободные столы занимаются, когда хостес рассаживает гостей.'] },
+  { id: 'dj-console', focus: '.device .cols2', icon: 'disc-3', clock: 7, dur: 12500, short: ['Stage', 'Сцена'],
+    title: ['The stage runs itself', 'Сцена работает сама'],
+    text: ['The rotation builds itself. When a set ends, the next performer goes on and every screen in the club moves with it.',
+      'Ротация собирается сама. Когда сет заканчивается, выходит следующая артистка, и все экраны клуба обновляются вместе с ней.'],
+    watch: ['Watch the clock: at 00:00 the next performer goes on.', 'Следите за часами: в 00:00 выходит следующая артистка.'] },
+  { id: 'cash-timers', focus: '.tcards', icon: 'timer', short: ['Timers', 'Таймеры'],
+    title: ['Every minute is billed', 'Каждая минута оплачена'],
+    text: ['Each paid service runs on its own timer, with a warning before it ends, so nothing runs over unpaid.',
+      'Каждая платная услуга идёт по своему таймеру с предупреждением перед окончанием — ничто не продлится бесплатно.'],
+    watch: ['A card turns red in its last five minutes.', 'В последние пять минут карточка краснеет.'] },
+  { id: 'cash-register', focus: '.order', icon: 'wallet', short: ['Cash desk', 'Касса'],
+    title: ['One tap to start and charge', 'Запуск и оплата в одно касание'],
+    text: ['The cashier starts a service and takes payment in one place. Every sale goes straight to R-Keeper, the club’s till.',
+      'Кассир запускает услугу и принимает оплату в одном окне. Каждая продажа сразу уходит в R-Keeper — кассу клуба.'] },
+  { id: 'finance-reconcile', focus: '.tiles', icon: 'check-check', short: ['R-Keeper check', 'Сверка'],
+    title: ['Money that checks itself', 'Деньги сверяются сами'],
+    text: ['Every night NOI checks itself against the till, line by line. A mismatch shows up the same night, not at the end of the month.',
+      'Каждую ночь NOI построчно сверяется с кассой. Расхождение видно в ту же ночь, а не в конце месяца.'] },
+  { id: 'app-earnings', focus: '.device', icon: 'smartphone', short: ['Staff app', 'Приложение'],
+    title: ['Every employee in their pocket', 'Смены и заработок — в телефоне у каждого'],
+    text: ['Shifts, swap requests and earnings on each person’s own phone: fewer calls to managers, fewer arguments about pay.',
+      'Смены, заявки на замену и заработок — в личном телефоне: меньше звонков менеджерам и споров о деньгах.'] },
+  { id: 'map', focus: '.sum-tiles', icon: 'layout-grid', short: ['All products', 'Все продукты'],
+    title: ['One system, ten products', 'Одна система, десять продуктов'],
+    text: ['From the floor to finance, HR and security: ten products on one platform, ready to run several clubs, each with its own data and rules.',
+      'От зала до финансов, HR и охраны: десять продуктов на одной платформе, готовой вести несколько клубов — у каждого свои данные и правила.'] },
+];
+const TT = {
+  take: ['Take the tour', 'Пройти тур'], tour: ['Tour', 'Тур'], resume: ['Resume the tour', 'Продолжить тур'],
+  back: ['Back', 'Назад'], next: ['Next', 'Далее'], finish: ['Finish', 'Завершить'], close: ['Close the tour', 'Закрыть тур'],
+  play: ['Play automatically', 'Автопрокрутка'], pause: ['Pause', 'Пауза'], of: ['of', 'из'],
+  all: ['All products', 'Все продукты'], allWho: ['Ten products on three kinds of device', 'Десять продуктов на трёх типах устройств'],
+};
+const INTRO = {
+  badge: ['Demo · sample data', 'Демо · тестовые данные'],
+  h1: ['The operating system for a nightclub', 'Операционная система для ночного клуба'],
+  p: ['One system for the floor, the stage, the cash desk and the money. Everything here is clickable and runs on sample data.',
+    'Одна система для зала, сцены, кассы и денег. Здесь всё кликается и работает на тестовых данных.'],
+  pts: [['layout-dashboard', ['Live.', 'Вживую.'], ['Everything updates as it happens.', 'Всё обновляется в моменте.']],
+    ['wallet', ['Accountable.', 'Под контролем.'], ['The money checks itself against the till.', 'Деньги сами сверяются с кассой.']],
+    ['smartphone', ['Everywhere.', 'Везде.'], ['Computer, tablet and phone, one system.', 'Компьютер, планшет и телефон — одна система.']]],
+  start: ['Start the tour', 'Начать тур'], explore: ['Explore on my own', 'Изучить самостоятельно'],
+  move: ['to move', 'листать'], auto: ['autoplay', 'автопрокрутка'], esc: ['to close', 'закрыть'],
+  route: ['What you’ll see', 'Что вы увидите'], meta: ['8 stops · about 2 min', '8 шагов · около 2 минут'],
+};
+const END = {
+  h1: ['That’s NOI', 'Это NOI'],
+  p: ['Ten products on one platform, built around how a club actually runs a night. Every screen stays open to explore.',
+    'Десять продуктов на одной платформе, построенной вокруг того, как клуб на самом деле живёт ночью. Все экраны открыты — изучайте.'],
+  offer: ['Back to the offer', 'Вернуться к предложению'], explore: ['Explore on my own', 'Изучить самостоятельно'],
+  restart: ['Restart the tour', 'Пройти тур заново'],
+};
+
+const tour = { at: -1, shown: -1, play: false, prog: 0, away: false, pending: false, side: '', raf: 0, last: 0,
+  cur: null, from: null, t0: 0, pos: null, posFrom: null, size: null, vw: 0, vh: 0, radius: 16, key: '' };
+const SPOT_PAD = 10, GAP = 18, EDGE = 12, MOVE = 640;
+const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isSheet = () => innerWidth <= 760;
+const tRect = (x, y, w, h) => ({ x, y, w, h });
+const tMix = (a, b, k) => tRect(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, a.w + (b.w - a.w) * k, a.h + (b.h - a.h) * k);
+const tEase = k => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+const tClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const tOverlap = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+const stopProduct = st => PRODUCTS.find(p => st.id.startsWith(p.id + '-'));
+const stopColor = st => { const p = stopProduct(st); return p ? PCOLOR[p.id] : AMBER; };
+const stopDur = st => st.dur || tClamp(3800 + (tx(st.title) + tx(st.text) + (st.watch ? tx(st.watch) : '')).length * 34, 7000, 12500);
+
+function tourBtn() {
+  const label = tour.at < 0 ? tx(TT.take) : tx(tour.away ? TT.resume : TT.tour) + ' · ' + (tour.at + 1) + ' / ' + TOUR.length;
+  return `<button class="btn primary tour-btn" id="tourBtn" data-tour="${tour.at < 0 ? 'start' : 'resume'}">${ICON.play}<span class="lbl">${label}</span></button>`;
+}
+function syncTourBtn() { const b = $('tourBtn'); if (b) b.outerHTML = tourBtn(); }
+
+function tourLayer() {
+  let el = $('tourLayer');
+  if (el) return el;
+  el = document.createElement('div');
+  el.className = 'tour';
+  el.id = 'tourLayer';
+  el.innerHTML = '<div class="tour-block"></div><div class="tour-spot"></div><section class="tour-card" role="dialog" aria-live="polite"></section>';
+  document.body.append(el);
+  const card = el.querySelector('.tour-card');
+  // A click outside the card does nothing but remind where the controls are.
+  el.querySelector('.tour-block').addEventListener('click', () => { card.classList.remove('enter', 'nudge'); void card.offsetWidth; card.classList.add('nudge'); });
+  return el;
+}
+
+function tourStart(i = 0) {
+  closeModal();
+  $('app').classList.remove('open');
+  Object.assign(tour, { play: false, shown: -1, cur: null, pos: null, posFrom: null, away: false });
+  tourGo(i);
+}
 function tourGo(i) {
   tour.at = i;
-  if (TOUR[i].clock) stage.left = TOUR[i].clock;
-  if (location.hash.replace(/^#/, '') === TOUR[i].id) route(); else location.hash = TOUR[i].id;
+  tour.prog = 0;
+  const st = TOUR[i];
+  if (st.clock) stage.left = st.clock;
+  if (location.hash.replace(/^#/, '') === st.id) tourPaint();
+  else { tour.pending = true; location.hash = st.id; }
 }
-function tourStart() { closeModal(); tourGo(0); }
 function tourStep(d) {
   const i = tour.at + d;
   if (i < 0) return;
   if (i >= TOUR.length) tourEnd(true); else tourGo(i);
 }
 function tourEnd(finished) {
-  tour.at = -1;
+  const el = $('tourLayer');
+  Object.assign(tour, { at: -1, shown: -1, play: false, away: false, pending: false, cur: null, pos: null, posFrom: null });
+  cancelAnimationFrame(tour.raf);
+  tour.raf = 0;
   document.body.classList.remove('touring');
-  const card = document.querySelector('.tour-card');
-  if (card) card.remove();
-  document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
-  const btn = $('tourBtn');
-  if (btn) { btn.dataset.tour = 'start'; btn.textContent = 'Take the tour'; }
-  if (finished) showModal('end');
+  if (el) { el.id = ''; el.classList.add('out'); setTimeout(() => el.remove(), 320); }
+  syncTourBtn();
+  if (finished) setTimeout(() => showModal('end'), reduced() ? 0 : 200);
 }
-function tourPaint() {
-  document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
-  let card = document.querySelector('.tour-card');
-  if (tour.at < 0) { if (card) card.remove(); document.body.classList.remove('touring'); return; }
-  document.body.classList.add('touring');
-  const stop = TOUR[tour.at], last = tour.at === TOUR.length - 1;
-  if (!card) { card = document.createElement('div'); card.className = 'tour-card'; card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', 'Tour'); document.body.append(card); }
-  card.innerHTML = `<button class="tour-x" data-tour="exit" aria-label="Close the tour">×</button>`
-    + `<div class="tour-dots" aria-hidden="true">${TOUR.map((x, k) => `<i class="${k <= tour.at ? 'on' : ''}"></i>`).join('')}</div>`
-    + `<span class="tour-n">Step ${tour.at + 1} of ${TOUR.length}</span><h3>${stop.title}</h3><p>${stop.text}</p>`
-    + `<div class="tour-btns">${tour.at ? '<button class="btn" data-tour="back">Back</button>' : ''}<span class="grow"></span><button class="btn primary" data-tour="next">${last ? 'Finish' : 'Next'}</button></div>`;
-  card.classList.remove('in'); void card.offsetWidth; card.classList.add('in');
-  card.querySelector('[data-tour="next"]').focus({ preventScroll: true });
-  if (location.hash.replace(/^#/, '') !== stop.id) return;
-  const focus = document.querySelector(stop.focus);
-  if (focus) { focus.classList.add('tour-focus'); focus.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+function tourPlay(on) {
+  tour.play = on;
+  tour.last = performance.now();
+  const el = $('tourLayer');
+  if (!el) return;
+  el.classList.toggle('playing', on);
+  const b = el.querySelector('.tc-play');
+  if (!b) return;
+  b.innerHTML = on ? ICON.pause : ICON.play;
+  b.setAttribute('aria-label', tx(on ? TT.pause : TT.play));
+  b.setAttribute('aria-pressed', String(on));
+  b.title = tx(on ? TT.pause : TT.play) + ' (P)';
 }
 
-// The intro on a first visit, and the card at the end of the tour.
+// Called after every render: shows the stop, or steps aside if the visitor has gone to another screen.
+function tourPaint() {
+  if (tour.at < 0) return;
+  const st = TOUR[tour.at], el = tourLayer();
+  tour.pending = false;
+  tour.away = location.hash.replace(/^#/, '') !== st.id;
+  el.classList.toggle('away', tour.away);
+  document.body.classList.toggle('touring', !tour.away);
+  syncTourBtn();
+  if (tour.away) return;
+  const fresh = tour.shown !== tour.at;
+  fillCard(st);
+  tour.shown = tour.at;
+  const target = document.querySelector(st.focus);
+  tour.radius = (target ? parseFloat(getComputedStyle(target).borderTopLeftRadius) || 0 : 6) + SPOT_PAD;
+  tour.from = tour.cur || tRect(0, 0, innerWidth, innerHeight);
+  tour.posFrom = tour.pos;
+  tour.side = '';
+  tour.t0 = performance.now();
+  if (fresh) scrollToStop(st);
+  if (!tour.raf) tour.raf = requestAnimationFrame(tourFrame);
+}
+
+function fillCard(st) {
+  const card = $('tourLayer').querySelector('.tour-card'), i = tour.at, last = i === TOUR.length - 1, p = stopProduct(st);
+  card.style.setProperty('--c', stopColor(st));
+  card.setAttribute('aria-label', tx(TT.tour) + ' ' + (i + 1) + ' ' + tx(TT.of) + ' ' + TOUR.length);
+  card.innerHTML = '<i class="tc-arrow" aria-hidden="true"></i>'
+    + `<div class="tc-top"><span class="tc-ico">${ICON[st.icon]}</span><span class="tc-eye"><b>${p ? p.name : tx(TT.all)}</b><span>${p ? p.who : tx(TT.allWho)}</span></span>`
+    + `<button class="tc-x" data-tour="exit" aria-label="${tx(TT.close)}" title="${tx(TT.close)} (Esc)">${ICON.x}</button></div>`
+    + `<div class="tc-body"><h3>${tx(st.title)}</h3><p>${tx(st.text)}</p>${st.watch ? `<div class="tc-watch"><i></i><span>${tx(st.watch)}</span></div>` : ''}</div>`
+    + `<div class="tc-segs">${TOUR.map((x, k) => `<button class="tc-seg${k < i ? ' done' : k === i ? ' on' : ''}" data-tour="seg" data-i="${k}" aria-label="${k + 1}. ${tx(x.short)}"><i></i><span>${tx(x.short)}</span></button>`).join('')}</div>`
+    + `<div class="tc-foot"><span class="tc-n"><b>${i + 1}</b> / ${TOUR.length}</span><button class="tc-play" data-tour="play"></button><span class="grow"></span>`
+    + `<button class="btn" data-tour="back"${i ? '' : ' disabled'}>${ICON['arrow-left']}${tx(TT.back)}</button>`
+    + `<button class="btn primary" data-tour="next">${tx(last ? TT.finish : TT.next)}${last ? ICON.check : ICON['arrow-right']}</button></div>`;
+  tourPlay(tour.play);
+  if (!tour.pos) { card.classList.remove('enter', 'nudge'); void card.offsetWidth; card.classList.add('enter'); }
+  card.querySelector('[data-tour="next"]').focus({ preventScroll: true });
+  tour.size = { w: card.offsetWidth, h: card.offsetHeight };
+  document.documentElement.style.setProperty('--tour-pad', Math.round(tour.size.h + GAP + 24) + 'px');
+}
+
+// Bring the stop into view: centred when the card fits beside it, high enough for the card when it has to go underneath.
+function scrollToStop(st) {
+  const el = document.querySelector(st.focus);
+  if (!el) return;
+  const r = el.getBoundingClientRect(), vh = innerHeight, vw = innerWidth, sheet = isSheet();
+  const top = ($('top') ? $('top').getBoundingClientRect().height : 0) + SPOT_PAD + 8;
+  const cw = tour.size ? tour.size.w : 376, ch = tour.size ? tour.size.h : 260;
+  const room = (sheet ? vh - ch - 22 : vh - EDGE) - top, h = r.height + SPOT_PAD;
+  const beside = !sheet && (r.right + SPOT_PAD + GAP + cw <= vw - EDGE || r.left - SPOT_PAD - GAP - cw >= EDGE);
+  let y;
+  if (h > room) y = r.top - top;
+  else if (beside || sheet) y = r.top - top - (room - h) / 2;
+  else y = r.top - top - Math.max(0, (room - h - GAP - ch) / 2);
+  const to = tClamp(scrollY + y, 0, Math.max(0, document.documentElement.scrollHeight - vh));
+  if (Math.abs(to - scrollY) > 2) window.scrollTo({ top: to, behavior: reduced() ? 'auto' : 'smooth' });
+}
+
+// Beside the stop if there is room (right, below, left, above), else the corner that covers the least of it.
+function placeCard(S, cw, ch) {
+  const vw = innerWidth, vh = innerHeight;
+  const x0 = Math.max(S.x, 0), y0 = Math.max(S.y, 0);
+  let vis = tRect(x0, y0, Math.min(S.x + S.w, vw) - x0, Math.min(S.y + S.h, vh) - y0);
+  if (vis.w <= 0 || vis.h <= 0) vis = S;
+  const midY = () => tClamp(vis.y + vis.h / 2 - ch / 2, EDGE, vh - EDGE - ch);
+  const alignX = () => tClamp(vis.w >= cw ? vis.x : vis.x + vis.w / 2 - cw / 2, EDGE, vw - EDGE - cw);
+  const fits = {
+    right: () => { const x = S.x + S.w + GAP; return x + cw <= vw - EDGE ? { x, y: midY() } : null; },
+    left: () => { const x = S.x - GAP - cw; return x >= EDGE ? { x, y: midY() } : null; },
+    bottom: () => { const y = S.y + S.h + GAP; return y + ch <= vh - EDGE ? { x: alignX(), y } : null; },
+    top: () => { const y = S.y - GAP - ch; return y >= EDGE ? { x: alignX(), y } : null; },
+  };
+  for (const side of [tour.side, 'right', 'bottom', 'left', 'top']) {
+    const p = side && fits[side]();
+    if (!p) continue;
+    tour.side = side;
+    const vert = side === 'right' || side === 'left';
+    const along = vert ? vis.y + vis.h / 2 - p.y : (vis.w >= cw ? 34 : vis.x + vis.w / 2 - p.x);
+    return { x: p.x, y: p.y, side, a: tClamp(along, 26, (vert ? ch : cw) - 26) };
+  }
+  tour.side = '';
+  let best = null;
+  for (const [x, y] of [[vw - EDGE - cw, vh - EDGE - ch], [EDGE, vh - EDGE - ch], [vw - EDGE - cw, EDGE], [EDGE, EDGE]]) {
+    const o = tOverlap(tRect(x, y, cw, ch), vis);
+    if (!best || o < best.o) best = { x, y, o };
+  }
+  return { x: best.x, y: best.y, side: 'none', a: null };
+}
+
+// One frame: the spotlight eases to the stop and then follows it while the page scrolls; the card does the same.
+function tourFrame(now) {
+  tour.raf = 0;
+  if (tour.at < 0) return;
+  tour.raf = requestAnimationFrame(tourFrame);
+  const el = $('tourLayer');
+  if (!el || tour.away || tour.pending) { tour.last = now; return; }
+  const st = TOUR[tour.at], spot = el.querySelector('.tour-spot'), card = el.querySelector('.tour-card');
+  if (tour.vw !== innerWidth || tour.vh !== innerHeight) { tour.vw = innerWidth; tour.vh = innerHeight; tour.size = { w: card.offsetWidth, h: card.offsetHeight }; }
+  const target = document.querySelector(st.focus);
+  let goal = tRect(innerWidth / 2, innerHeight / 2, 0, 0);
+  if (target) { const r = target.getBoundingClientRect(); goal = tRect(r.left - SPOT_PAD, r.top - SPOT_PAD, r.width + 2 * SPOT_PAD, r.height + 2 * SPOT_PAD); }
+  const k = reduced() ? 1 : tEase(tClamp((now - tour.t0) / MOVE, 0, 1));
+  const cur = k < 1 && tour.from ? tMix(tour.from, goal, k) : goal;
+  tour.cur = cur;
+  let pos = null, place = null;
+  if (!isSheet()) {
+    place = placeCard(goal, tour.size.w, tour.size.h);
+    pos = k < 1 && tour.posFrom ? { x: tour.posFrom.x + (place.x - tour.posFrom.x) * k, y: tour.posFrom.y + (place.y - tour.posFrom.y) * k } : place;
+  }
+  tour.pos = pos;
+  const side = place && !(k < 1 && tour.posFrom) ? place.side : 'none';
+  const key = [cur.x, cur.y, cur.w, cur.h, pos && pos.x, pos && pos.y, side, place && place.a].map(v => (typeof v === 'number' ? Math.round(v) : v)).join();
+  if (key !== tour.key) {
+    tour.key = key;
+    spot.style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0)`;
+    spot.style.width = cur.w + 'px';
+    spot.style.height = cur.h + 'px';
+    spot.style.borderRadius = tour.radius + 'px';
+    card.style.transform = pos ? `translate3d(${Math.round(pos.x)}px, ${Math.round(pos.y)}px, 0)` : '';
+    card.dataset.side = side;
+    if (place && place.a != null) card.style.setProperty('--a', Math.round(place.a) + 'px');
+  }
+  // Autoplay: the current segment fills, then the tour moves on. Leaving the tab pauses it.
+  if (tour.play && !document.hidden) {
+    tour.prog += (now - (tour.last || now)) / stopDur(st);
+    if (tour.prog >= 1) { tour.last = now; tourStep(1); return; }
+  }
+  tour.last = now;
+  const seg = card.querySelector('.tc-seg.on');
+  if (seg) seg.style.setProperty('--p', (tour.prog * 100).toFixed(2) + '%');
+}
+
+// The opening card on a first visit, and the closing card at the end of the tour.
 function showModal(kind) {
   closeModal();
   const m = document.createElement('div');
   m.className = 'intro';
-  m.innerHTML = kind === 'end'
-    ? `<div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="introH"><div class="logo">NOI</div><h1 id="introH">That’s NOI</h1>`
-      + `<p>Ten products on one platform, built around how a club actually runs a night. Every screen is open to explore from the menu on the left.</p>`
-      + `<div class="intro-btns"><button class="btn primary big" data-tour="explore">Explore on my own</button><button class="btn big" data-tour="start">Restart the tour</button></div></div>`
-    : `<div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="introH"><div class="logo">NOI</div><h1 id="introH">The operating system for a nightclub</h1>`
-      + `<p>One system for the floor, the stage, the cash desk and the money. This is a clickable demo with sample data.</p>`
-      + `<div class="intro-pts"><div><i>${ICON['layout-dashboard']}</i><span><b>Live.</b> Everything updates as it happens.</span></div>`
-      + `<div><i>${ICON.wallet}</i><span><b>Accountable.</b> The money checks itself against the till.</span></div>`
-      + `<div><i>${ICON.smartphone}</i><span><b>Everywhere.</b> Computer, tablet and phone, one system.</span></div></div>`
-      + `<div class="intro-btns"><button class="btn primary big" data-tour="start">Start the 2-minute tour</button><button class="btn big" data-tour="explore">Explore on my own</button></div></div>`;
+  m.innerHTML = kind === 'end' ? endCard() : introCard();
   m.addEventListener('click', e => { if (e.target === m) closeModal(); });
   document.body.append(m);
-  m.querySelector('.btn.primary').focus();
+  const first = m.querySelector('[data-tour="start"], .btn.offer');
+  if (first) first.focus({ preventScroll: true });
+}
+function introCard() {
+  return '<div class="intro-card wide" role="dialog" aria-modal="true" aria-labelledby="introH">'
+    + `<div class="ic-hero"><div class="ic-brand"><span class="ic-mark">NOI</span>${chip(tx(INTRO.badge))}<span class="grow"></span>${langSwitch()}</div>`
+    + `<h1 id="introH">${tx(INTRO.h1)}</h1><p>${tx(INTRO.p)}</p>`
+    + `<div class="ic-pts">${INTRO.pts.map(([icon, b, t]) => `<div><i>${ICON[icon]}</i><span><b>${tx(b)}</b> ${tx(t)}</span></div>`).join('')}</div>`
+    + `<div class="ic-btns"><button class="btn primary big" data-tour="start">${ICON.play}${tx(INTRO.start)}</button><button class="btn big" data-tour="explore">${tx(INTRO.explore)}</button></div>`
+    + `<div class="ic-keys"><kbd>←</kbd><kbd>→</kbd><span>${tx(INTRO.move)}</span><kbd>P</kbd><span>${tx(INTRO.auto)}</span><kbd>Esc</kbd><span>${tx(INTRO.esc)}</span></div></div>`
+    + `<div class="ic-route"><h2>${tx(INTRO.route)}<span>${tx(INTRO.meta)}</span></h2>`
+    + TOUR.map((st, k) => { const p = stopProduct(st); return `<button class="ic-stop" data-tour="startAt" data-i="${k}" style="--c:${stopColor(st)}"><span class="n">${String(k + 1).padStart(2, '0')}</span><span class="t">${ICON[st.icon]}</span><span><b>${tx(st.short)}</b><small>${p ? p.name : tx(TT.all)}</small></span>${ICON['chevron-right']}</button>`; }).join('')
+    + '</div></div>';
+}
+function endCard() {
+  return '<div class="intro-card end" role="dialog" aria-modal="true" aria-labelledby="introH">'
+    + `<div class="ic-done">${ICON.check}</div><div class="ic-head"><h1 id="introH">${tx(END.h1)}</h1><p>${tx(END.p)}</p></div>`
+    + `<div class="ic-recap">${TOUR.map((st, k) => `<button data-tour="goto" data-i="${k}" style="--c:${stopColor(st)}"><span class="t">${ICON[st.icon]}</span><span><b>${tx(st.title)}</b><small>${tx(st.short)}</small></span></button>`).join('')}</div>`
+    + `<div class="ic-cta"><a class="btn big offer" href="${backHref()}">${ICON['arrow-left']}${tx(END.offer)}</a><button class="btn big" data-tour="explore">${tx(END.explore)}</button>`
+    + `<span class="grow"></span><button class="btn big ghost" data-tour="start">${ICON['rotate-ccw']}${tx(END.restart)}</button></div></div>`;
 }
 function closeModal() { const m = document.querySelector('.intro'); if (m) m.remove(); }
 
 document.addEventListener('click', e => {
   const a = e.target.closest('[data-tour]');
-  if (!a) return;
-  const k = a.dataset.tour;
-  if (k === 'start') tourStart();
-  else if (k === 'resume') tourGo(tour.at);
+  if (!a || a.disabled) return;
+  const k = a.dataset.tour, i = +a.dataset.i;
+  if (k === 'start') tourStart(0);
+  else if (k === 'startAt') tourStart(i);
+  else if (k === 'resume') { if (tour.at >= 0) tourGo(tour.at); else tourStart(0); }
   else if (k === 'next') tourStep(1);
   else if (k === 'back') tourStep(-1);
+  else if (k === 'seg') { if (i !== tour.at) tourGo(i); }
+  else if (k === 'play') tourPlay(!tour.play);
   else if (k === 'exit') tourEnd(false);
   else if (k === 'explore') closeModal();
+  else if (k === 'goto') { closeModal(); location.hash = TOUR[i].id; }
 });
+document.addEventListener('visibilitychange', () => { tour.last = performance.now(); });
 
+// Switching language: the thumb slides first, then the page re-renders in place, keeping the screen and the tour stop.
+function setLang(l, sw) {
+  if (l === lang) return;
+  if (sw) sw.dataset.on = l;
+  setTimeout(() => {
+    lang = l;
+    const q = new URLSearchParams(location.search);
+    if (l === 'en') q.set('lang', 'en'); else q.delete('lang');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+    document.documentElement.lang = l;
+    document.title = tx(TITLE);
+    if (l === 'ru') trNode(document.body); else unNode(document.body);
+    const y = scrollY, m = document.querySelector('.intro');
+    route();
+    window.scrollTo(0, y);
+    if (m) showModal(m.querySelector('.end') ? 'end' : 'intro');
+    $('backOffer').href = backHref();
+  }, sw && !reduced() ? 180 : 0);
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b) setLang(b.dataset.lang, b.closest('.lang')); });
+
+document.documentElement.lang = lang;
+document.title = tx(TITLE);
+ruWatch.observe(document.body, { childList: true, subtree: true, characterData: true });
+if (lang === 'ru') trNode(document.body);
 window.addEventListener('hashchange', route);
 route();
-// Back to the offer lands on the screen the visitor came from, in the same language.
-(() => {
-  const q = new URLSearchParams(location.search), from = (q.get('from') || '').replace(/[^a-z]/g, ''), en = q.get('lang') === 'en';
-  const hash = [en ? 'en' : '', from].filter(Boolean).join('-');
-  $('backOffer').href = '../index.html' + (hash ? '#' + hash : '');
-})();
+$('backOffer').href = backHref();
 // A first visit with no screen in the link opens with the intro; #tour starts the tour straight away.
 if (location.hash === '#tour') tourStart();
 else if (!location.hash) showModal('intro');
