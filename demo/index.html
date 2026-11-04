@@ -255,7 +255,48 @@ svg { width: 16px; height: 16px; flex: none; }
   .device .screen { padding: 14px; }
   .top .btn span.lbl { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* The investor tour: an intro card, a caption card for each stop, and a soft ring around what the stop is about. */
+.intro { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(5, 6, 8, 0.6); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: fadeIn 0.3s ease; }
+.intro-card { width: min(540px, 100%); display: grid; gap: 14px; padding: 30px 30px 26px; border-radius: 22px; background: var(--panel); border: 1px solid var(--line-2); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55); animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.intro-card .logo { margin: 0; font-size: 20px; }
+.intro-card h1 { margin: 0; font-size: 30px; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; }
+.intro-card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.intro-pts { display: grid; gap: 10px; margin: 4px 0 6px; }
+.intro-pts > div { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 12px; color: var(--ink-2); }
+.intro-pts i { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--amber-wash); color: var(--amber); }
+.intro-pts b { color: var(--ink); }
+.intro-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes popIn { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+.tour-card { position: fixed; right: 24px; bottom: 24px; z-index: 40; width: min(380px, calc(100vw - 32px)); display: grid; gap: 9px; padding: 18px 18px 16px; border-radius: 18px; background: rgba(22, 23, 27, 0.96); border: 1px solid var(--line-2); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.tour-card.in { animation: popIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tour-dots { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-right: 34px; }
+.tour-dots i { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); transition: background 0.3s ease; }
+.tour-dots i.on { background: var(--amber); }
+.tour-n { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.tour-card h3 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+.tour-card p { margin: 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
+.tour-btns { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.tour-x { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.06); color: var(--ink-2); font: 600 18px/1 var(--font); cursor: pointer; }
+.tour-x:hover { background: rgba(255, 255, 255, 0.12); color: var(--ink); }
+.tour-focus { outline: 2px solid var(--amber); outline-offset: 6px; animation: focusRing 2.6s ease-in-out infinite; }
+.tour-focus:not(.device) { border-radius: 14px; }
+@keyframes focusRing { 50% { outline-offset: 10px; outline-color: rgba(242, 169, 59, 0.5); } }
+.flash { animation: flash 1.2s ease; }
+@keyframes flash { 0%, 35% { color: #7fe0b0; } }
+.tb.flash { animation: tbPop 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes tbPop { 40% { transform: scale(1.08); } }
+.tcard .big, .huge { font-variant-numeric: tabular-nums; }
+.tcard.done { opacity: 0.5; }
+.cat .it strong { margin-top: 2px; font-size: 16px; font-variant-numeric: tabular-nums; }
+.order .ln b { font-variant-numeric: tabular-nums; }
+@media (max-width: 900px) {
+  .tour-card { left: 12px; right: 12px; bottom: 12px; width: auto; }
+  .intro-card { padding: 22px; }
+  .intro-card h1 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
@@ -432,7 +473,7 @@ const RULES = [
   [/^club$/i, i => at(['Demo Club', 'Second club'], i)],
   [/city/i, i => at(['Moscow', 'St Petersburg'], i)],
 ];
-const cell = (col, i) => { for (const [re, f] of RULES) if (re.test(col)) return f(i); return '<i class="ph"></i>'; };
+const cell = (col, i) => { for (const [re, f] of RULES) if (re.test(col)) return f(i); return '—'; };
 
 /* ---------------------------------------------------------------- templates ---- */
 const TPL = {
@@ -453,7 +494,7 @@ const TPL = {
     const legend = `<div class="legend"><span><i style="background:var(--green)"></i>Free</span><span><i style="background:var(--amber)"></i>Guests seated</span><span><i style="background:var(--blue)"></i>Booked</span><span><i style="background:var(--violet)"></i>Service running</span></div>`;
     const side = s.hostess
       ? panel('Arriving now', rows(G.slice(0, 5).map((g, i) => `<span>${g} <span class="mut">· ${i % 3 + 2} guests</span></span>${chip(at(['Booked', 'Walk-in', 'VIP'], i), at(['b', '', 'a'], i))}`)) + `<div class="row-btns mt8"><span class="btn primary">Seat guests</span><span class="btn">Waiting list</span></div>`)
-      : panel(s.vip ? 'VIP 2' : 'Table 7', rows([`<span class="mut">Guests</span><b>3</b>`, `<span class="mut">Manager</span><b>Anna K.</b>`, `<span class="mut">Spend tonight</span><b>$1,240</b>`, `<span class="mut">Running</span>${chip('Private, 12:30 left', 'v')}`, `<span class="mut">Deposit left</span><b>$260</b>`]) + `<div class="row-btns mt8"><span class="btn">Move guests</span><span class="btn">Hand over</span><span class="btn primary">Open bill</span></div>`);
+      : panel(s.vip ? 'VIP 2' : 'Table 7', rows([`<span class="mut">Guests</span><b>3</b>`, `<span class="mut">Manager</span><b>Anna K.</b>`, `<span class="mut">Spend tonight</span><b data-money>$1,240</b>`, `<span class="mut">Running</span>${chip('Private, 12:30 left', 'v')}`, `<span class="mut">Deposit left</span><b>$260</b>`]) + `<div class="row-btns mt8"><span class="btn">Move guests</span><span class="btn">Hand over</span><span class="btn primary">Open bill</span></div>`);
     return `<div class="cols-main"><div>${room}${legend}</div>${side}</div>`;
   },
 
@@ -477,13 +518,13 @@ const TPL = {
     const st = [['On stage', 'a'], ['Next', 'g'], ['Ready', 'g'], ['Ready', 'g'], ['Break', 'b'], ['With a guest', 'v'], ['Ready', 'g'], ['Late', 'r']];
     const list = N.slice(0, 8).map((n, i) => `<div class="qrow"><span class="qn">${i + 1}</span><span class="av">${n[0]}</span><b>${n}</b><span class="grow"></span>${chip(st[i][0], st[i][1])}<span class="mut">⋮⋮</span></div>`).join('');
     return `<div class="cols-main"><div class="panel"><div class="toolbar">${fchips(['Rotation', 'Breaks', 'With guests'])}<span class="grow"></span><span class="btn">Mode: two poles</span><span class="btn primary">${ICON.plus}Add to queue</span></div>${list}</div>`
-      + panel('On stage now', `<div class="huge">03:42</div><p class="mut">Alina · pole 1 · set 2 of 2</p>` + rows(['<span>Up next</span><b>Vera</b>', '<span>Then</span><b>Mila</b>', '<span>Cycle</span><b>10 min</b>'])) + `</div>`;
+      + panel('On stage now', `<div class="huge" data-clock>03:42</div><p class="mut"><span data-stage="0">Alina</span> · pole 1 · set 2 of 2</p>` + rows(['<span>Up next</span><b data-stage="1">Vera</b>', '<span>Then</span><b data-stage="2">Mila</b>', '<span>Cycle</span><b>10 min</b>'])) + `</div>`;
   },
 
   timers: () => {
     const svc = [['Private', 'Vera', 'T7', 12, 40], ['Sit-down 30', 'Mila', 'T3', 4, 85], ['Gulyat 1 h', 'Sofia', 'VIP 2', 38, 35], ['Kletka 30', 'Kira', 'Kletka 1', 21, 30], ['Sit-down 60', 'Diana', 'T12', 51, 15], ['Group private', 'Eva, Lana', 'VIP 4', 2, 92]];
     return `<div class="toolbar">${fchips(['All', 'Ending soon', 'Sit-downs', 'Privates', 'Gulyat', 'Kletka'])}<span class="grow"></span><span class="btn primary">${ICON.plus}New service</span></div><div class="tcards">`
-      + svc.map(([n, p, t, m, pct]) => `<div class="tcard${m < 5 ? ' warn' : ''}"><div class="sp-b"><b>${n}</b>${chip(t)}</div><span class="mut">${p}</span><div class="big">${String(m).padStart(2, '0')}:${String((m * 13) % 60).padStart(2, '0')}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="row-btns"><span class="btn">Extend</span><span class="btn">Change</span><span class="btn">End</span></div></div>`).join('') + `</div>`;
+      + svc.map(([n, p, t, m, pct]) => `<div class="tcard${m < 5 ? ' warn' : ''}"><div class="sp-b"><b>${n}</b>${chip(t)}</div><span class="mut">${p}</span><div class="big" data-left="${m * 60 + (m * 13) % 60}" data-total="${Math.round((m * 60 + (m * 13) % 60) / (1 - pct / 100))}">${String(m).padStart(2, '0')}:${String((m * 13) % 60).padStart(2, '0')}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="row-btns"><span class="btn">Extend</span><span class="btn">Change</span><span class="btn">End</span></div></div>`).join('') + `</div>`;
   },
 
   calendar: s => {
@@ -520,14 +561,14 @@ const TPL = {
   },
 
   console: () => `<div class="sp-b"><b class="m-h">Stage</b>${chip('Two poles · 5-minute sets', 'a')}</div>
-    <div class="cols2">${panel('On stage', `<div class="huge">03:42</div><p class="big-name">Alina</p><p class="mut">Pole 1 · set 2 of 2</p>`)}${panel('Up next', rows(['<b>Vera</b><span class="mut">pole 2 · in 0:18</span>', '<b>Mila</b><span class="mut">pole 1 · in 5:18</span>', '<b>Sofia</b><span class="mut">pole 2 · in 10:18</span>']))}</div>
+    <div class="cols2">${panel('On stage', `<div class="huge" data-clock>03:42</div><p class="big-name" data-stage="0">Alina</p><p class="mut">Pole 1 · set 2 of 2</p>`)}${panel('Up next', rows(['<b data-stage="1">Vera</b><span class="mut">pole 2 · in <span data-in="0">3:42</span></span>', '<b data-stage="2">Mila</b><span class="mut">pole 1 · in <span data-in="300">8:42</span></span>', '<b data-stage="3">Sofia</b><span class="mut">pole 2 · in <span data-in="600">13:42</span></span>']))}</div>
     <div class="big-btns mt"><div class="bigbtn g">START</div><div class="bigbtn">PAUSE</div><div class="bigbtn">RESUME</div><div class="bigbtn a">NEXT</div></div>`,
 
   settings: s => s.groups.map(([title, ...items]) => `<div class="panel set-group"><h3>${title}</h3>${items.map(([kind, label, val]) => `<div class="set-row"><span>${label}</span>${kind === 'toggle' ? `<span class="tog${val ? ' on' : ''}"></span>` : kind === 'radio' ? `<span class="radio${val ? ' on' : ''}"></span>` : `<span class="inp sm">${val}</span>`}</div>`).join('')}</div>`).join('')
     + `<div class="row-btns"><span class="btn primary">Save</span><span class="btn">Cancel</span></div>`,
 
   board: () => `<div class="sp-b"><b class="m-h">Rotation</b>${chip('Pole 1 and pole 2', 'a')}</div>`
-    + N.slice(0, 7).map((n, i) => `<div class="brow${i === 0 ? ' now' : ''}"><span class="bn">${i + 1}</span><b>${n}</b><span class="grow"></span><span class="mut">${i === 0 ? 'On stage · 03:42' : 'in ' + (i * 5 - 1) + ' min'}</span></div>`).join('')
+    + N.slice(0, 7).map((n, i) => `<div class="brow${i === 0 ? ' now' : ''}"><span class="bn">${i + 1}</span><b data-stage="${i}">${n}</b><span class="grow"></span><span class="mut">${i === 0 ? 'On stage · <span data-clock>03:42</span>' : 'in ' + (i * 5 - 1) + ' min'}</span></div>`).join('')
     + `<p class="mut mt8">On a break: Zara, Maya</p>`,
 
   mystatus: () => `<p class="mut">Tap your name</p><div class="namegrid">${N.slice(0, 12).map((n, i) => `<span class="${i === 1 ? 'on' : ''}">${n}</span>`).join('')}</div>
@@ -544,9 +585,9 @@ const TPL = {
   form: s => `<div class="panel"><div class="form">${s.fields.map(([l, v]) => `<div class="fld${v === 'area' ? ' wide' : ''}"><label>${l}</label><div class="inp${v === 'area' ? ' area' : ''}">${{ select: 'Choose <span class="mut">▾</span>', text: '<span class="mut">Type here</span>', area: '<span class="mut">Describe what happened</span>', file: '<span class="mut">Attach a photo</span>', date: '1 Nov 2026', now: 'Now, 21:42' }[v] || v}</div></div>`).join('')}</div><div class="row-btns mt"><span class="btn primary">${s.submit}</span><span class="btn">Cancel</span></div></div>`,
 
   register: () => {
-    const items = [['Sit-down', '30 min'], ['Sit-down', '60 min'], ['Private', '15 min'], ['Group private', '15 min'], ['Gulyat', '1 hour'], ['Gulyat', '2 hours'], ['Kletka', '30 min'], ['Kletka', '60 min']];
-    return `<div class="cols-main"><div><div class="toolbar">${fchips(['All', 'Sit-downs', 'Privates', 'Gulyat', 'Kletka'])}</div><div class="cat">${items.map(([a, b]) => `<div class="it"><b>${a}</b><span>${b}</span><i class="ph"></i></div>`).join('')}</div></div>`
-      + `<div class="panel order"><div class="sp-b"><b>Order · Table 7</b>${chip('Vera', 'a')}</div>${['Private · 15 min', 'Extension · 15 min', 'Sit-down · 30 min'].map(a => `<div class="ln"><span>${a}</span><i class="ph" style="width:60px"></i></div>`).join('')}<div class="tot"><span>Total</span><i class="ph" style="width:90px;height:12px"></i></div><div class="row-btns"><span class="btn primary">Cash</span><span class="btn primary">Card</span><span class="btn">Put on tab</span></div><p class="mut mt8">Goes to the R-Keeper art cash desk</p></div></div>`;
+    const items = [['Sit-down', '30 min', 90], ['Sit-down', '60 min', 160], ['Private', '15 min', 120], ['Group private', '15 min', 200], ['Gulyat', '1 hour', 300], ['Gulyat', '2 hours', 550], ['Kletka', '30 min', 250], ['Kletka', '60 min', 450]];
+    return `<div class="cols-main"><div><div class="toolbar">${fchips(['All', 'Sit-downs', 'Privates', 'Gulyat', 'Kletka'])}</div><div class="cat">${items.map(([a, b, c]) => `<div class="it"><b>${a}</b><span>${b}</span><strong>$${c}</strong></div>`).join('')}</div></div>`
+      + `<div class="panel order"><div class="sp-b"><b>Order · Table 7</b>${chip('Vera', 'a')}</div>${[['Private · 15 min', 120], ['Extension · 15 min', 120], ['Sit-down · 30 min', 90]].map(([a, c]) => `<div class="ln"><span>${a}</span><b>$${c}</b></div>`).join('')}<div class="tot"><span>Total</span><span>$330</span></div><div class="row-btns"><span class="btn primary">Cash</span><span class="btn primary">Card</span><span class="btn">Put on tab</span></div><p class="mut mt8">Goes to the R-Keeper art cash desk</p></div></div>`;
   },
 
   matrix: s => {
@@ -616,25 +657,22 @@ function rail(active) {
 }
 function side(p, activeId) {
   if (!p) {
-    $('side').innerHTML = `<h2>Map</h2><div class="who">Every product and screen in NOI</div><nav>${PRODUCTS.map(x => `<a href="#${x.id}-${x.nav[0][0]}"><span>${x.name}</span><i>${x.nav.length}</i></a>`).join('')}</nav><div class="count">${PRODUCTS.length} products, ${UNIQUE} screens, ${NAV.length} menu entries</div>`;
+    $('side').innerHTML = `<h2>All products</h2><div class="who">Everything a club runs on</div><nav>${PRODUCTS.map(x => `<a href="#${x.id}-${x.nav[0][0]}"><span>${x.name}</span><i>${x.nav.length}</i></a>`).join('')}</nav>`;
     return;
   }
-  $('side').innerHTML = `<h2>${p.name}${p.guess ? '<span class="tag">to confirm</span>' : ''}</h2><div class="who">${p.who}</div><span class="dev">${ICON[DEV[p.device][0]]}${DEV[p.device][1]}</span>`
-    + `<nav>${p.nav.map(([k, t, ref]) => `<a href="#${p.id}-${k}" class="${p.id + '-' + k === activeId ? 'on' : ''}"><span>${t}</span>${ref ? '<i>shared</i>' : ''}</a>`).join('')}</nav>`
-    + `<div class="count">${p.nav.length} screens here, ${UNIQUE} in NOI</div>`;
+  $('side').innerHTML = `<h2>${p.name}</h2><div class="who">${p.who}</div><span class="dev">${ICON[DEV[p.device][0]]}${DEV[p.device][1]}</span>`
+    + `<nav>${p.nav.map(([k, t, ref]) => `<a href="#${p.id}-${k}" class="${p.id + '-' + k === activeId ? 'on' : ''}"><span>${t}</span></a>`).join('')}</nav>`;
 }
-function topbar(crumb, idx) {
-  const nav = idx < 0 ? '' : (() => {
-    const prev = NAV[(idx - 1 + NAV.length) % NAV.length], next = NAV[(idx + 1) % NAV.length];
-    return `<span class="counter">${idx + 1} / ${NAV.length}</span><a class="btn" href="#${prev.id}">${ICON['chevron-left']}<span class="lbl">Prev</span></a><a class="btn" href="#${next.id}"><span class="lbl">Next</span>${ICON['chevron-right']}</a>`;
-  })();
-  $('top').innerHTML = `<button class="btn menu-btn" id="menuBtn" aria-label="Menu">${ICON.menu}</button><div class="crumb">${crumb}</div><span class="grow"></span><span class="club">Demo Club</span>${nav}`;
+function topbar(crumb) {
+  const on = tour.at >= 0;
+  $('top').innerHTML = `<button class="btn menu-btn" id="menuBtn" aria-label="Menu">${ICON.menu}</button><div class="crumb">${crumb}</div><span class="grow"></span><span class="club">Demo Club</span>`
+    + `<button class="btn primary" id="tourBtn" data-tour="${on ? 'resume' : 'start'}">${on ? 'Tour · ' + (tour.at + 1) + ' / ' + TOUR.length : 'Take the tour'}</button>`;
 }
 function renderMap() {
-  rail('map'); side(null); topbar('<b>Map of NOI</b>', -1);
-  $('content').innerHTML = `<div class="head"><h1>Map of NOI</h1><p>Every product and every screen. Click any screen to open it.</p></div>`
-    + `<div class="tiles sum-tiles">${[['Products', PRODUCTS.length], ['Unique screens', UNIQUE], ['Menu entries', NAV.length], ['Screen layouts', Object.keys(TPL).length]].map(([l, v]) => `<div class="tile"><span>${l}</span><b>${v}</b></div>`).join('')}</div>`
-    + `<div class="map">${PRODUCTS.map(p => `<div class="mcard"><h3>${ICON[p.icon]}${p.name}${p.guess ? '<span class="tag">to confirm</span>' : ''}</h3><p>${p.who} · ${DEV[p.device][1].toLowerCase()}</p>${p.nav.map(([k, t, ref]) => `<a href="#${p.id}-${k}"><span>${t}</span><span>${ref ? 'shared' : SCREENS[p.id + '-' + k].t}</span></a>`).join('')}</div>`).join('')}</div>`;
+  rail('map'); side(null); topbar('<b>All products</b>');
+  $('content').innerHTML = `<div class="head"><h1>One system for the whole club</h1><p>Every product and screen in NOI, with sample data. Click any screen to open it.</p></div>`
+    + `<div class="tiles sum-tiles">${[['Products', PRODUCTS.length], ['Screens', UNIQUE], ['Devices', 3], ['Roles', 7]].map(([l, v]) => `<div class="tile"><span>${l}</span><b>${v}</b></div>`).join('')}</div>`
+    + `<div class="map">${PRODUCTS.map(p => `<div class="mcard"><h3>${ICON[p.icon]}${p.name}</h3><p>${p.who} · ${DEV[p.device][1].toLowerCase()}</p>${p.nav.map(([k, t, ref]) => `<a href="#${p.id}-${k}"><span>${t}</span></a>`).join('')}</div>`).join('')}</div>`;
 }
 function render(n) {
   const p = PRODUCTS.find(x => x.id === n.pid);
@@ -643,13 +681,14 @@ function render(n) {
   topbar(`${p.name} <span>/</span> <b>${n.title}</b>`, NAV.indexOf(n));
   let body = TPL[s.t](s);
   if (p.device !== 'desktop') body = `<div class="device ${p.device}"><div class="screen">${body}</div></div>`;
-  $('content').innerHTML = `<div class="head"><h1>${n.title}${n.shared ? '<span class="tag">shared screen</span>' : ''}${p.guess ? '<span class="tag">to confirm</span>' : ''}</h1><p>${s.d}</p></div>${body}`;
+  $('content').innerHTML = `<div class="head"><h1>${n.title}</h1><p>${s.d}</p></div>${body}`;
 }
 function route() {
   const h = location.hash.replace(/^#/, '');
   if (h === 'map') renderMap();
   else render(NAV.find(x => x.id === h) || NAV[0]);
   window.scrollTo(0, 0);
+  afterRender();
 }
 document.addEventListener('click', e => {
   if (e.target.closest('#menuBtn')) $('app').classList.toggle('open');
@@ -657,12 +696,187 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('input, textarea')) return;
+  if (e.key === 'Escape' && document.querySelector('.intro')) { closeModal(); return; }
+  if (tour.at >= 0) {
+    if (e.key === 'Enter' && e.target.closest && e.target.closest('button, a')) return;
+    if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); tourStep(1); }
+    else if (e.key === 'ArrowLeft') tourStep(-1);
+    else if (e.key === 'Escape') tourEnd(false);
+    return;
+  }
   const idx = NAV.findIndex(x => x.id === location.hash.replace(/^#/, ''));
   if (e.key === 'ArrowRight') location.hash = NAV[(Math.max(idx, 0) + 1) % NAV.length].id;
   if (e.key === 'ArrowLeft') location.hash = NAV[(Math.max(idx, 0) - 1 + NAV.length) % NAV.length].id;
 });
+
+/* ---------------------------------------------------------------- live sample data ---- */
+// Nothing here is real. Clocks count down, timers run and money ticks up, so the screens feel like a working night.
+const mmss = sec => Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+const mmss2 = sec => String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+const stage = { left: 222, at: 0 };
+let shownAt = 0;
+function flash(el) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+
+// Tile numbers count up from zero when a screen opens.
+function countUp(el) {
+  const m = el.textContent.match(/^(\$?)([\d,]+)( \/ \d+|%)?$/);
+  if (!m || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const to = +m[2].replace(/,/g, ''), pre = m[1], post = m[3] || '', t0 = performance.now();
+  const step = now => {
+    const k = Math.min(1, (now - t0) / 900);
+    el.textContent = pre + Math.round(to * (1 - Math.pow(1 - k, 3))).toLocaleString('en-US') + post;
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+// The stage: the clock, how long until each next performer, and whose name is where in the rotation.
+function paintStage(moved) {
+  document.querySelectorAll('[data-clock]').forEach(el => { el.textContent = mmss2(stage.left); });
+  document.querySelectorAll('[data-in]').forEach(el => { el.textContent = mmss(stage.left + +el.dataset.in); });
+  document.querySelectorAll('[data-stage]').forEach(el => {
+    const name = N[(stage.at + +el.dataset.stage) % N.length];
+    if (el.textContent !== name) { el.textContent = name; if (moved) flash(el); }
+  });
+}
+
+function afterRender() {
+  shownAt = performance.now();
+  document.querySelectorAll('.tile b').forEach(countUp);
+  // On the owner's screen, revenue and guests keep moving.
+  document.querySelectorAll('.tile').forEach(t => {
+    const label = t.querySelector('span') && t.querySelector('span').textContent;
+    if (label === 'Revenue tonight') t.querySelector('b').dataset.money = '';
+    if (label === 'Guests in the club') t.querySelector('b').dataset.count = '';
+  });
+  paintStage(false);
+  tourPaint();
+}
+
+setInterval(() => {
+  // When a set ends, the next performer goes on and every rotation view moves up.
+  stage.left -= 1;
+  if (stage.left < 0) { stage.at += 1; stage.left = 299; paintStage(true); } else paintStage(false);
+  // Service timers run down; under five minutes a card turns red, and at zero it ends.
+  document.querySelectorAll('[data-left]').forEach(el => {
+    const left = Math.max(0, +el.dataset.left - 1), card = el.closest('.tcard'), bar = card && card.querySelector('.bar i');
+    el.dataset.left = left;
+    el.textContent = mmss2(left);
+    if (bar) bar.style.width = Math.min(100, 100 - left / +el.dataset.total * 100).toFixed(1) + '%';
+    if (card) { card.classList.toggle('warn', left < 300); card.classList.toggle('done', left === 0); }
+  });
+  if (performance.now() - shownAt < 1500) return;
+  // Money comes in now and then, the odd guest arrives, and free tables fill up.
+  document.querySelectorAll('[data-money]').forEach(el => {
+    if (Math.random() < 0.3) { el.textContent = '$' + Math.round(+el.textContent.replace(/[^\d]/g, '') + 20 + Math.random() * 220).toLocaleString('en-US'); flash(el); }
+  });
+  document.querySelectorAll('[data-count]').forEach(el => { if (Math.random() < 0.08) { el.textContent = String(+el.textContent + 1); flash(el); } });
+  const free = document.querySelectorAll('.room .tb.free');
+  if (free.length > 2 && Math.random() < 0.08) {
+    const tb = free[Math.floor(Math.random() * free.length)];
+    tb.classList.replace('free', 'busy');
+    tb.querySelector('small').textContent = (2 + Math.floor(Math.random() * 3)) + ' guests';
+    flash(tb);
+  }
+}, 1000);
+
+/* ---------------------------------------------------------------- investor tour ---- */
+// Eight stops through the screens that tell the story, each with a caption and a ring around what it is about.
+const TOUR = [
+  { id: 'crm-dashboard', focus: '.tiles', title: 'The whole night on one screen',
+    text: 'The owner sees the club as it happens: guests, tables, performers, running services and revenue, all updating live.' },
+  { id: 'crm-floor', focus: '.room', title: 'A live map of every table',
+    text: 'Managers see who sits where, what is running at each table and what it has spent, and act straight from the map.' },
+  { id: 'dj-console', focus: '.device .cols2', clock: 12, title: 'The stage runs itself',
+    text: 'The rotation builds itself. Watch the clock: when the set ends, the next performer goes on and every screen in the club moves with it.' },
+  { id: 'cash-timers', focus: '.tcards', title: 'Every minute is billed',
+    text: 'Each paid service runs on a timer, with a warning before it ends, so nothing runs over unpaid.' },
+  { id: 'cash-register', focus: '.order', title: 'One tap to start and charge',
+    text: 'The cashier starts a service and takes payment in one place. Every sale goes straight to R-Keeper, the club’s till.' },
+  { id: 'finance-reconcile', focus: '.tiles', title: 'Money that checks itself',
+    text: 'Every night NOI reconciles itself with the till, line by line. A mismatch shows up the same night, not at the end of the month.' },
+  { id: 'app-earnings', focus: '.device', title: 'Every employee in their pocket',
+    text: 'Shifts, swap requests and earnings on each person’s own phone: fewer calls to managers, fewer arguments about pay.' },
+  { id: 'map', focus: '.map', title: 'One system, ten products',
+    text: 'From the floor to finance, HR and security: ten products on one platform, ready to run several clubs, each with its own data and rules.' },
+];
+const tour = { at: -1 };
+
+function tourGo(i) {
+  tour.at = i;
+  if (TOUR[i].clock) stage.left = TOUR[i].clock;
+  if (location.hash.replace(/^#/, '') === TOUR[i].id) route(); else location.hash = TOUR[i].id;
+}
+function tourStart() { closeModal(); tourGo(0); }
+function tourStep(d) {
+  const i = tour.at + d;
+  if (i < 0) return;
+  if (i >= TOUR.length) tourEnd(true); else tourGo(i);
+}
+function tourEnd(finished) {
+  tour.at = -1;
+  const card = document.querySelector('.tour-card');
+  if (card) card.remove();
+  document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
+  const btn = $('tourBtn');
+  if (btn) { btn.dataset.tour = 'start'; btn.textContent = 'Take the tour'; }
+  if (finished) showModal('end');
+}
+function tourPaint() {
+  document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
+  let card = document.querySelector('.tour-card');
+  if (tour.at < 0) { if (card) card.remove(); return; }
+  const stop = TOUR[tour.at], last = tour.at === TOUR.length - 1;
+  if (!card) { card = document.createElement('div'); card.className = 'tour-card'; card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', 'Tour'); document.body.append(card); }
+  card.innerHTML = `<button class="tour-x" data-tour="exit" aria-label="Close the tour">×</button>`
+    + `<div class="tour-dots" aria-hidden="true">${TOUR.map((x, k) => `<i class="${k <= tour.at ? 'on' : ''}"></i>`).join('')}</div>`
+    + `<span class="tour-n">Step ${tour.at + 1} of ${TOUR.length}</span><h3>${stop.title}</h3><p>${stop.text}</p>`
+    + `<div class="tour-btns">${tour.at ? '<button class="btn" data-tour="back">Back</button>' : ''}<span class="grow"></span><button class="btn primary" data-tour="next">${last ? 'Finish' : 'Next'}</button></div>`;
+  card.classList.remove('in'); void card.offsetWidth; card.classList.add('in');
+  card.querySelector('[data-tour="next"]').focus({ preventScroll: true });
+  if (location.hash.replace(/^#/, '') !== stop.id) return;
+  const focus = document.querySelector(stop.focus);
+  if (focus) { focus.classList.add('tour-focus'); focus.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+}
+
+// The intro on a first visit, and the card at the end of the tour.
+function showModal(kind) {
+  closeModal();
+  const m = document.createElement('div');
+  m.className = 'intro';
+  m.innerHTML = kind === 'end'
+    ? `<div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="introH"><div class="logo">NOI</div><h1 id="introH">That’s NOI</h1>`
+      + `<p>Ten products on one platform, built around how a club actually runs a night. Every screen is open to explore from the menu on the left.</p>`
+      + `<div class="intro-btns"><button class="btn primary big" data-tour="explore">Explore on my own</button><button class="btn big" data-tour="start">Restart the tour</button></div></div>`
+    : `<div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="introH"><div class="logo">NOI</div><h1 id="introH">The operating system for a nightclub</h1>`
+      + `<p>One system for the floor, the stage, the cash desk and the money. This is a clickable demo with sample data.</p>`
+      + `<div class="intro-pts"><div><i>${ICON['layout-dashboard']}</i><span><b>Live.</b> Everything updates as it happens.</span></div>`
+      + `<div><i>${ICON.wallet}</i><span><b>Accountable.</b> The money checks itself against the till.</span></div>`
+      + `<div><i>${ICON.smartphone}</i><span><b>Everywhere.</b> Computer, tablet and phone, one system.</span></div></div>`
+      + `<div class="intro-btns"><button class="btn primary big" data-tour="start">Start the 2-minute tour</button><button class="btn big" data-tour="explore">Explore on my own</button></div></div>`;
+  m.addEventListener('click', e => { if (e.target === m) closeModal(); });
+  document.body.append(m);
+  m.querySelector('.btn.primary').focus();
+}
+function closeModal() { const m = document.querySelector('.intro'); if (m) m.remove(); }
+
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-tour]');
+  if (!a) return;
+  const k = a.dataset.tour;
+  if (k === 'start') tourStart();
+  else if (k === 'resume') tourGo(tour.at);
+  else if (k === 'next') tourStep(1);
+  else if (k === 'back') tourStep(-1);
+  else if (k === 'exit') tourEnd(false);
+  else if (k === 'explore') closeModal();
+});
+
 window.addEventListener('hashchange', route);
 route();
+// A first visit with no screen in the link opens with the intro; #tour starts the tour straight away.
+if (location.hash === '#tour') tourStart();
+else if (!location.hash) showModal('intro');
 </script>
 </body>
 </html>
