@@ -396,10 +396,17 @@ h1, h2 { margin: 0; font: 700 32px/1.15 var(--display); letter-spacing: -0.015em
 .foot-c:hover .trk { stroke: rgba(255, 255, 255, 0.32); }
 .round { width: var(--btn); height: var(--btn); border: 0; border-radius: 50%; display: grid; place-items: center; align-content: center; gap: 1px; padding: 0; font-size: 11.5px; font-weight: 700; line-height: 1.1; color: #ffffff; cursor: pointer; background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 62%, rgba(255, 255, 255, 0.12) 100%); box-shadow: 0 0 18px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -8px 16px rgba(0, 0, 0, 0.1); transition: transform 0.4s var(--spring), box-shadow 0.25s ease; }
 .round svg { width: 14px; height: 14px; transition: transform 0.35s var(--spring); }
-.round.top svg { transform: rotate(180deg); }
 .round:hover { transform: scale(1.05); background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.26) 62%, rgba(255, 255, 255, 0.16) 100%); box-shadow: 0 0 22px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -8px 16px rgba(0, 0, 0, 0.1); }
 .round:hover svg { transform: translateY(2px); }
-.round.top:hover svg { transform: rotate(180deg) translateY(2px); }
+/* On the last screen the round button leaves for the demo: amber like the demo, with a play mark, and an amber ring. */
+.round .play { display: none; width: 15px; height: 15px; }
+.round.demo { color: #1a1205; background: radial-gradient(circle at 50% 28%, #ffe4ad 0%, #f6b54a 56%, #d98a1c 100%); box-shadow: 0 0 22px rgba(242, 169, 59, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -8px 16px rgba(120, 60, 0, 0.18); }
+.round.demo:hover { background: radial-gradient(circle at 50% 28%, #fff1cf 0%, #ffc35e 56%, #e39a2c 100%); box-shadow: 0 0 30px rgba(242, 169, 59, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.75), inset 0 -8px 16px rgba(120, 60, 0, 0.18); }
+.round.demo .chev { display: none; }
+.round.demo .play { display: block; }
+.round.demo:hover .play { transform: translateX(2px); }
+.foot-c.demo .prg { stroke: #f6b54a; }
+.foot-c.demo:hover .trk { stroke: rgba(246, 181, 74, 0.4); }
 .round:active { transform: scale(0.94); transition-duration: 0.12s; }
 .round:focus-visible { outline: 2px solid #ffffff; outline-offset: 8px; }
 .foot-cap { position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); display: grid; gap: 1px; text-align: left; white-space: nowrap; pointer-events: none; }
@@ -679,7 +686,7 @@ svg text { pointer-events: none; }
         </div>
         <div class="group">
           <div class="group-h" data-i18n="g.demo">Демо</div>
-          <a class="nav-item rip" href="https://gilavi.github.io/noi-proposal/demo/" target="_blank" rel="noopener"><span class="icon t-demo"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="10.5" rx="2" fill="#fff"/><path d="M8.6 6.4l4 2.35-4 2.35z" fill="#8a5a12"/><rect x="6.5" y="15.4" width="7" height="1.6" rx="0.8" fill="#fff"/></svg></span><span data-i18n="nav.demo">Интерфейс NOI</span><span class="nv" aria-hidden="true">↗</span></a>
+          <a class="nav-item rip" data-demo href="https://gilavi.github.io/noi-proposal/demo/"><span class="icon t-demo"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="10.5" rx="2" fill="#fff"/><path d="M8.6 6.4l4 2.35-4 2.35z" fill="#8a5a12"/><rect x="6.5" y="15.4" width="7" height="1.6" rx="0.8" fill="#fff"/></svg></span><span data-i18n="nav.demo">Интерфейс NOI</span><span class="nv" aria-hidden="true">→</span></a>
         </div>
       </nav>
       <div class="side-foot">
@@ -938,7 +945,7 @@ svg text { pointer-events: none; }
         </div>
         <div class="foot-c">
           <span class="ring" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="46"/><circle class="prg" id="footRing" cx="50" cy="50" r="46"/></svg></span>
-          <button type="button" class="round rip" id="footNext"><span id="footNextLbl">Далее</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5l5 5 5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button type="button" class="round rip" id="footNext"><span id="footNextLbl">Далее</span><svg class="chev" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5l5 5 5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="play" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.2 5.4v9.2l7.4-4.6z" fill="currentColor"/></svg></button>
           <span class="foot-cap" id="footCap" aria-hidden="true"><span class="k" id="footCapK">Дальше</span><b id="footNextName">Объём</b></span>
         </div>
         <div class="foot-r" id="footCount">1 / 8</div>
@@ -1332,6 +1339,9 @@ const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls)
 const setText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
 const monthsRange = (p, lang) => (lang === 'en' ? 'months ' : 'мес. ') + (Math.round(p.start) + 1) + '–' + Math.round(p.end);
 const isNarrow = () => window.matchMedia('(max-width: 900px)').matches;
+const DEMO = 'https://gilavi.github.io/noi-proposal/demo/';
+const demoUrl = () => DEMO + '?from=' + state.pane + (state.lang === 'en' ? '&lang=en' : '');
+const syncDemoLinks = () => document.querySelectorAll('[data-demo]').forEach(a => { a.href = demoUrl(); });
 const paneLabel = p => { const e = document.querySelector('.nav-item[data-pane="' + p + '"] [data-i18n]'); return e ? e.textContent : p; };
 const replay = (e, cls) => { e.classList.remove(cls); void e.offsetWidth; e.classList.add(cls); };
 
@@ -1539,11 +1549,13 @@ function renderFoot() {
     back.setAttribute('aria-label', (en ? 'Back: ' : 'Назад: ') + paneLabel(PANES[n - 1]));
   }
   const next = document.getElementById('footNext');
-  next.classList.toggle('top', last);
-  setText('footNextLbl', last ? (en ? 'Top' : 'Наверх') : (en ? 'Next' : 'Далее'));
-  setText('footCapK', last ? (en ? 'That’s all' : 'Это всё') : (en ? 'Next up' : 'Дальше'));
-  setText('footNextName', last ? (en ? 'Back to the start' : 'В начало') : paneLabel(PANES[n + 1]));
-  next.setAttribute('aria-label', last ? (en ? 'Back to the start' : 'В начало') : (en ? 'Next: ' : 'Далее: ') + paneLabel(PANES[n + 1]));
+  // The last screen hands over to the interface demo.
+  next.classList.toggle('demo', last);
+  next.closest('.foot-c').classList.toggle('demo', last);
+  setText('footNextLbl', last ? (en ? 'Demo' : 'Демо') : (en ? 'Next' : 'Далее'));
+  setText('footCapK', en ? 'Next up' : 'Дальше');
+  setText('footNextName', last ? (en ? 'Interface demo' : 'Демо интерфейса') : paneLabel(PANES[n + 1]));
+  next.setAttribute('aria-label', last ? (en ? 'Open the interface demo' : 'Открыть демо интерфейса') : (en ? 'Next: ' : 'Далее: ') + paneLabel(PANES[n + 1]));
   setText('footCount', (n + 1) + ' / ' + PANES.length);
   const ring = document.getElementById('footRing');
   const C = 2 * Math.PI * 46;
@@ -1596,6 +1608,7 @@ function setLang(lang) {
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   document.title = lang === 'en' ? 'NOI Build Proposal' : 'NOI: предложение по разработке';
   langListeners.forEach(f => f(lang));
+  syncDemoLinks();
   moveInd();
 }
 
@@ -1625,6 +1638,7 @@ function showPane(id, dir) {
   if (changed && !REDUCE) replay(document.getElementById('footCap'), 'in');
   document.getElementById('main').scrollTop = 0;
   if (isNarrow()) window.scrollTo(0, 0);
+  syncDemoLinks();
   paneListeners.forEach(f => f(id));
 }
 
@@ -1650,11 +1664,10 @@ function canScrollFurther(node, dir) {
   document.querySelectorAll('[data-i18n]').forEach(e => { e.dataset.ru = e.textContent; });
   document.querySelectorAll('[data-i18n-aria]').forEach(e => { e.dataset.ruAria = e.getAttribute('aria-label') || ''; });
   onLang(renderNumbers);
-  // Russian unless the link asks for English with #en; #scope, #price and so on open that screen.
+  // Russian unless the link asks for English with #en; #scope, #price and so on open that screen; #en-faq does both.
   let lang = 'ru', pane = 'overview';
   const h = location.hash.replace(/^#/, '');
-  if (h === 'en') lang = 'en';
-  else if (PANES.includes(h)) pane = h;
+  h.split('-').forEach(x => { if (x === 'en') lang = 'en'; else if (PANES.includes(x)) pane = x; });
   document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
   document.querySelectorAll('[data-pane]').forEach(b => b.addEventListener('click', () => {
     const target = b.dataset.pane;
@@ -1675,7 +1688,7 @@ function canScrollFurther(node, dir) {
   window.matchMedia('(max-width: 900px)').addEventListener('change', placeStep);
   document.getElementById('footBack').addEventListener('click', () => step(-1));
   document.getElementById('footNext').addEventListener('click', () => {
-    if (state.pane === PANES[PANES.length - 1]) showPane(PANES[0], -1); else step(1);
+    if (state.pane === PANES[PANES.length - 1]) location.href = demoUrl(); else step(1);
   });
 
   const main = document.getElementById('main');
