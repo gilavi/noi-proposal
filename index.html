@@ -1,0 +1,2192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>NOI Build Proposal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root {
+  /* CleanMyMac X spirit: one window whose colour changes with the section, a grouped sidebar with coloured icons and live numbers, every screen centred on one idea, and one round Next button in a blurred footer; scrolling moves between screens. */
+  color-scheme: dark;
+  --page: #0c0b14;
+  --ink: #ffffff;
+  --ink-2: rgba(255, 255, 255, 0.82);
+  --muted: rgba(255, 255, 255, 0.62);
+  --faint: rgba(255, 255, 255, 0.45);
+  --line: rgba(255, 255, 255, 0.16);
+  --amber: #fab219;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --g-overview: linear-gradient(140deg, #35196a 0%, #74288c 55%, #b5397a 100%);
+  --g-scope: radial-gradient(120% 95% at 72% 62%, #5a2fc4 0%, #35188e 42%, #1a0b4a 78%, #120734 100%);
+  --g-plan: linear-gradient(140deg, #0a3742 0%, #0e655f 55%, #198a67 100%);
+  --g-steps: linear-gradient(140deg, #3a0d2c 0%, #7a1d4f 55%, #bf3a62 100%);
+  --g-safety: linear-gradient(140deg, #062b3f 0%, #0a5873 55%, #1390a8 100%);
+  --g-team: linear-gradient(140deg, #1f1d5c 0%, #3b2d96 55%, #6740bd 100%);
+  --g-price: linear-gradient(140deg, #4b1a0b 0%, #973c13 55%, #d4691f 100%);
+  --g-rights: linear-gradient(140deg, #2a2008 0%, #5e4a0e 55%, #9c7a1f 100%);
+  --g-faq: linear-gradient(140deg, #161f3b 0%, #273a63 55%, #3b5889 100%);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--page); color: var(--ink); font: 16px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--page); }
+button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+p { margin: 0; }
+
+/* Preloader: the spheres assemble, then the window opens */
+.preloader { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--g-overview); animation: plOut 0.5s ease 1.55s forwards; }
+.pl-inner { display: grid; justify-items: center; gap: 22px; }
+.pl-orbs { position: relative; width: 150px; height: 150px; }
+.pl-orbs i { position: absolute; border-radius: 50%; transform: scale(0); animation: orbIn 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) forwards; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); }
+.pl-orbs i.b { background: radial-gradient(circle at 35% 28%, #e6f0ff, #7fb2f5 35%, #2a5fb8); }
+.pl-orbs i.a { background: radial-gradient(circle at 35% 28%, #fff3cf, #ffc943 35%, #b8760a); }
+.pl-title { font: 700 22px/1.2 var(--display); letter-spacing: -0.01em; }
+.pl-bar { width: 160px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.22); overflow: hidden; }
+.pl-bar i { display: block; height: 100%; background: #ffffff; transform: scaleX(0); transform-origin: left; animation: barFill 1.3s ease 0.15s forwards; }
+@keyframes orbIn { to { transform: scale(1); } }
+@keyframes barFill { to { transform: scaleX(1); } }
+@keyframes plOut { to { opacity: 0; visibility: hidden; } }
+
+/* Window */
+.frame { height: 100%; padding-block: 18px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+.shell { position: relative; isolation: isolate; height: 100%; max-width: 1360px; margin: 0 auto; display: grid; grid-template-columns: 236px minmax(0, 1fr); border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 40px 100px rgba(0, 0, 0, 0.55); }
+.bgs { position: absolute; inset: 0; z-index: -1; }
+.bg { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s ease; }
+.bg.on { opacity: 1; }
+.instant .bg, .instant .nav-ind, .instant .lang::before { transition: none; }
+.bg-overview, .t-overview { background: var(--g-overview); }
+.bg-scope, .t-scope { background: var(--g-scope); }
+.bg-plan, .t-plan { background: var(--g-plan); }
+.bg-steps, .t-steps { background: var(--g-steps); }
+.bg-safety, .t-safety { background: var(--g-safety); }
+.bg-team, .t-team { background: var(--g-team); }
+.bg-price, .t-price { background: var(--g-price); }
+.bg-rights, .t-rights { background: var(--g-rights); }
+.bg-faq, .t-faq { background: var(--g-faq); }
+
+/* Press feedback shared by buttons and tiles: a ripple from the pointer, and a soft light that follows it */
+.rip { position: relative; overflow: hidden; }
+.ripple { position: absolute; border-radius: 50%; pointer-events: none; background: rgba(255, 255, 255, 0.32); transform: scale(0); animation: ripple 0.6s var(--out) forwards; }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+.spot { position: relative; isolation: isolate; }
+.spot::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0; background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.11), transparent 65%); transition: opacity 0.3s ease; }
+.spot:hover::after { opacity: 1; }
+
+/* Sidebar */
+.side { display: flex; flex-direction: column; gap: 26px; padding: 22px 12px 16px; min-height: 0; overflow: auto; background: rgba(8, 6, 22, 0.36); -webkit-backdrop-filter: blur(20px) saturate(130%); backdrop-filter: blur(20px) saturate(130%); border-right: 1px solid rgba(255, 255, 255, 0.08); }
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+.brand-mark { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.3); flex: none; }
+.brand-mark svg { width: 18px; height: 18px; }
+.brand b { display: block; font: 700 17px/1 var(--display); letter-spacing: 0.05em; }
+.brand span { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.groups { position: relative; display: grid; gap: 20px; }
+.nav-ind { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 9px; background: rgba(255, 255, 255, 0.17); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); pointer-events: none; transition: transform 0.5s var(--spring), width 0.3s var(--out), height 0.3s var(--out); }
+.group { display: grid; gap: 2px; }
+.group-h { padding: 0 10px 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.nav-item { z-index: 1; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 10px 7px 8px; border: 0; border-radius: 9px; background: transparent; color: rgba(255, 255, 255, 0.86); font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+.nav-item:hover { background: rgba(255, 255, 255, 0.07); color: #ffffff; }
+.nav-item[aria-current="page"] { color: #ffffff; font-weight: 600; }
+.nav-item[aria-current="page"]:hover { background: transparent; }
+.nav-item:focus-visible { outline: 2px solid #ffffff; outline-offset: 1px; }
+.icon { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 3px rgba(0, 0, 0, 0.35); transition: transform 0.35s var(--spring); }
+.icon svg { width: 14px; height: 14px; }
+.nav-item:hover .icon { transform: scale(1.12) rotate(-6deg); }
+.nav-item:active .icon { transform: scale(0.9); }
+.icon.pop { animation: pop 0.5s var(--spring); }
+@keyframes pop { 40% { transform: scale(1.24) rotate(-8deg); } }
+.nv { font-size: 12px; color: rgba(255, 255, 255, 0.55); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.side-foot { margin-top: auto; display: grid; gap: 12px; padding: 0 8px; }
+.side-note { font-size: 11.5px; line-height: 1.45; color: var(--faint); }
+
+/* Language switch with a sliding thumb */
+.lang { position: relative; justify-self: start; display: inline-flex; padding: 2px; border-radius: 999px; background: rgba(0, 0, 0, 0.22); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+.lang::before { content: ""; position: absolute; top: 2px; left: 2px; width: 40px; height: calc(100% - 4px); border-radius: 999px; background: rgba(255, 255, 255, 0.94); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); transition: transform 0.4s var(--spring); }
+.lang[data-on="en"]::before { transform: translateX(40px); }
+.lang button { position: relative; z-index: 1; width: 40px; border: 0; background: none; padding: 5px 0; border-radius: 999px; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.72); cursor: pointer; transition: color 0.25s ease; }
+.lang button:hover { color: #ffffff; }
+.lang button[aria-pressed="true"] { color: #1b1532; }
+.lang button:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+/* Progress dots: hover one to see its section */
+.dots { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); z-index: 7; display: grid; gap: 10px; }
+.dots button { position: relative; width: 8px; height: 8px; padding: 0; border: 0; border-radius: 4px; background: rgba(255, 255, 255, 0.35); cursor: pointer; transition: height 0.4s var(--spring), background 0.25s ease; }
+.dots button:hover { background: rgba(255, 255, 255, 0.8); }
+.dots button[aria-current="true"] { height: 24px; background: #ffffff; }
+.dots button:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
+.dots button::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translate(6px, -50%); padding: 4px 10px; border-radius: 999px; background: rgba(16, 15, 34, 0.94); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 18px rgba(0, 0, 0, 0.35); font-size: 12px; font-weight: 600; line-height: 1.4; color: #ffffff; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.18s ease, transform 0.3s var(--spring); }
+.dots button:hover::after, .dots button:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+
+/* Main area */
+.main { position: relative; min-width: 0; min-height: 0; overflow: auto; display: flex; flex-direction: column; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.25) transparent; }
+
+/* A centred screen: hero, title, lead, one block of content */
+.pane { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 34px 64px 28px; }
+.pane[hidden] { display: none; }
+.pane.in-down > *, .pane.in-up > * { animation-duration: 0.5s; animation-timing-function: var(--out); animation-fill-mode: backwards; }
+.pane.in-down > * { animation-name: fromBelow; }
+.pane.in-up > * { animation-name: fromAbove; }
+.pane > *:nth-child(2) { animation-delay: 0.04s; }
+.pane > *:nth-child(3) { animation-delay: 0.08s; }
+.pane > *:nth-child(4) { animation-delay: 0.12s; }
+.pane > *:nth-child(5) { animation-delay: 0.16s; }
+.pane > *:nth-child(6) { animation-delay: 0.2s; }
+.pane.in-down .stagger > *, .pane.in-up .stagger > * { animation: rise 0.55s var(--out) backwards; }
+.stagger > :nth-child(1) { animation-delay: 0.14s; }
+.stagger > :nth-child(2) { animation-delay: 0.18s; }
+.stagger > :nth-child(3) { animation-delay: 0.22s; }
+.stagger > :nth-child(4) { animation-delay: 0.26s; }
+.stagger > :nth-child(5) { animation-delay: 0.3s; }
+.stagger > :nth-child(6) { animation-delay: 0.34s; }
+.stagger > :nth-child(7) { animation-delay: 0.38s; }
+@keyframes fromBelow { from { opacity: 0; transform: translateY(28px); } }
+@keyframes fromAbove { from { opacity: 0; transform: translateY(-28px); } }
+@keyframes rise { from { opacity: 0; transform: translateY(16px) scale(0.97); } }
+.hero { width: clamp(72px, 10.5vh, 100px); aspect-ratio: 1; margin-bottom: 22px; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.35)); }
+.hero.big { width: clamp(150px, 23vh, 210px); margin-bottom: 26px; }
+.hero svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.hero.bob svg { animation: bob 6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.art-s { transform-box: fill-box; transform-origin: center; animation: drift 7s ease-in-out infinite; }
+@keyframes drift { 50% { transform: translate(var(--dx, 0), var(--dy, 0)); } }
+h1, h2 { margin: 0; font: 700 32px/1.15 var(--display); letter-spacing: -0.015em; max-width: 26ch; text-wrap: balance; }
+.lead { margin-top: 12px; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--ink-2); text-wrap: balance; }
+.pi { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.15); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28); font-weight: 700; font-size: 15px; transition: transform 0.4s var(--spring); }
+.pi svg { width: 18px; height: 18px; }
+.note { font-size: 12px; line-height: 1.45; color: var(--faint); }
+
+/* Overview: quick links to every section */
+.quick { width: 100%; max-width: 880px; margin-top: 34px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.ql { flex: 0 0 calc((100% - 30px) / 4); min-width: 0; display: grid; justify-items: start; align-content: start; gap: 2px; padding: 14px 14px 15px; border: 0; border-radius: 16px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); color: #ffffff; text-align: left; cursor: pointer; transition: transform 0.4s var(--spring), background 0.2s ease, box-shadow 0.25s ease; }
+.ql .icon { width: 38px; height: 38px; border-radius: 11px; margin-bottom: 10px; transition: transform 0.45s var(--spring); }
+.ql .icon svg { width: 20px; height: 20px; }
+.ql b { font-size: 15px; font-weight: 600; line-height: 1.25; }
+.ql .qs { font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.ql .arr { position: absolute; top: 25px; right: 14px; width: 16px; height: 16px; opacity: 0; transform: translateX(-5px); transition: opacity 0.2s ease, transform 0.35s var(--spring); }
+.ql:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.13); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 10px 22px -8px rgba(0, 0, 0, 0.34); }
+.ql:hover .icon { transform: scale(1.1) rotate(-7deg); }
+.ql:hover .arr { opacity: 0.9; transform: none; }
+.ql:active { transform: translateY(-1px) scale(0.97); transition-duration: 0.12s; }
+.ql:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+/* Cards: one idea each, with an icon */
+.cards { width: 100%; max-width: 920px; margin-top: 30px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; text-align: left; }
+.cards.two { max-width: 860px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 3px 14px; align-content: start; padding: 14px 18px 14px 14px; border-radius: 16px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); transition: transform 0.4s var(--spring), background 0.2s ease, box-shadow 0.25s ease; }
+.card .pi { grid-row: span 2; }
+.card b { font-size: 15px; font-weight: 600; line-height: 1.35; }
+.card > span:last-child { font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.card:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.11); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.17), 0 10px 22px -8px rgba(0, 0, 0, 0.3); }
+.card:hover .pi { transform: scale(1.1) rotate(-7deg); }
+.ready { width: 100%; max-width: 920px; margin-top: 22px; display: grid; justify-items: center; gap: 10px; }
+.ready h3, .phase-list h3, .cv h3 { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+/* Chips flow like words in a balanced line, so the rows come out even instead of leaving one chip alone on the last row. */
+.chips { margin: -4px; font-size: 0; text-align: center; text-wrap: balance; }
+.chk { display: inline-flex; vertical-align: top; margin: 4px; align-items: center; gap: 7px; padding: 6px 12px 6px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); font-size: 13px; transition: background 0.2s ease, transform 0.35s var(--spring); }
+.chk svg { width: 14px; height: 14px; flex: none; }
+.chk:hover { background: rgba(255, 255, 255, 0.17); transform: translateY(-2px); }
+
+/* Plan */
+.timeline { width: 100%; max-width: 820px; margin-top: 32px; }
+/* Phases sit 6px inside the track on every side and 6px apart, with corners 6px tighter than the track's, so the shapes nest evenly. The month labels use the same inner scale: the first starts where the first phase starts, the last ends where the last phase ends. */
+.ticks { position: relative; height: 18px; margin-bottom: 8px; }
+.ticks span { position: absolute; top: 0; transform: translateX(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ticks span:first-child { transform: none; }
+.ticks span:last-child { transform: translateX(-100%); }
+.track { position: relative; height: 56px; border-radius: 18px; background: rgba(0, 0, 0, 0.16); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.seg { position: absolute; top: 6px; bottom: 6px; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 0 10px; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; cursor: default; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 18px rgba(0, 0, 0, 0.18); transform-origin: left center; transition: filter 0.2s ease, box-shadow 0.2s ease; }
+.seg.p1 { background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.26)); }
+.seg.p2 { background: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.18)); }
+.seg.p3 { background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.12)); }
+.seg.hl { filter: brightness(1.18); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1.5px rgba(255, 255, 255, 0.5), 0 6px 18px rgba(0, 0, 0, 0.18); }
+.pane.in-down .seg, .pane.in-up .seg { animation: grow 0.7s var(--out) backwards; }
+.seg.p2 { animation-delay: 0.14s; }
+.seg.p3 { animation-delay: 0.28s; }
+@keyframes grow { from { opacity: 0; transform: scaleX(0.2); } }
+.cols { width: 100%; max-width: 820px; margin-top: 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; text-align: left; }
+.col { padding: 10px 12px; border-radius: 12px; transition: background 0.2s ease; }
+.col.hl { background: rgba(255, 255, 255, 0.09); }
+.col b { display: block; font-size: 16px; font-weight: 600; }
+.col .when { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.col span.what { display: block; margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+#pane-plan .cards { margin-top: 18px; }
+
+/* Steps: each phase cut into steps of a few weeks. Rows are pills with the number inset 5px all round, inside cards
+   whose corners are 6px wider, so every shape nests evenly; the chosen step's detail sits under the three columns. */
+.board { width: 100%; max-width: 1060px; margin-top: 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; text-align: left; }
+.sg { display: flex; flex-direction: column; padding: 6px; border-radius: 22px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.sg-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 10px; padding: 10px 12px 12px; }
+.sg-head b { font-size: 15px; font-weight: 600; }
+.sg-head .when { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sg-head .sum { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sg-bar { grid-column: 1 / -1; display: flex; gap: 3px; height: 6px; margin-top: 8px; }
+.sg-bar i { min-width: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.22); transition: background 0.2s ease; }
+.sg-bar i.hl { background: rgba(255, 255, 255, 0.55); }
+.sg-bar i.on { background: #ffffff; }
+.sg-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.srow { width: 100%; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 5px 12px 5px 5px; border: 0; border-radius: 16px; background: transparent; color: #ffffff; font: inherit; text-align: left; cursor: pointer; transition: background 0.2s ease, transform 0.3s var(--spring); }
+.srow .sn { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.14); font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums; transition: background 0.2s ease, color 0.2s ease; }
+.srow .snm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; font-weight: 600; }
+.srow .sw { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.srow:hover { background: rgba(255, 255, 255, 0.08); }
+.srow:hover .sn { background: rgba(255, 255, 255, 0.24); }
+.srow:active { transform: scale(0.98); transition-duration: 0.12s; }
+.srow[aria-pressed="true"] { background: rgba(255, 255, 255, 0.17); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+.srow[aria-pressed="true"] .sn { background: #ffffff; color: #6a1742; }
+.srow[aria-pressed="true"] .sw { color: var(--ink-2); }
+.srow:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; }
+.sdet { width: 100%; max-width: 1060px; margin-top: 12px; padding: 16px 18px; border-radius: 22px; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 12px 24px -12px rgba(24, 0, 16, 0.4); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); text-align: left; }
+.sd-in { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; }
+.sd-in.swap { animation: swapIn 0.4s var(--out); }
+@keyframes swapIn { from { opacity: 0; transform: translateY(6px); } }
+.sd-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; min-width: 0; }
+.sd-n { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #ffffff; color: #6a1742; font: 700 17px/1 var(--display); font-variant-numeric: tabular-nums; box-shadow: 0 0 16px rgba(0, 0, 0, 0.18); }
+.sd-title { min-width: 0; display: grid; gap: 2px; }
+.sd-title h3 { margin: 0; font: 700 18px/1.25 var(--display); }
+.sd-meta { font-size: 12.5px; color: var(--muted); }
+.sd-stats { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.sd-stats span { padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sd-nav { flex: none; display: flex; gap: 6px; }
+.sd-col { min-width: 0; }
+.sd-col > b { display: block; margin-bottom: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.sd-col p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.sd-parts { display: flex; flex-wrap: wrap; gap: 6px; }
+/* What a step includes runs across the panel in one row of chips, after its label. */
+.sd-inc { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 4px 12px; }
+.sd-inc > b { flex: none; margin: 0; }
+#pane-steps .lead, #pane-team .lead { max-width: none; }
+.sd-note { grid-column: 1 / -1; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.45; color: var(--faint); }
+
+/* Team: everyone on one screen */
+#pane-team { padding-inline: 44px; }
+.crew { width: 100%; max-width: 1060px; margin-top: 22px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; text-align: left; }
+.cv { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: rgba(0, 0, 0, 0.18); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); transition: transform 0.45s var(--spring), background 0.25s ease, box-shadow 0.25s ease; }
+.cv:hover { transform: translateY(-5px); background: rgba(0, 0, 0, 0.24); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24), 0 14px 26px -10px rgba(0, 0, 0, 0.4); }
+/* Avatars line up at the top of every card, however long the name. */
+.cv-top { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 14px; align-items: start; }
+.avatar { position: relative; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18), 0 10px 24px rgba(0, 0, 0, 0.3); transition: box-shadow 0.3s ease, transform 0.45s var(--spring); }
+.cv:hover .avatar { transform: scale(1.07) rotate(-3deg); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55), 0 10px 24px rgba(0, 0, 0, 0.3); }
+.avatar svg { display: block; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+.avatar.tbd { display: grid; place-items: center; background: rgba(255, 255, 255, 0.06); box-shadow: none; border: 1.5px dashed rgba(255, 255, 255, 0.55); font: 700 24px/1 var(--display); color: rgba(255, 255, 255, 0.85); }
+.cv:hover .avatar.tbd { box-shadow: none; border-color: #ffffff; }
+/* The photo label is a badge centred on the avatar's ring, clear of the silhouette. */
+.ph-tag { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); padding: 1px 6px; border-radius: 999px; background: rgba(22, 16, 54, 0.94); box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.22); font-size: 8.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.cv-name { font: 700 19px/1.2 var(--display); }
+.cv-role { margin-top: 3px; font-size: 13px; line-height: 1.35; color: var(--ink-2); text-wrap: balance; }
+.cv-sum { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.cv-noi { padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.cv-noi b { display: block; margin-bottom: 2px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.cv h3 { margin-bottom: 4px; }
+.xp-row { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 12px; padding: 4px 0; }
+.xp-row::before { content: ""; width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: #ffffff; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16); }
+.xp-row b { display: block; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.xp-row span { display: block; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.tags { margin-top: auto; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); transition: background 0.2s ease, transform 0.3s var(--spring); }
+.tag:hover { background: rgba(255, 255, 255, 0.22); transform: translateY(-2px); }
+.ai-strip { max-width: 1060px; margin-top: 12px; display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); font-size: 13.5px; line-height: 1.4; text-align: left; transition: background 0.2s ease; }
+.ai-strip .pi { width: 28px; height: 28px; border-radius: 50%; flex: none; }
+.ai-strip .pi svg { width: 15px; height: 15px; }
+.ai-strip b { font-weight: 600; white-space: nowrap; }
+.ai-strip span:last-child { color: var(--muted); }
+.ai-strip:hover { background: rgba(255, 255, 255, 0.11); }
+.ai-strip:hover .pi { transform: scale(1.12) rotate(14deg); }
+
+/* Price */
+.pricebox { width: 100%; max-width: 860px; margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; text-align: left; }
+.glass { border-radius: 18px; padding: 20px 22px; background: rgba(0, 0, 0, 0.16); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+.big b { display: block; font: 800 44px/1 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.big span { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+.calc { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--ink-2); }
+.row output, .row strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.after strong { display: inline-block; font: 700 26px/1.1 var(--display); }
+.bump { animation: bump 0.4s var(--spring); }
+@keyframes bump { 40% { transform: scale(1.07); } }
+.save { text-align: right; font-size: 13px; color: #c8f7d9; font-variant-numeric: tabular-nums; }
+.range { --p: 50%; -webkit-appearance: none; appearance: none; width: 100%; height: 22px; margin: 2px 0 0; background: transparent; cursor: pointer; }
+.range::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #ffffff var(--p), rgba(255, 255, 255, 0.2) var(--p)); }
+.range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(255, 255, 255, 0.2); transition: transform 0.3s var(--spring), box-shadow 0.25s ease; }
+.range:hover::-webkit-slider-thumb { transform: scale(1.15); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 6px rgba(255, 255, 255, 0.18); }
+.range:active::-webkit-slider-thumb { transform: scale(1.25); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 9px rgba(255, 255, 255, 0.2); }
+.range::-moz-range-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.2); }
+.range::-moz-range-progress { height: 6px; border-radius: 3px; background: #ffffff; }
+.range::-moz-range-thumb { width: 20px; height: 20px; border: 0; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); }
+.range:focus-visible { outline: 2px solid #ffffff; outline-offset: 4px; border-radius: 4px; }
+/* Each label sits exactly under the thumb's centre for its value: the 20px thumb travels from 10px to 10px short of the end. */
+.ticks5 { position: relative; height: 15px; font-size: 11.5px; line-height: 15px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.ticks5 span { position: absolute; top: 0; left: calc(10px + (100% - 20px) * var(--t)); transform: translateX(-50%); white-space: nowrap; transition: color 0.2s ease, transform 0.3s var(--spring); }
+.ticks5 span.on { color: #ffffff; font-weight: 700; transform: translateX(-50%) scale(1.12); }
+.ticks5 span:first-child { left: 0; transform: none; transform-origin: left center; }
+.ticks5 span:last-child { left: auto; right: 0; transform: none; transform-origin: right center; }
+.ticks5 span:first-child.on, .ticks5 span:last-child.on { transform: scale(1.12); }
+.phase-list h3.gap { margin-top: 16px; }
+.pp { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1px 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.pp:last-child { border-bottom: 0; }
+.pp b { font-size: 14.5px; font-weight: 600; }
+.pp .amt { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pp .when { grid-column: 1 / -1; font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+.phase-list .note { margin-top: 6px; }
+.terms { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.term { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 2px 10px; align-content: start; }
+.term .pi { grid-row: span 2; width: 28px; height: 28px; border-radius: 9px; }
+.term .pi svg { width: 15px; height: 15px; }
+.term b { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.term span:last-child { font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+.term:hover .pi { transform: scale(1.12) rotate(-7deg); }
+
+/* Questions: one answer open at a time, opening smoothly */
+.faq { width: 100%; max-width: 700px; margin-top: 24px; text-align: left; border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); interpolate-size: allow-keywords; }
+.faq details::details-content { block-size: 0; overflow: clip; opacity: 0; transition: block-size 0.35s var(--out), opacity 0.3s ease, content-visibility 0.35s allow-discrete; }
+.faq details[open]::details-content { block-size: auto; opacity: 1; }
+.faq summary { position: relative; isolation: isolate; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 -10px; padding: 13px 10px; border-radius: 10px; font-size: 15.5px; font-weight: 600; }
+/* The hover highlight floats 3px clear of the dividers above and below instead of touching them. */
+.faq summary::before { content: ""; position: absolute; inset: 3px 0; z-index: -1; border-radius: 9px; transition: background 0.2s ease; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; flex: none; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, 0.1); font-size: 18px; line-height: 1; font-weight: 400; transition: transform 0.4s var(--spring), background 0.2s ease; }
+.faq summary:hover::before { background: rgba(255, 255, 255, 0.06); }
+.faq summary:hover::after { background: rgba(255, 255, 255, 0.2); }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq summary:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.faq p { padding: 0 2px 16px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.faq-end { margin-top: 16px; font-size: 13.5px; color: var(--muted); }
+
+/* Footer: the round Next button, sticky and blurred, with progress around it */
+.foot { position: sticky; bottom: 0; z-index: 6; flex: none; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 8px 52px 8px 22px; background: linear-gradient(180deg, rgba(10, 8, 26, 0.08), rgba(10, 8, 26, 0.3)); border-top: 1px solid rgba(255, 255, 255, 0.1); }
+/* The footer blurs what is behind it only while a screen runs under it. With only the background behind it the blur adds nothing,
+   and Chrome can smear the shadows of hovered cards into it. */
+.foot.over { -webkit-backdrop-filter: blur(18px) saturate(125%); backdrop-filter: blur(18px) saturate(125%); }
+.foot-l { justify-self: start; min-width: 0; }
+.foot-r { justify-self: end; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* The ring and the button share one centre. The button stays 4px inside the ring, even when it grows on hover, and its shadow has no offset, so nothing looks off-centre. */
+.foot-c { --ring: 72px; --btn: 56px; position: relative; width: var(--ring); height: var(--ring); display: grid; place-items: center; }
+.ring { position: absolute; inset: 0; pointer-events: none; }
+.ring svg { display: block; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3; }
+.ring .trk { stroke: rgba(255, 255, 255, 0.16); transition: stroke 0.25s ease; }
+.ring .prg { stroke: #ffffff; stroke-linecap: round; transition: stroke-dashoffset 0.7s var(--out); }
+.foot-c:hover .trk { stroke: rgba(255, 255, 255, 0.32); }
+.round { width: var(--btn); height: var(--btn); border: 0; border-radius: 50%; display: grid; place-items: center; align-content: center; gap: 1px; padding: 0; font-size: 11.5px; font-weight: 700; line-height: 1.1; color: #ffffff; cursor: pointer; background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 62%, rgba(255, 255, 255, 0.12) 100%); box-shadow: 0 0 18px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -8px 16px rgba(0, 0, 0, 0.1); transition: transform 0.4s var(--spring), box-shadow 0.25s ease; }
+.round svg { width: 14px; height: 14px; transition: transform 0.35s var(--spring); }
+.round.top svg { transform: rotate(180deg); }
+.round:hover { transform: scale(1.05); background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.26) 62%, rgba(255, 255, 255, 0.16) 100%); box-shadow: 0 0 22px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -8px 16px rgba(0, 0, 0, 0.1); }
+.round:hover svg { transform: translateY(2px); }
+.round.top:hover svg { transform: rotate(180deg) translateY(2px); }
+.round:active { transform: scale(0.94); transition-duration: 0.12s; }
+.round:focus-visible { outline: 2px solid #ffffff; outline-offset: 8px; }
+.foot-cap { position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); display: grid; gap: 1px; text-align: left; white-space: nowrap; pointer-events: none; }
+.foot-cap.in { animation: capIn 0.45s var(--out); }
+@keyframes capIn { from { opacity: 0; transform: translate(-8px, -50%); } }
+.foot-cap .k { font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.foot-cap b { font-size: 14.5px; font-weight: 600; }
+.back { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; border: 0; background: none; padding: 7px 12px 7px 8px; border-radius: 999px; font-size: 13.5px; font-weight: 600; color: var(--ink-2); cursor: pointer; transition: background 0.2s ease, color 0.2s ease, transform 0.3s var(--spring); }
+.back svg { width: 16px; height: 16px; flex: none; transition: transform 0.35s var(--spring); }
+.back span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.back:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+.back:hover svg { transform: translateY(-2px); }
+.back:active { transform: scale(0.95); }
+.back[hidden] { display: none; }
+.back:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+/* Scope: the Space Lens screen, after CleanMyMac. A glass card and list on the left; glass bubbles floating in space on the right. */
+.pane.tool { flex: 1 1 0; min-height: 0; align-items: stretch; justify-content: flex-start; text-align: left; padding: 22px 52px 14px 22px; }
+.scope { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(300px, 344px) minmax(0, 1fr); gap: 22px; }
+.scope-side, .scope-main { display: flex; flex-direction: column; gap: 12px; min-height: 0; min-width: 0; }
+.disk, .panel { border-radius: 16px; background: rgba(255, 255, 255, 0.075); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 12px 24px -12px rgba(8, 2, 36, 0.45); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+.disk { flex: none; display: grid; gap: 9px; padding: 14px 16px; }
+.disk-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.disk-row h2 { font: 600 15px/1.3 var(--display); letter-spacing: 0; max-width: none; }
+.disk-h { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.disk-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, 0.12); }
+.disk-bar i { display: block; width: 0; height: 100%; transition: width 0.7s var(--out); }
+.disk-bar .bc { background: linear-gradient(90deg, #8ec0fb, #5b9cf0); }
+.disk-bar .bx { background: linear-gradient(90deg, #ffd36a, #fab219); }
+.disk-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); }
+.disk-legend b { font-weight: 600; color: #ffffff; font-variant-numeric: tabular-nums; }
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.dot.l3 { background: radial-gradient(circle at 35% 30%, #c4defd, #5b9cf0 60%); }
+.dot.lx { background: radial-gradient(circle at 35% 30%, #ffe6ad, #fab219 60%); }
+.disk-note { font-size: 12px; line-height: 1.45; color: var(--muted); }
+.roles-h { margin-top: 2px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.roles { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px; }
+.rl { position: relative; width: 25px; height: 25px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.85); cursor: pointer; transition: background 0.2s ease, color 0.2s ease, transform 0.35s var(--spring), box-shadow 0.25s ease; }
+.rl svg { width: 14px; height: 14px; }
+.rl:hover { background: rgba(255, 255, 255, 0.18); color: #ffffff; transform: translateY(-2px); }
+.rl:active { transform: scale(0.9); }
+.rl[aria-pressed="true"] { background: #ffffff; color: #2a1670; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22), 0 6px 14px rgba(0, 0, 0, 0.3); transform: none; }
+.rl .gq { position: absolute; top: 0; right: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 2px rgba(40, 20, 100, 0.9); }
+.rl::after { content: attr(data-label); position: absolute; z-index: 8; top: calc(100% + 7px); left: 50%; transform: translate(-50%, -4px); padding: 4px 10px; border-radius: 8px; background: rgba(52, 46, 72, 0.96); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.35); font-size: 12px; font-weight: 600; line-height: 1.4; color: #ffffff; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.18s ease, transform 0.3s var(--spring); }
+.rl:nth-child(-n+3)::after { left: 0; transform: translate(0, -4px); }
+.rl:nth-last-child(-n+3)::after { left: auto; right: 0; transform: translate(0, -4px); }
+.rl:hover::after, .rl:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.rl:nth-child(-n+3):hover::after, .rl:nth-child(-n+3):focus-visible::after, .rl:nth-last-child(-n+3):hover::after, .rl:nth-last-child(-n+3):focus-visible::after { transform: none; }
+.rl:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.panel { flex: 1 1 auto; min-height: 160px; overflow: auto; display: flex; flex-direction: column; gap: 8px; padding: 14px 8px 8px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.25) transparent; }
+.lp-head { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; align-items: center; padding: 0 8px; }
+.lp-ico { width: 42px; height: 42px; display: grid; place-items: center; }
+.lp-ico svg { display: block; width: 42px; height: 42px; }
+.lp-ico.root { border-radius: 12px; background: var(--g-scope); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3); }
+.lp-ico.root svg { width: 28px; height: 28px; }
+.lp-head h3 { margin: 0; font: 600 15px/1.25 var(--display); }
+.lp-meta { display: block; margin-top: 2px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: pre; }
+.lp-desc { padding: 0 8px; font-size: 12px; line-height: 1.45; color: var(--muted); }
+.lp-desc:empty { display: none; }
+.q { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px; background: rgba(250, 178, 25, 0.2); color: var(--amber); margin-left: 6px; }
+.list { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 1px; }
+.item { width: 100%; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 2px 10px; padding: 6px 8px; border: 0; border-radius: 9px; background: transparent; color: #ffffff; text-align: left; cursor: pointer; animation: rowIn 0.4s var(--out) backwards; transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.3s var(--spring); }
+@keyframes rowIn { from { opacity: 0; transform: translateX(-6px); } }
+.item .ri { grid-row: span 2; align-self: start; }
+.item .ri svg { display: block; width: 22px; height: 22px; }
+.item .nm { font-size: 13.5px; line-height: 1.3; }
+.item .hr { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.item .sub { grid-column: 2 / -1; font-size: 11.5px; line-height: 1.35; color: var(--muted); }
+.item:hover, .item.hl { background: rgba(255, 255, 255, 0.09); }
+.item.on { background: rgba(255, 120, 220, 0.16); box-shadow: inset 0 0 0 1px rgba(255, 150, 230, 0.55); }
+.item:active { transform: scale(0.985); }
+.item:focus-visible { outline: 2px solid #ffffff; outline-offset: 1px; }
+.pathbar { flex: none; display: flex; align-items: center; gap: 6px; min-height: 30px; }
+.arrow-btn { width: 26px; height: 26px; flex: none; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); color: #ffffff; cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease, transform 0.3s var(--spring); }
+.arrow-btn svg { width: 14px; height: 14px; }
+.arrow-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.2); }
+.arrow-btn:active:not(:disabled) { transform: scale(0.88); }
+.arrow-btn:disabled { opacity: 0.35; cursor: default; }
+.arrow-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0 2px; min-width: 0; margin-left: 6px; font-size: 13px; color: var(--faint); }
+.crumb { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 3px 7px; border-radius: 7px; font-size: 13px; font-weight: 500; color: var(--ink-2); cursor: pointer; animation: rowIn 0.35s var(--out) backwards; transition: background 0.2s ease, color 0.2s ease; }
+.crumb svg { width: 16px; height: 16px; flex: none; }
+.crumb:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+.crumb[aria-current="true"] { color: #ffffff; font-weight: 600; cursor: default; background: none; }
+.crumb:focus-visible { outline: 2px solid #ffffff; outline-offset: 1px; }
+.lens { position: relative; flex: 1 1 auto; min-width: 0; min-height: 300px; }
+#lens { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; touch-action: manipulation; }
+#lens .star { fill: #ffffff; }
+#lens .star.hid { visibility: hidden; }
+#lens .tw { animation: twinkle 3.6s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: 0.05; } }
+#lens .bub { cursor: pointer; }
+#lens .fl { animation: floaty 10s ease-in-out infinite; }
+@keyframes floaty { 50% { transform: translate(var(--fx, 0px), var(--fy, -4px)); } }
+#lens .bi { transform-box: fill-box; transform-origin: center; transition: transform 0.45s var(--spring), opacity 0.3s ease; }
+#lens .body { stroke: rgba(255, 255, 255, 0.34); stroke-width: 1.2; transition: stroke 0.2s ease, stroke-width 0.2s ease, filter 0.3s ease; }
+#lens .body.x { stroke: rgba(255, 214, 140, 0.62); }
+#lens .bub.hov .bi { transform: scale(1.06); }
+#lens.hovering .bub:not(.hov) .bi { opacity: 0.6; }
+#lens .bub.hov .body { stroke: rgba(255, 255, 255, 0.9); stroke-width: 1.8; filter: drop-shadow(0 0 14px rgba(200, 165, 255, 0.75)); }
+#lens .bub.sel .body { stroke: #ff8be0; stroke-width: 3; filter: drop-shadow(0 0 12px rgba(255, 120, 220, 0.7)); }
+svg text { pointer-events: none; }
+.lbl-n { font-family: var(--font); font-weight: 600; fill: #ffffff; text-anchor: middle; }
+.lbl-h { font-family: var(--font); font-weight: 500; fill: rgba(255, 255, 255, 0.72); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.lens-stats { flex: none; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 12px; min-height: 18px; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.lens-stats .sep { width: 1px; height: 14px; background: rgba(255, 255, 255, 0.3); }
+.lens-fail { color: var(--ink-2); }
+.tip { position: absolute; z-index: 3; pointer-events: none; max-width: 280px; padding: 9px 12px; border-radius: 10px; font-size: 12.5px; line-height: 1.45; color: rgba(255, 255, 255, 0.86); background: rgba(58, 52, 78, 0.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 12px 28px rgba(0, 0, 0, 0.4); }
+.tip b { display: block; margin-bottom: 2px; font-size: 13.5px; font-weight: 600; color: #ffffff; }
+
+/* Short windows: less air above each screen */
+@media (max-height: 820px) and (min-width: 901px) {
+  .pane { padding-top: 22px; }
+  .hero { width: clamp(60px, 9vh, 76px); margin-bottom: 14px; }
+  .hero.big { width: clamp(130px, 20vh, 170px); margin-bottom: 18px; }
+  .cards, .quick, .pricebox, .board { margin-top: 20px; }
+  .sg { border-radius: 21px; }
+  .sg-head { padding: 8px 12px 10px; }
+  .sg-bar { margin-top: 6px; }
+  .srow { padding: 4px 12px 4px 4px; border-radius: 15px; }
+  .sdet { padding: 12px 16px; }
+  .sd-in { gap: 8px 24px; }
+  .sd-note { padding-top: 9px; }
+  .sg-head .sum { display: none; }
+  .sd-col p { font-size: 13px; line-height: 1.45; }
+  /* Narrower side margins (still clear of the dots), a smaller icon, and denser CV and price cards,
+     so every screen fits above the footer on a 1280×800 window. */
+  .pane { padding-left: 40px; padding-right: 44px; padding-bottom: 18px; }
+  .hero { width: clamp(52px, 7vh, 76px); margin-bottom: 12px; }
+  #pane-team .lead { margin-top: 8px; }
+  .crew { margin-top: 12px; gap: 12px; }
+  .cv { padding: 14px; gap: 7px; }
+  .cv-top { grid-template-columns: 52px minmax(0, 1fr); gap: 12px; }
+  .avatar { width: 52px; height: 52px; }
+  .avatar.tbd { font-size: 21px; }
+  .cv-name { font-size: 18px; }
+  .cv-role { font-size: 12.5px; }
+  .cv-sum { font-size: 13px; line-height: 1.45; }
+  .cv-noi { padding: 8px 10px; font-size: 12.5px; line-height: 1.45; }
+  .cv h3 { margin-bottom: 2px; }
+  .xp-row { gap: 10px; padding: 2px 0; }
+  .xp-row::before { margin-top: 5px; }
+  .xp-row b { font-size: 13.5px; line-height: 1.3; }
+  .xp-row span { font-size: 12.5px; line-height: 1.35; }
+  .tags { gap: 4px; }
+  .tag { padding: 1px 7px; font-size: 11px; }
+  .ai-strip { margin-top: 10px; padding: 6px 14px 6px 6px; font-size: 13px; }
+  .glass { padding: 16px 18px; }
+  .big b { font-size: 38px; }
+  .calc { margin-top: 14px; padding-top: 14px; }
+  .after strong { font-size: 24px; }
+  .terms { margin-top: 14px; padding-top: 12px; gap: 10px 14px; }
+  .term span:last-child { font-size: 12px; line-height: 1.4; }
+  .pp { padding: 7px 0; }
+}
+
+/* Phone and narrow windows: the sidebar becomes a sticky bar with a scrolling strip of sections */
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  .frame { height: auto; padding: 0; }
+  .shell { display: block; height: auto; min-height: 100vh; border-radius: 0; overflow: visible; box-shadow: none; }
+  .bgs { position: fixed; }
+  .dots { display: none; }
+  .side {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; overflow: visible;
+    padding-block: 10px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    background: rgba(8, 6, 22, 0.6); border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .brand { padding: 0; margin-right: auto; }
+  .side-foot { display: contents; }
+  .lang { order: 2; }
+  /* The strip fades out at whichever edge has more sections to scroll to, instead of cutting a label in half. */
+  .groups { --fl: #000; --fr: #000; order: 3; width: 100%; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, var(--fl), #000 28px, #000 calc(100% - 28px), var(--fr)); mask-image: linear-gradient(90deg, var(--fl), #000 28px, #000 calc(100% - 28px), var(--fr)); }
+  .groups.more-l { --fl: transparent; }
+  .groups.more-r { --fr: transparent; }
+  .groups::-webkit-scrollbar { display: none; }
+  .group { display: contents; }
+  .group-h, .side-note, .nv { display: none; }
+  .nav-item { grid-template-columns: 22px auto; gap: 8px; padding: 6px 10px 6px 6px; white-space: nowrap; flex: none; }
+  .icon { width: 22px; height: 22px; }
+  .main { overflow: visible; }
+  .pane, .pane.tool { flex: none; justify-content: flex-start; padding-block: 22px 30px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1, h2 { font-size: 27px; }
+  .ql { flex: 0 0 calc((100% - 10px) / 2); }
+  .cards, .cards.two, .pricebox, .crew, .cols, .terms { grid-template-columns: minmax(0, 1fr); }
+  .board { grid-template-columns: minmax(0, 1fr); }
+  .sd-li { padding: 4px 0 6px; }
+  .sd-li .sdet { margin-top: 0; padding: 14px; border-radius: 16px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+  .sd-in { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .sd-head { flex-wrap: wrap; }
+  .sd-stats { width: 100%; margin-left: 0; justify-content: flex-start; }
+  .sd-nav { display: none; }
+  .scope { display: flex; flex-direction: column; gap: 12px; }
+  .scope-side, .scope-main { display: contents; }
+  .disk { order: 0; }
+  .pathbar { order: 1; }
+  .lens { order: 2; width: 100%; aspect-ratio: 1 / 1.08; min-height: 0; flex: none; }
+  .lens-stats { order: 3; }
+  .panel { order: 4; flex: none; }
+  .foot { -webkit-backdrop-filter: blur(18px) saturate(125%); backdrop-filter: blur(18px) saturate(125%); }
+  .foot { gap: 8px; padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
+  .foot-c { --ring: 64px; --btn: 50px; }
+  .round { font-size: 10.5px; }
+  .round svg { width: 12px; height: 12px; }
+  .round:focus-visible { outline-offset: 6px; }
+  .back span, .foot-cap .k { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  .preloader { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="pl-inner">
+    <div class="pl-orbs">
+      <i class="a" style="left:22px;top:40px;width:72px;height:72px;animation-delay:0.05s"></i>
+      <i class="b" style="left:50px;top:2px;width:34px;height:34px;animation-delay:0.15s"></i>
+      <i class="b" style="left:92px;top:18px;width:40px;height:40px;animation-delay:0.25s"></i>
+      <i class="b" style="left:98px;top:64px;width:44px;height:44px;animation-delay:0.35s"></i>
+      <i class="b" style="left:78px;top:108px;width:34px;height:34px;animation-delay:0.45s"></i>
+      <i class="b" style="left:36px;top:116px;width:30px;height:30px;animation-delay:0.55s"></i>
+      <i class="b" style="left:6px;top:10px;width:30px;height:30px;animation-delay:0.65s"></i>
+    </div>
+    <div class="pl-title" data-i18n="pl.load">Давайте построим CRM</div>
+    <div class="pl-bar"><i></i></div>
+  </div>
+</div>
+
+<div class="frame">
+  <div class="shell">
+    <div class="bgs" aria-hidden="true">
+      <div class="bg bg-overview on" data-bg="overview"></div>
+      <div class="bg bg-scope" data-bg="scope"></div>
+      <div class="bg bg-plan" data-bg="plan"></div>
+      <div class="bg bg-steps" data-bg="steps"></div>
+      <div class="bg bg-safety" data-bg="safety"></div>
+      <div class="bg bg-team" data-bg="team"></div>
+      <div class="bg bg-price" data-bg="price"></div>
+      <div class="bg bg-rights" data-bg="rights"></div>
+      <div class="bg bg-faq" data-bg="faq"></div>
+    </div>
+
+    <aside class="side">
+      <div class="brand">
+        <span class="brand-mark t-overview"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#ffffff"/><circle cx="14.5" cy="13.5" r="3" fill="#ffffff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#ffffff" fill-opacity="0.85"/></svg></span>
+        <div><b>NOI</b><span data-i18n="brand.sub">Предложение</span></div>
+      </div>
+      <nav class="groups" data-i18n-aria="nav.aria" aria-label="Разделы">
+        <span class="nav-ind" id="navInd" aria-hidden="true"></span>
+        <div class="group">
+          <div class="group-h" data-i18n="g.offer">Предложение</div>
+          <button type="button" class="nav-item rip" data-pane="overview" aria-current="page"><span class="icon t-overview"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="6" height="6" rx="1.8" fill="#fff"/><rect x="11" y="3" width="6" height="6" rx="1.8" fill="#fff" fill-opacity="0.75"/><rect x="3" y="11" width="6" height="6" rx="1.8" fill="#fff" fill-opacity="0.75"/><rect x="11" y="11" width="6" height="6" rx="1.8" fill="#fff"/></svg></span><span data-i18n="nav.overview">Обзор</span><span class="nv"></span></button>
+        </div>
+        <div class="group">
+          <div class="group-h" data-i18n="g.project">Проект</div>
+          <button type="button" class="nav-item rip" data-pane="scope"><span class="icon t-scope"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><span data-i18n="nav.scope">Объём</span><span class="nv" id="nvScope">3 970 ч</span></button>
+          <button type="button" class="nav-item rip" data-pane="plan"><span class="icon t-plan"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="8" height="3.4" rx="1.7" fill="#fff"/><rect x="6" y="8.3" width="9" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.85"/><rect x="10" y="13.1" width="7.5" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.7"/></svg></span><span data-i18n="nav.plan">План</span><span class="nv" id="nvPlan">16 мес.</span></button>
+          <button type="button" class="nav-item rip" data-pane="steps"><span class="icon t-steps"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V13.5h3.6V10h3.6V6.5h3.6V3H17v14z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></span><span data-i18n="nav.steps">Шаги</span><span class="nv" id="nvSteps">18</span></button>
+          <button type="button" class="nav-item rip" data-pane="safety"><span class="icon t-safety"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2.2v4.6c0 3.9-2.6 6.8-6 8.2-3.4-1.4-6-4.3-6-8.2V4.7z" fill="#fff"/></svg></span><span data-i18n="nav.safety">Надёжность</span><span class="nv"></span></button>
+          <button type="button" class="nav-item rip" data-pane="team"><span class="icon t-team"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="7" r="3" fill="#fff"/><path d="M2.6 16.6c.5-3 2.5-4.6 4.9-4.6s4.4 1.6 4.9 4.6z" fill="#fff"/><circle cx="14" cy="6.6" r="2.3" fill="#fff" fill-opacity="0.75"/><path d="M13.6 11.4c2.2 0 3.6 1.5 4 4.2h-3.4c-.2-1.7-.8-3.1-1.8-4.1z" fill="#fff" fill-opacity="0.75"/></svg></span><span data-i18n="nav.team">Команда</span><span class="nv"></span></button>
+        </div>
+        <div class="group">
+          <div class="group-h" data-i18n="g.terms">Условия</div>
+          <button type="button" class="nav-item rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><span data-i18n="nav.price">Цена</span><span class="nv" id="nvPrice">$120 000</span></button>
+          <button type="button" class="nav-item rip" data-pane="rights"><span class="icon t-rights"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="#fff"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.8"/></svg></span><span data-i18n="nav.rights">Права</span><span class="nv"></span></button>
+          <button type="button" class="nav-item rip" data-pane="faq"><span class="icon t-faq"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5h10a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5H9.5L6 17v-2.5H5A2.5 2.5 0 0 1 2.5 12V6A2.5 2.5 0 0 1 5 3.5z" fill="#fff"/></svg></span><span data-i18n="nav.faq">Вопросы</span><span class="nv" id="nvFaq">8</span></button>
+        </div>
+      </nav>
+      <div class="side-foot">
+        <div class="lang" id="lang" data-on="ru" role="group" aria-label="Язык / Language">
+          <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <p class="side-note" data-i18n="side.note">Оценка от 5 ноября 2026 года по вашему ТЗ. Цены в долларах США.</p>
+      </div>
+    </aside>
+
+    <nav class="dots" id="dots" data-i18n-aria="dots.aria" aria-label="Экраны"></nav>
+
+    <main class="main" id="main">
+      <section class="pane" id="pane-overview">
+        <div class="hero big" id="ovArt" aria-hidden="true"></div>
+        <h1 data-i18n="ov.h">Система, которой можно доверить деньги клуба</h1>
+        <p class="lead" data-i18n="ov.lead">Полный объём без скрытых доплат. Цена может только снизиться, а первый запуск в клубе — примерно через 3 месяца.</p>
+        <nav class="quick stagger" data-i18n-aria="ql.aria" aria-label="Разделы предложения">
+          <button type="button" class="ql spot rip" data-pane="scope"><span class="icon t-scope"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.scope">Объём</b><span class="qs" id="qsScope">≈ 3 970 ч работы</span></button>
+          <button type="button" class="ql spot rip" data-pane="plan"><span class="icon t-plan"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="8" height="3.4" rx="1.7" fill="#fff"/><rect x="6" y="8.3" width="9" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.85"/><rect x="10" y="13.1" width="7.5" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.7"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.plan">План</b><span class="qs" id="qsPlan">Запуск через ≈ 4 мес.</span></button>
+          <button type="button" class="ql spot rip" data-pane="steps"><span class="icon t-steps"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V13.5h3.6V10h3.6V6.5h3.6V3H17v14z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.steps">Шаги</b><span class="qs" id="qsSteps">18 шагов по 3–5 нед.</span></button>
+          <button type="button" class="ql spot rip" data-pane="safety"><span class="icon t-safety"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2.2v4.6c0 3.9-2.6 6.8-6 8.2-3.4-1.4-6-4.3-6-8.2V4.7z" fill="#fff"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.safety">Надёжность</b><span class="qs" data-i18n="qs.safety">Как защищены деньги</span></button>
+          <button type="button" class="ql spot rip" data-pane="team"><span class="icon t-team"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="7" r="3" fill="#fff"/><path d="M2.6 16.6c.5-3 2.5-4.6 4.9-4.6s4.4 1.6 4.9 4.6z" fill="#fff"/><circle cx="14" cy="6.6" r="2.3" fill="#fff" fill-opacity="0.75"/><path d="M13.6 11.4c2.2 0 3.6 1.5 4 4.2h-3.4c-.2-1.7-.8-3.1-1.8-4.1z" fill="#fff" fill-opacity="0.75"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.team">Команда</b><span class="qs" data-i18n="qs.team">Гио, Лука и архитектор</span></button>
+          <button type="button" class="ql spot rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.price">Цена</b><span class="qs" id="qsPrice">Потолок $120 000</span></button>
+          <button type="button" class="ql spot rip" data-pane="rights"><span class="icon t-rights"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="#fff"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.8"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.rights">Права</b><span class="qs" data-i18n="qs.rights">Код и данные — ваши</span></button>
+          <button type="button" class="ql spot rip" data-pane="faq"><span class="icon t-faq"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5h10a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5H9.5L6 17v-2.5H5A2.5 2.5 0 0 1 2.5 12V6A2.5 2.5 0 0 1 5 3.5z" fill="#fff"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.faq">Вопросы</b><span class="qs" id="qsFaq">8 коротких ответов</span></button>
+        </nav>
+      </section>
+
+      <section class="pane tool" id="pane-scope" hidden>
+        <div class="scope">
+          <div class="scope-side">
+            <div class="disk">
+              <div class="disk-row"><h2 id="dName">Весь объём</h2><span class="disk-h" id="dHours">3 970 ч</span></div>
+              <div class="disk-bar" aria-hidden="true"><i class="bc" id="barCode"></i><i class="bx" id="barX"></i></div>
+              <div class="disk-legend">
+                <span class="key"><i class="dot l3"></i><span data-i18n="lg.code">Программирование</span><b id="lgCode"></b></span>
+                <span class="key"><i class="dot lx"></i><span data-i18n="lgx">Сверх программирования</span><b id="lgX"></b></span>
+              </div>
+              <p class="disk-note" data-i18n="sc.lead">Янтарное — то, что обычно не считают: тесты, запуски на месте, управление, дизайн, перенос данных. Около трети работы.</p>
+              <div class="roles-h" data-i18n="roles.h" aria-hidden="true">Чьи экраны показать</div>
+              <div class="roles" id="roles" role="group" data-i18n-aria="roles.aria" aria-label="Чьи экраны показать"></div>
+            </div>
+            <aside class="panel" data-i18n-aria="lens.panel" aria-label="Состав на этом уровне">
+              <div class="lp-head"><span class="lp-ico" id="fIcon" aria-hidden="true"></span><div><h3 id="fName">Вся система</h3><span class="lp-meta" id="fMeta"></span></div></div>
+              <p class="lp-desc" id="fDesc"></p>
+              <ol class="list" id="list"></ol>
+            </aside>
+          </div>
+          <div class="scope-main">
+            <div class="pathbar">
+              <button type="button" class="arrow-btn" id="lensBack" data-i18n-aria="lens.back" aria-label="Назад" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4.5L6.5 10l5.5 5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button type="button" class="arrow-btn" id="lensFwd" data-i18n-aria="lens.fwd" aria-label="Вперёд" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4.5l5.5 5.5L8 15.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <nav class="crumbs" id="crumbs" data-i18n-aria="lens.crumbs" aria-label="Уровень"></nav>
+            </div>
+            <div class="lens">
+              <svg id="lens" role="img" data-i18n-aria="lens.aria" aria-label="Карта частей системы NOI: размер пузыря показывает часы работы"></svg>
+              <div class="tip" id="tip" hidden></div>
+              <p class="lens-fail" id="lensFail" hidden data-i18n="lens.fail">Для карты нужна библиотека d3, а она не загрузилась. Обновите страницу.</p>
+            </div>
+            <p class="lens-stats" id="lensStats" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-plan" hidden>
+        <div class="hero bob" aria-hidden="true">
+          <svg viewBox="0 0 140 140"><defs><linearGradient id="capA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b5f0dc"/></linearGradient><linearGradient id="capB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9fff6"/><stop offset="1" stop-color="#7fdcbc"/></linearGradient><linearGradient id="capC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d2f7ea"/><stop offset="1" stop-color="#4fbf98"/></linearGradient></defs><rect x="12" y="24" width="66" height="26" rx="13" fill="url(#capA)"/><rect x="36" y="57" width="82" height="26" rx="13" fill="url(#capB)"/><rect x="66" y="90" width="62" height="26" rx="13" fill="url(#capC)"/><circle cx="78" cy="37" r="5" fill="#0e655f" fill-opacity="0.55"/><circle cx="118" cy="70" r="5" fill="#0e655f" fill-opacity="0.55"/><circle cx="128" cy="103" r="5" fill="#0e655f" fill-opacity="0.55"/></svg>
+        </div>
+        <h2 data-i18n="pl.h">Три запуска, а не один большой</h2>
+        <p class="lead" data-i18n="pl.lead">Каждый этап заканчивается запуском в клубе и вашей приёмкой. Вы обязуетесь только на следующий этап.</p>
+        <div class="timeline">
+          <div class="ticks" id="ticks"></div>
+          <div class="track" id="track"></div>
+        </div>
+        <div class="cols" id="cols"></div>
+        <div class="cards two stagger">
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M6.8 10.2l2.2 2.2 4.2-4.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="ac.b">Как принимаем этап</b><span data-i18n="ac.s">Ваши сценарии из ТЗ и регрессионные тесты переносим в новый код. Этап принят, когда они проходят, ночь в клубе прошла без критических ошибок и вы подписали приёмку.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3l7 3.8-7 3.8-7-3.8z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 10.2l7 3.8 7-3.8M3 13.6l7 3.8 7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></span><b data-i18n="wy.b">Почему деньги — вторым этапом</b><span data-i18n="wy.s">Деньгам нужен фундамент: роли, права и журнал действий. Этап 1 строит его и проверяет на сцене, где ошибка не стоит денег. Хотите начать с денег — поменяем порядок, потолок цены тот же.</span></div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-steps" hidden>
+        <h2 id="stH">18 шагов по 3–5 недель</h2>
+        <p class="lead" data-i18n="st.lead">Демо каждые две недели. Следующий шаг начинаем только после вашей проверки.</p>
+        <div class="board stagger" id="board" role="group" aria-label="Шаги по этапам" data-i18n-aria="st.aria"></div>
+        <div class="sdet" id="sdet">
+          <div class="sd-in" id="sdIn">
+            <div class="sd-head">
+              <span class="sd-n" id="sdN" aria-hidden="true">1</span>
+              <div class="sd-title" aria-live="polite"><h3 id="sdName"></h3><span class="sd-meta" id="sdMeta"></span></div>
+              <div class="sd-stats" id="sdStats"></div>
+              <div class="sd-nav">
+                <button type="button" class="arrow-btn" id="sdPrev" data-i18n-aria="sd.prev" aria-label="Предыдущий шаг"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4.5L6.5 10l5.5 5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button type="button" class="arrow-btn" id="sdNext" data-i18n-aria="sd.next" aria-label="Следующий шаг"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4.5l5.5 5.5L8 15.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+            <div class="sd-col"><b data-i18n="sd.get">Что вы получите</b><p id="sdGet"></p></div>
+            <div class="sd-col"><b data-i18n="sd.check">Как проверите</b><p id="sdCheck"></p></div>
+            <div class="sd-col sd-inc"><b data-i18n="sd.parts">Что входит</b><div class="sd-parts" id="sdParts"></div></div>
+            <p class="sd-note" data-i18n="sd.note">Часы шага включают его долю дизайна, тестов, управления и резерва. Цена — доля потолка по часам; аудит может её только снизить.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-safety" hidden>
+        <div class="hero bob" aria-hidden="true">
+          <svg viewBox="0 0 140 140"><defs><linearGradient id="shG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9fe3f2"/></linearGradient></defs><path d="M70 12l46 17v35c0 30-20 53-46 64-26-11-46-34-46-64V29z" fill="url(#shG)"/><path d="M49 70l15 15 28-31" fill="none" stroke="#0a5873" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 data-i18n="sf.h">Ошибка не сможет тихо потерять деньги</h2>
+        <p class="lead" data-i18n="sf.lead">Правила денег живут в базе данных и проверяются тестами — как вы и начали в своём ТЗ.</p>
+        <div class="cards stagger">
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M7 7h6M7 10h6M7 13h3" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="sf1.b">Журнал без правок</b><span data-i18n="sf1.s">Каждая операция — новая запись, ничего не удаляется. Исправление — отдельная запись.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M8.6 7.6l1.8-1.1V14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="sf2.b">Без двойных списаний</b><span data-i18n="sf2.s">У каждой операции свой ключ: повторный клик или обрыв сети не создадут второй платёж.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6" ry="2.5" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M4 5.5v9c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-9M4 10c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5" fill="none" stroke="#fff" stroke-width="1.7"/></svg></span><b data-i18n="sf3.b">Правила — в самой базе</b><span data-i18n="sf3.s">Баланс не уйдёт в минус, смена не закроется дважды: это запрещает PostgreSQL, а не экран.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 8a6 6 0 0 1 10.4-2.6M15.5 12a6 6 0 0 1-10.4 2.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M15.4 2.8v3.2h-3.2M4.6 17.2V14h3.2" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="sf4.b">Сверка каждый день</b><span data-i18n="sf4.s">Автоматическая сверка с R‑Keeper и кассой. Расхождение сразу попадает в отчёт управляющему.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 5L4 9l4 4" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9H12a4 4 0 0 1 0 8H9" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="sf5.b">Возвраты и отмены</b><span data-i18n="sf5.s">Входят в объём: с причиной, автором и подтверждением старшего.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="7" r="3" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M3 16.5c.6-2.8 2.5-4.3 5-4.3" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="14" cy="14" r="3.5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M14 12.4V14l1 .8" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg></span><b data-i18n="sf6.b">Видно, кто что сделал</b><span data-i18n="sf6.s">Права на каждое действие и журнал: кто, что и когда изменил. Тихо поправить его нельзя.</span></div>
+        </div>
+        <div class="ready">
+          <h3 data-i18n="rd.h">Готовность к работе в клубе</h3>
+          <div class="chips stagger">
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd1">Отдельная тестовая среда</span></span>
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd2">Восстановление из копий</span></span>
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd3">Обновления без простоя</span></span>
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd4">Мониторинг сервера</span></span> <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd8">Двухфакторный вход</span></span>
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd5">Тест на пиковую нагрузку</span></span>
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd6">Интеграции с повтором при сбое</span></span>
+            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd7">Пилот в одном клубе</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-team" hidden>
+        <h2 data-i18n="tm.h">Кто будет делать</h2>
+        <p class="lead" data-i18n="tm.lead">Двое — на продукте и фронтенде, старший архитектор проверяет деньги и данные.</p>
+        <div class="crew stagger">
+          <article class="cv spot">
+            <header class="cv-top">
+              <div class="avatar"><svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="avG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6cf0"/><stop offset="1" stop-color="#d0569a"/></linearGradient></defs><rect width="128" height="128" fill="url(#avG)"/><circle cx="64" cy="52" r="22" fill="#ffffff" fill-opacity="0.85"/><path d="M22 128c3-26 20-40 42-40s39 14 42 40z" fill="#ffffff" fill-opacity="0.85"/></svg><span class="ph-tag" data-i18n="cv.photo">Фото</span></div>
+              <div><div class="cv-name" data-i18n="cv.gio.name">Гио Хеладзе</div><div class="cv-role" data-i18n="cv.gio.role">Старший UX-дизайнер · фронтенд NOI</div></div>
+            </header>
+            <p class="cv-sum" data-i18n="cv.gio.sum">Проектирует интерфейсы для сложных рабочих систем — HR, госсектор, финансы — так, чтобы ими было просто пользоваться каждый день.</p>
+            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.gio.noi">Дизайн-система в Storybook, все экраны и взаимодействия, запуски на месте.</span></p>
+            <div>
+              <h3 data-i18n="cv.xp">Опыт</h3>
+              <div class="xp-row"><div><b>Webiz ERP</b><span data-i18n="cv.gio.x1">UX-дизайн HR-системы</span></div></div>
+              <div class="xp-row"><div><b>FINA</b><span data-i18n="cv.gio.x2">UX-дизайн государственной CRM</span></div></div>
+              <div class="xp-row"><div><b>Bank of Georgia</b><span data-i18n="cv.gio.x3">Финансовые продукты</span></div></div>
+            </div>
+            <div class="tags"><span class="tag" data-i18n="sk.ux">UX-дизайн</span><span class="tag" data-i18n="sk.ds">Дизайн-системы</span><span class="tag">Storybook</span><span class="tag" data-i18n="sk.erp">ERP и CRM</span><span class="tag" data-i18n="sk.fin">Финансовые продукты</span></div>
+          </article>
+          <article class="cv spot">
+            <header class="cv-top">
+              <div class="avatar"><svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="avL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fae8a"/><stop offset="1" stop-color="#2a6fd6"/></linearGradient></defs><rect width="128" height="128" fill="url(#avL)"/><circle cx="64" cy="52" r="22" fill="#ffffff" fill-opacity="0.85"/><path d="M22 128c3-26 20-40 42-40s39 14 42 40z" fill="#ffffff" fill-opacity="0.85"/></svg><span class="ph-tag" data-i18n="cv.photo">Фото</span></div>
+              <div><div class="cv-name" data-i18n="cv.luka.name">Лука Схиладзе</div><div class="cv-role" data-i18n="cv.luka.role">Продуктовый инженер · фронтенд NOI</div></div>
+            </header>
+            <p class="cv-sum" data-i18n="cv.luka.sum">Ведёт продукт от идеи до релиза: дизайн, интерфейс, анимация и код. Говорит по-русски, по-грузински и по-английски.</p>
+            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.luka.noi">Фронтенд на React, интерактив и анимации интерфейса, запуски на месте.</span></p>
+            <div>
+              <h3 data-i18n="cv.xp">Опыт</h3>
+              <div class="xp-row"><div><b data-i18n="cv.luka.x1b">Стартап-приложение · 2025–2026</b><span data-i18n="cv.luka.x1">Приложение целиком — от идеи до App Store</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.luka.x2b">Независимый разработчик · 2023–2025</b><span data-i18n="cv.luka.x2">Сайты и приложения от идеи до релиза</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.luka.x3b">Постпродакшн · 2019–2021</b><span data-i18n="cv.luka.x3">Руководство монтажом, звуком и моушн-дизайном; цветокоррекция фильмов</span></div></div>
+            </div>
+            <div class="tags"><span class="tag">React</span><span class="tag">React Native</span><span class="tag">Figma</span><span class="tag">Rive</span><span class="tag">Lottie</span><span class="tag" data-i18n="sk.motion">Моушн-дизайн</span></div>
+          </article>
+          <article class="cv spot">
+            <header class="cv-top">
+              <div class="avatar tbd" aria-hidden="true">?</div>
+              <div><div class="cv-name" data-i18n="cv.ar.name">Старший backend‑архитектор</div><div class="cv-role" data-i18n="cv.ar.role">Имя и CV — до подписания договора</div></div>
+            </header>
+            <p class="cv-sum" data-i18n="cv.ar.sum">Подбираем под NOI. Вы сможете поговорить с ним до старта и отказаться от кандидата.</p>
+            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.ar.noi">Задаёт модель данных и правила денег, проверяет R‑Keeper и каждое изменение, где есть деньги.</span></p>
+            <div>
+              <h3 data-i18n="cv.ar.h">Кого берём</h3>
+              <div class="xp-row"><div><b data-i18n="cv.ar.x1b">Финансовые системы</b><span data-i18n="cv.ar.x1">Платежи, балансы и сверки</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.ar.x2b">Ваш стек</b><span data-i18n="cv.ar.x2">PostgreSQL и Node.js в продакшене</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.ar.x3b">Проверка до найма</b><span data-i18n="cv.ar.x3">Тестовое задание на вашей логике денег</span></div></div>
+            </div>
+            <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">Node.js</span><span class="tag">Socket.IO</span><span class="tag">R‑Keeper</span></div>
+          </article>
+        </div>
+        <p class="ai-strip"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l1.7 4.6L16.3 9l-4.6 1.7L10 15.5l-1.7-4.8L3.7 9l4.6-1.9z" fill="#fff"/></svg></span><b data-i18n="r3.b">ИИ под контролем:</b><span data-i18n="r3.s">ChatGPT, Codex и Claude берут рутину по правилам архитектора, а каждое изменение проверяет человек.</span></p>
+      </section>
+
+      <section class="pane" id="pane-price" hidden>
+        <h2 data-i18n="pr.h">Цена может только снизиться</h2>
+        <p class="lead" data-i18n="pr.lead">Потолок известен сразу — аудит может его только уменьшить.</p>
+        <div class="pricebox">
+          <div class="glass spot">
+            <div class="big"><b id="priceBig">$120 000</b><span data-i18n="pr.cap">потолок за всю систему — не вырастет</span></div>
+            <div class="calc">
+              <div class="row"><label for="keep" data-i18n="calc.label">Аудит оставит из вашего кода</label><output id="keepOut" for="keep">20%</output></div>
+              <input type="range" class="range" id="keep" min="0" max="40" step="5" value="20">
+              <div class="ticks5" id="keepTicks" aria-hidden="true"><span style="--t: 0">0%</span><span style="--t: 0.25">10%</span><span style="--t: 0.5">20%</span><span style="--t: 0.75">30%</span><span style="--t: 1">40%</span></div>
+              <div class="row after"><span data-i18n="calc.after">Ваша цена</span><strong id="priceAfter">≈ $103 000</strong></div>
+              <div class="save" id="priceSave">экономия ≈ $17 000</div>
+              <p class="note" data-i18n="calc.note">Оставленное вычитаем с 70% цены, доработанное — с 30%. Аудит тоже засчитывается.</p>
+            </div>
+            <div class="terms">
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="t1.b">Оплата по этапам</b><span data-i18n="t1.s">Аванс при старте этапа, остальное — после вашей приёмки.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8l5.5 2v4.4c0 3.6-2.4 6.3-5.5 7.6-3.1-1.3-5.5-4-5.5-7.6V4.8z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.5 10l1.8 1.8 3.4-3.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="t2.b">Гарантия 3 месяца</b><span data-i18n="t2.s">После каждого запуска чиним ошибки бесплатно, дальше — поддержка по договору.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.2V4.5c0-.8.7-1.5 1.5-1.5h5.7l7 7-7.2 7.2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="#fff"/></svg></span><b data-i18n="t3.b">Риск оценки — наш</b><span data-i18n="t3.s">Ошиблись — цена не растёт. Новые пожелания — с ценой заранее.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M6.5 10h7" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="t4.b">Не входит в цену</b><span data-i18n="t4.s">Серверы, лицензии R‑Keeper, внешний пентест, дорога.</span></div>
+            </div>
+          </div>
+          <div class="glass phase-list spot">
+            <h3 data-i18n="pp.h">По этапам</h3>
+            <div id="ppList"></div>
+            <h3 class="gap" data-i18n="bf.h">Как просили в ТЗ</h3>
+            <div id="bfList"></div>
+            <p class="note" data-i18n="bf.note">Те же часы, разложенные на три части из вашего ТЗ: текущие проблемы решает новый фундамент, а не заплатки. Управление проектом распределено между частями.</p>
+          </div>
+        </div>
+</section>
+
+      <section class="pane" id="pane-rights" hidden>
+        <div class="hero bob" aria-hidden="true">
+          <svg viewBox="0 0 140 140"><defs><linearGradient id="lkG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d8"/><stop offset="1" stop-color="#f2c661"/></linearGradient></defs><path d="M44 62V46a26 26 0 0 1 52 0v16" fill="none" stroke="#fff1c4" stroke-width="11" stroke-linecap="round"/><rect x="26" y="60" width="88" height="66" rx="17" fill="url(#lkG)"/><circle cx="70" cy="89" r="8.5" fill="#7a5a10"/><rect x="66" y="91" width="8" height="17" rx="4" fill="#7a5a10"/></svg>
+        </div>
+        <h2 data-i18n="rt.h">Всё, что мы создадим, — ваше</h2>
+        <p class="lead" data-i18n="rt.lead">Код, данные, дизайн и права на продукт принадлежат вам. Мы подрядчик, а не совладелец.</p>
+        <div class="cards stagger">
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h7l3.5 3.5v11.5H5z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.5 11l2 2 3.5-4" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="rt1.b">Права переходят вам</b><span data-i18n="rt1.s">Исключительные права на код, дизайн и документацию — ваши по мере оплаты этапов.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="5.5" rx="1.6" fill="none" stroke="#fff" stroke-width="1.7"/><rect x="3.5" y="11" width="13" height="5.5" rx="1.6" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="6.5" cy="6.2" r="1" fill="#fff"/><circle cx="6.5" cy="13.7" r="1" fill="#fff"/></svg></span><b data-i18n="rt2.b">Ваши серверы и аккаунты</b><span data-i18n="rt2.s">Репозиторий, база и доступы — на ваше имя с первого дня. Уйти можно в любой момент, со всем кодом.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.7"/></svg></span><b data-i18n="rt3.b">NDA до доступа</b><span data-i18n="rt3.s">Подписываем NDA до того, как увидим код. Для разработки — обезличенная копия данных.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.2V4.5c0-.8.7-1.5 1.5-1.5h5.7l7 7-7.2 7.2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="#fff"/></svg></span><b data-i18n="rt4.b">NOI можно продавать</b><span data-i18n="rt4.s">Вы вправе продавать и лицензировать NOI другим клубам. Мы не используем ваш код и дизайн в других проектах.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3l7 3.8-7 3.8-7-3.8z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 10.2l7 3.8 7-3.8M3 13.6l7 3.8 7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></span><b data-i18n="rt5.b">Ваш стек</b><span data-i18n="rt5.s">Остаёмся на Node.js, PostgreSQL, React и Socket.IO — продолжить сможет любой сильный разработчик.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5c2.2-.9 4.3-.9 6 .5 1.7-1.4 3.8-1.4 6-.5v11c-2.2-.9-4.3-.9-6 .5-1.7-1.4-3.8-1.4-6-.5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 5v11" stroke="#fff" stroke-width="1.6"/></svg></span><b data-i18n="rt6.b">Документация к каждому этапу</b><span data-i18n="rt6.s">Схема данных, решения и инструкции лежат рядом с кодом. Ничего не держится только у нас в голове.</span></div>
+        </div>
+      </section>
+
+      <section class="pane" id="pane-faq" hidden>
+        <div class="hero bob" aria-hidden="true">
+          <svg viewBox="0 0 140 140"><defs><linearGradient id="bub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c3d4f6"/></linearGradient></defs><path d="M30 26h80a18 18 0 0 1 18 18v40a18 18 0 0 1-18 18H62l-22 18v-18H30a18 18 0 0 1-18-18V44a18 18 0 0 1 18-18z" fill="url(#bub)"/><text x="70" y="80" text-anchor="middle" font-size="44" font-weight="800" fill="#3b5889" style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif">?</text></svg>
+        </div>
+        <h2 data-i18n="fq.h">Коротко о главном</h2>
+        <div class="faq">
+          <details name="faq"><summary data-i18n="q1">Зачем строить заново, а не продолжить мой код?</summary><p data-i18n="a1">Мы не решаем это заранее. Аудит оценивает каждую часть, и всё, что остаётся, вычитается из цены.</p></details>
+          <details name="faq"><summary data-i18n="q2">Чем эта оценка отличается от первой карты?</summary><p data-i18n="a2">Первая карта считала программирование по старинке — 2 440 ч. Теперь черновики кода пишут ИИ-агенты, а человек проверяет каждое изменение, поэтому кода закладываем на 28% меньше. Сверху — тесты, запуски, управление и резерв: около трети работы.</p></details>
+          <details name="faq"><summary data-i18n="q3">Кто будет старшим архитектором?</summary><p data-i18n="a3">Подбираем под NOI: опыт в финансовых системах, PostgreSQL и Node.js. Представим его с CV до подписания договора — вы сможете поговорить с ним и отказаться от кандидата.</p></details>
+          <details name="faq"><summary data-i18n="q4">Можно дальше работать с ChatGPT и Codex?</summary><p data-i18n="a4">Да. ИИ остаётся в работе, архитектор задаёт правила и проверяет всё, что касается денег и доступа. Логика продукта и приоритеты — за вами.</p></details>
+          <details name="faq"><summary data-i18n="q5">Как будет с R-Keeper?</summary><p data-i18n="a5">Зависит от вашей версии и дилера. Уточним на аудите, до того как это повлияет на цену или сроки.</p></details>
+          <details name="faq"><summary data-i18n="q6">Кто проводит аудит и насколько он независим?</summary><p data-i18n="a6">Наш партнёр — мы говорим об этом прямо. Поэтому каждый вывод подкреплён ссылкой на файл, функцию или тест, и его может перепроверить любой разработчик. Хотите — пригласите второго, независимого эксперта.</p></details>
+          <details name="faq"><summary data-i18n="q7">Как клуб будет работать во время разработки?</summary><p data-i18n="a7">Как сейчас. Каждую часть запускаем только после вашей приёмки, данные переносим, пока клуб закрыт, а на первой ночи мы рядом.</p></details>
+          <details name="faq"><summary data-i18n="q8">Что если кто-то из вас уйдёт?</summary><p data-i18n="a8">Работа не встанет: код, документация и дизайн-система лежат в вашем репозитории, фронтенд знают двое, бэкенд описан архитектором. Замену согласуем с вами.</p></details>
+        </div>
+        <p class="faq-end" data-i18n="fq.end">Остались вопросы — напишите в чат, где вы получили эту ссылку.</p>
+      </section>
+
+      <footer class="foot" id="foot">
+        <div class="foot-l">
+          <button type="button" class="back rip" id="footBack" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 12.5l5-5 5 5" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="footBackName"></span></button>
+        </div>
+        <div class="foot-c">
+          <span class="ring" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="46"/><circle class="prg" id="footRing" cx="50" cy="50" r="46"/></svg></span>
+          <button type="button" class="round rip" id="footNext"><span id="footNextLbl">Далее</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5l5 5 5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="foot-cap" id="footCap" aria-hidden="true"><span class="k" id="footCapK">Дальше</span><b id="footNextName">Объём</b></span>
+        </div>
+        <div class="foot-r" id="footCount">1 / 8</div>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  { id: 'all', name: ['Всё', 'All'], note: ['Вся система целиком.', 'The whole system.'] },
+  { id: 'crm', name: ['CRM менеджера', 'Manager CRM'], note: ['Рабочее место управляющей и менеджеров зала: очередь, гости, столы, услуги, смены.', 'The workplace for the club manager and floor managers: queue, guests, tables, services, shifts.'] },
+  { id: 'dj', name: ['Пульт DJ', 'DJ console'], note: ['Отдельный экран для DJ: управление сценой.', 'A separate screen the DJ uses to run the stage.'] },
+  { id: 'tablet', name: ['Планшет артисток', 'Performers’ tablet'], note: ['Общий планшет: текущая ротация и свои статусы.', 'A shared tablet with the current rotation and each performer’s status.'] },
+  { id: 'security', name: ['Пост охраны', 'Security post'], note: ['Отметка прихода и ухода, журнал охраны.', 'Marking arrivals and departures, and the security log.'] },
+  { id: 'cash', name: ['Арт-касса', 'Art cash desk'], note: ['Запуск и оплата услуг артисток, таймеры, долги.', 'Starting and taking payment for artist services, timers, debts.'] },
+  { id: 'finance', name: ['Финансовый отдел', 'Finance office'], note: ['Платежи, начисления, выплаты, отчёты, загрузка из Excel.', 'Payments, accruals, payouts, reports, Excel import.'] },
+  { id: 'hr', name: ['Кадры и кастинг', 'HR & casting'], note: ['Сотрудники, кастинг, графики, условия работы.', 'Staff, casting, schedules, pay terms.'] },
+  { id: 'departments', name: ['Службы клуба', 'Club departments'], note: ['Салон, костюмерная, ателье, охрана, хостес, сервис.', 'Salon, costume room, tailoring, security, hostesses, service.'] },
+  { id: 'staff-app', name: ['Приложение сотрудника', 'Staff app'], guess: true, note: ['Телефон сотрудника: график, замены, заявки на отпуск и больничный, уведомления.', 'On each employee’s phone: schedule, swaps, time-off and sick-leave requests, notifications.'] },
+  { id: 'core', name: ['Ядро системы', 'Core system'], note: ['То, что не видно на экранах, но без чего ничего не работает: права, сервер, интеграции, тесты.', 'What you don’t see on screen but nothing works without: permissions, server, integrations, tests.'] }
+];
+
+const D = (ru, en, h, p) => ({ n: [ru, en], h, p });
+const DATA = { n: ['Вся система', 'Whole system'], c: [
+  { n: ['Общая платформа', 'Shared platform'], s: ['Платформа', 'Platform'], d: ['Фундамент, на котором работают все экраны: вход, права, журнал действий, несколько клубов, сервер.', 'The foundation every screen runs on: sign-in, permissions, action log, multiple clubs, server.'], c: [
+    { n: ['Вход и сессии', 'Sign-in and sessions'], c: [D('Вход по логину и паролю', 'Login and password', 6, ['core']), D('Быстрый вход на общих планшетах', 'Quick sign-in on shared tablets', 8, ['core', 'tablet', 'dj', 'security']), D('Сессии и выход со всех устройств', 'Sessions and sign-out on all devices', 9, ['core']), D('Двухфакторная авторизация', 'Two-factor authentication', 15, ['core', 'crm', 'finance'])] },
+    { n: ['Роли и права доступа', 'Roles and permissions'], c: [D('Роли сотрудников и отделов', 'Staff and department roles', 11, ['core']), D('Права на каждое действие', 'Permission for every action', 19, ['core']), D('Каждый отдел видит только своё', 'Each department sees only its own', 15, ['core'])] },
+    { n: ['Журнал действий', 'Action log'], c: [D('Кто, что и когда изменил', 'Who changed what, and when', 11, ['core']), D('История каждой записи', 'History of every record', 11, ['core']), D('Защита истории от правок', 'History protected from edits', 8, ['core'])] },
+    { n: ['Несколько клубов', 'Multiple clubs'], c: [D('Отдельные данные каждого клуба', 'Separate data for each club', 19, ['core']), D('Свои настройки и правила клуба', 'Each club’s own settings and rules', 11, ['core']), D('Переключение между клубами', 'Switching between clubs', 8, ['core', 'crm'])] },
+    { n: ['Синхронизация в реальном времени', 'Real-time sync'], s: ['Синхронизация', 'Sync'], c: [D('Мгновенные обновления на всех экранах', 'Instant updates on every screen', 19, ['core']), D('Работа при обрыве связи', 'Working through dropped connections', 15, ['core']), D('Одновременные действия сотрудников', 'Staff acting at the same time', 11, ['core'])] },
+    { n: ['Интерфейс для компьютера, планшета и телефона', 'Interface for computer, tablet and phone'], s: ['Интерфейс', 'Interface'], c: [D('Единый дизайн и компоненты', 'One design and component set', 26, ['core']), D('Версия для планшетов', 'Tablet version', 19, ['core', 'tablet', 'dj', 'security']), D('Версия для телефона', 'Phone version', 15, ['core', 'staff-app'])] },
+    { n: ['Сервер, резервные копии, обновления', 'Server, backups, updates'], s: ['Сервер и копии', 'Server & backups'], c: [D('Установка на вашем сервере', 'Setup on your server', 19, ['core']), D('Резервные копии и восстановление', 'Backups and restore', 15, ['core']), D('Мониторинг и оповещения о сбоях', 'Monitoring and failure alerts', 11, ['core']), D('Обновления без потери данных', 'Updates without data loss', 15, ['core'])] }
+  ]},
+  { n: ['Коммерческие услуги и арт-касса', 'Commercial services and art cash desk'], s: ['Услуги и арт-касса', 'Services & cash desk'], d: ['Посиделки, приваты, «Гулять», «Клетка»: запуск, таймеры, продления и оплата.', 'Sit-downs, private dances, “Gulyat”, “Kletka”: starting, timers, extensions and payment.'], c: [
+    { n: ['Посиделки 30 и 60 минут', 'Sit-downs, 30 and 60 minutes'], s: ['Посиделки', 'Sit-downs'], c: [D('Запуск: стол и артистка', 'Start: table and performer', 7, ['cash', 'crm']), D('Таймер и предупреждение', 'Timer and warning', 7, ['cash', 'crm']), D('Продление', 'Extension', 7, ['cash', 'crm'])] },
+    { n: ['Приваты: индивидуальные и групповые', 'Private dances: individual and group'], s: ['Приваты', 'Private dances'], c: [D('Индивидуальный приват', 'Individual private dance', 8, ['cash']), D('Групповой приват', 'Group private dance', 10, ['cash']), D('Свободные комнаты', 'Free rooms', 6, ['cash', 'crm'])] },
+    { n: ['Услуга «Гулять»', 'The “Gulyat” service'], s: ['«Гулять»', '“Gulyat”'], c: [D('Пакеты по времени', 'Time packages', 10, ['cash']), D('Замена пакета на ходу', 'Changing the package mid-service', 18, ['cash']), D('Досрочное завершение и перерасчёт', 'Early end and recalculation', 14, ['cash', 'finance'])] },
+    { n: ['VIP-комнаты «Клетка»', '“Kletka” VIP rooms'], s: ['«Клетка»', '“Kletka”'], c: [D('Занятость комнат', 'Room occupancy', 10, ['cash', 'crm']), D('Таймер и продление', 'Timer and extension', 10, ['cash'])] },
+    { n: ['Продления и замены', 'Extensions and changes'], c: [D('Продление любой услуги', 'Extending any service', 10, ['cash']), D('Замена артистки или пакета', 'Changing the performer or package', 14, ['cash']), D('Досрочное завершение', 'Ending early', 10, ['cash'])] },
+    { n: ['Что можно совмещать', 'What can run together'], s: ['Совмещение', 'Combinations'], c: [D('Правила совмещения услуг', 'Rules for combining services', 18, ['core']), D('Запрет недопустимых сочетаний', 'Blocking forbidden combinations', 10, ['cash', 'crm'])] },
+    { n: ['Таймеры, долги, оплата', 'Timers, debts, payment'], c: [D('Все таймеры на одном экране', 'All timers on one screen', 10, ['cash', 'crm']), D('Пробитие в кассе', 'Ringing up at the till', 14, ['cash']), D('Долги и частичная оплата', 'Debts and partial payment', 18, ['cash', 'finance'])] },
+    { n: ['Заработок артисток и доли сотрудников', 'Performer earnings and staff shares'], s: ['Заработок и доли', 'Earnings & shares'], c: [D('Заработок за каждую услугу', 'Earnings for each service', 18, ['finance']), D('Доли менеджеров и сотрудников', 'Manager and staff shares', 14, ['finance']), D('Итоги смены для артистки', 'Shift summary for each performer', 10, ['finance', 'staff-app'])] }
+  ]},
+  { n: ['Финансы и отчёты', 'Finance and reporting'], s: ['Финансы', 'Finance'], d: ['Платежи, кассовые смены, начисления и выплаты, долги, отчёты.', 'Payments, cash-register shifts, accruals and payouts, debts, reports.'], c: [
+    { n: ['Наличные и безналичные', 'Cash and cashless'], s: ['Платежи', 'Payments'], c: [D('Учёт всех платежей', 'Recording every payment', 19, ['finance']), D('Связь платежа с услугой или заказом', 'Linking a payment to a service or order', 19, ['finance', 'cash'])] },
+    { n: ['Кассовые смены', 'Cash-register shifts'], c: [D('Открытие и закрытие смены', 'Opening and closing a shift', 11, ['finance', 'cash']), D('Сверка наличных', 'Counting the cash', 15, ['finance', 'cash'])] },
+    { n: ['Начисления и выплаты сотрудникам', 'Staff accruals and payouts'], s: ['Начисления и выплаты', 'Accruals & payouts'], c: [D('Начисления по услугам и ставкам', 'Accruals from services and rates', 19, ['finance']), D('Защита от двойных выплат', 'Protection from double payouts', 19, ['finance', 'core']), D('Выплаты и ведомости', 'Payouts and pay sheets', 15, ['finance'])] },
+    { n: ['Долги гостей', 'Guest debts'], c: [D('Учёт долгов', 'Tracking debts', 11, ['finance', 'crm']), D('Частичное погашение', 'Partial repayment', 11, ['finance', 'cash']), D('Контроль сроков', 'Due-date control', 8, ['finance'])] },
+    { n: ['Распределение процентов', 'Percentage splits'], s: ['Проценты', 'Percentages'], c: [D('Правила процентов по услугам', 'Percentage rules per service', 19, ['finance']), D('Индивидуальные условия', 'Individual terms', 11, ['finance', 'hr'])] },
+    { n: ['Расходы и доходы', 'Expenses and income'], c: [D('Расходы по категориям', 'Expenses by category', 11, ['finance']), D('Доходы клуба', 'Club income', 11, ['finance'])] },
+    { n: ['Отчёты', 'Reports'], c: [D('Отчёт за смену', 'Shift report', 15, ['finance', 'crm']), D('Отчёт за месяц и любой период', 'Monthly and any-period report', 19, ['finance']), D('Выгрузка в Excel', 'Export to Excel', 11, ['finance'])] },
+    { n: ['Загрузка данных из Excel', 'Importing data from Excel'], s: ['Загрузка из Excel', 'Excel import'], c: [D('Импорт файла', 'File import', 11, ['finance']), D('Проверка и сопоставление полей', 'Checking and matching fields', 11, ['finance'])] }
+  ]},
+  { n: ['Гости и залы', 'Guests and halls'], s: ['Гости и залы', 'Guests & halls'], d: ['Схемы залов, брони, карточки гостей, лояльность и депозиты.', 'Hall maps, bookings, guest profiles, loyalty and deposits.'], c: [
+    { n: ['Интерактивные схемы залов', 'Interactive hall maps'], s: ['Схемы залов', 'Hall maps'], c: [D('Основной зал', 'Main hall', 20, ['crm']), D('Караоке', 'Karaoke', 13, ['crm']), D('VIP-зоны', 'VIP areas', 13, ['crm']), D('Статусы столов в реальном времени', 'Live table statuses', 13, ['crm'])] },
+    { n: ['Бронирование и лист ожидания', 'Bookings and waiting list'], s: ['Брони', 'Bookings'], c: [D('Бронь стола', 'Table booking', 13, ['crm']), D('Лист ожидания свободных столов', 'Waiting list for free tables', 13, ['crm'])] },
+    { n: ['Пересадки и передача менеджеру', 'Table moves and handover'], s: ['Пересадки', 'Table moves'], c: [D('Пересадка гостей', 'Moving guests', 8, ['crm']), D('Передача стола другому менеджеру', 'Handing a table to another manager', 8, ['crm'])] },
+    { n: ['Карточки гостей', 'Guest profiles'], c: [D('История визитов', 'Visit history', 10, ['crm']), D('История покупок', 'Purchase history', 6, ['crm']), D('Заметки менеджеров', 'Manager notes', 6, ['crm'])] },
+    { n: ['Лояльность, скидки, депозиты', 'Loyalty, discounts, deposits'], s: ['Лояльность', 'Loyalty'], c: [D('Карты лояльности', 'Loyalty cards', 13, ['crm']), D('Скидки', 'Discounts', 6, ['crm', 'cash']), D('Депозиты', 'Deposits', 13, ['crm', 'cash'])] },
+    { n: ['Откуда пришли гости', 'Where guests come from'], s: ['Источники гостей', 'Guest sources'], c: [D('Сайт, звонок, промоутер', 'Website, call, promoter', 10, ['crm'])] },
+    { n: ['Расходы и активность по столам', 'Spend and activity per table'], s: ['Активность столов', 'Table activity'], c: [D('Сумма по столу сейчас', 'Current table total', 10, ['crm']), D('Активность стола за вечер', 'Table activity over the night', 10, ['crm'])] }
+  ]},
+  { n: ['Внешние системы', 'Outside systems'], d: ['Подключение кассы R-Keeper, телефонии Mango Office и системы кастинга HandFlow.', 'Connecting the R-Keeper POS, Mango Office telephony and the HandFlow casting system.'], c: [
+    { n: ['Касса R-Keeper', 'R-Keeper POS'], s: ['R-Keeper', 'R-Keeper'], c: [D('Барная касса', 'Bar cash desk', 34, ['core', 'finance']), D('Арт-касса', 'Art cash desk', 42, ['core', 'cash']), D('Сверка NOI и R-Keeper', 'Reconciling NOI and R-Keeper', 34, ['core', 'finance']), D('Повторы и сбои связи', 'Retries and connection failures', 26, ['core'])] },
+    { n: ['Телефония Mango Office', 'Mango Office telephony'], s: ['Mango Office', 'Mango Office'], c: [D('Входящие звонки', 'Incoming calls', 13, ['core', 'crm']), D('Карточка гостя по номеру', 'Guest profile from the caller’s number', 13, ['crm']), D('История звонков', 'Call history', 8, ['crm'])] },
+    { n: ['Кастинг HandFlow', 'HandFlow casting'], s: ['HandFlow', 'HandFlow'], c: [D('Кандидаты', 'Candidates', 13, ['core', 'hr']), D('Этапы кастинга', 'Casting stages', 8, ['hr']), D('Перевод в штат', 'Moving to staff', 8, ['hr'])] }
+  ]},
+  { n: ['Тестирование и запуск', 'Testing and launch'], s: ['Тесты и запуск', 'Tests & launch'], d: ['Тесты, проверка безопасности и пилотный запуск в одном клубе. Технический аудит — отдельный шаг.', 'Tests, security checks and a pilot launch in one club. The technical audit is a separate step.'], c: [
+    { n: ['Автоматические тесты', 'Automated tests'], s: ['Тесты', 'Tests'], c: [D('Финансовые правила', 'Financial rules', 22, ['core']), D('Сквозные сценарии', 'End-to-end scenarios', 22, ['core']), D('Одновременные действия', 'Simultaneous actions', 15, ['core'])] },
+    { n: ['Нагрузочное тестирование', 'Load testing'], s: ['Нагрузка', 'Load'], c: [D('Десятки сотрудников одновременно', 'Dozens of staff at once', 19, ['core'])] },
+    { n: ['Защита', 'Data protection'], c: [D('Проверка на взлом', 'Penetration test', 15, ['core']), D('Защита персональных данных', 'Personal data protection', 15, ['core'])] },
+    { n: ['Пилот в одном клубе', 'Pilot in one club'], s: ['Пилот', 'Pilot'], c: [D('Обучение сотрудников', 'Staff training', 11, ['core']), D('Запуск и доработки по ходу', 'Launch and fixes along the way', 19, ['core'])] }
+  ]},
+  { n: ['Сотрудники', 'Staff'], d: ['База, кастинг, графики, приход через пост охраны, условия работы.', 'Staff database, casting, schedules, arrival at the security post, pay terms.'], c: [
+    { n: ['База сотрудников, артисток и кандидатов', 'Database of staff, performers and candidates'], s: ['База сотрудников', 'Staff database'], c: [D('Карточка сотрудника', 'Employee profile', 12, ['hr']), D('Документы и контакты', 'Documents and contacts', 6, ['hr']), D('Поиск и фильтры', 'Search and filters', 6, ['hr', 'crm'])] },
+    { n: ['Кастинг, стажировка, приём, увольнение', 'Casting, trial, hiring, dismissal'], s: ['Кастинг и приём', 'Casting & hiring'], c: [D('Этапы кастинга', 'Casting stages', 9, ['hr']), D('Стажировка', 'Trial period', 6, ['hr']), D('Приём в штат и увольнение', 'Hiring and dismissal', 9, ['hr'])] },
+    { n: ['Графики, замены, отпуска, больничные', 'Schedules, swaps, vacations, sick leave'], s: ['Графики', 'Schedules'], c: [D('График смен', 'Shift schedule', 15, ['hr', 'crm']), D('Замены', 'Swaps', 9, ['hr', 'crm', 'staff-app']), D('Заявки на отпуск и больничный', 'Vacation and sick-leave requests', 12, ['hr', 'staff-app'])] },
+    { n: ['Приход и уход через пост охраны', 'Arrival and departure at the security post'], s: ['Пост охраны', 'Security post'], c: [D('Отметка прихода и ухода', 'Marking arrival and departure', 9, ['security']), D('Опоздания и отсутствия', 'Late arrivals and absences', 6, ['security', 'hr', 'crm'])] },
+    { n: ['Ставки, проценты, бонусы, удержания', 'Rates, percentages, bonuses, deductions'], s: ['Условия работы', 'Pay terms'], c: [D('Индивидуальные условия', 'Individual terms', 12, ['hr', 'finance']), D('Бонусы', 'Bonuses', 6, ['hr', 'finance']), D('Удержания и штрафы', 'Deductions and fines', 9, ['hr', 'finance'])] },
+    { n: ['История изменений по сотруднику', 'Change history per employee'], s: ['История', 'History'], c: [D('Кто и когда менял условия', 'Who changed terms, and when', 12, ['hr'])] }
+  ]},
+  { n: ['Сцена и ротация', 'Stage and rotation'], s: ['Сцена и ротация', 'Stage & rotation'], d: ['Очередь артисток, режимы сцены, пульт DJ и общий планшет.', 'The performer queue, stage modes, the DJ console and the shared tablet.'], c: [
+    { n: ['Автоматическая очередь', 'Automatic queue'], s: ['Очередь', 'Queue'], c: [D('Приход и готовность', 'Arrival and readiness', 15, ['crm', 'tablet']), D('Перерывы и возврат в очередь', 'Breaks and returning to the queue', 15, ['crm', 'tablet']), D('Уход на услугу и возврат', 'Leaving for a service and coming back', 19, ['crm', 'cash']), D('Ручная правка очереди', 'Manual queue edits', 11, ['crm'])] },
+    { n: ['Режимы сцены', 'Stage modes'], c: [D('Два пилона: такты 5 минут, цикл 10 минут', 'Two poles: 5-minute sets, 10-minute cycle', 11, ['dj', 'crm']), D('Один пилон: выступление 10 минут', 'One pole: 10-minute performance', 8, ['dj', 'crm']), D('Смена режима без сбоя очереди', 'Switching modes without breaking the queue', 11, ['dj'])] },
+    { n: ['Пульт DJ', 'DJ console'], c: [D('Кнопки START, PAUSE, RESUME, NEXT', 'START, PAUSE, RESUME, NEXT buttons', 9, ['dj']), D('Кто на сцене и кто следующий', 'Who is on stage and who is next', 8, ['dj']), D('Таймер выступления', 'Performance timer', 6, ['dj'])] },
+    { n: ['Экран очереди для менеджера', 'Queue screen for managers'], s: ['Очередь у менеджера', 'Manager’s queue'], c: [D('Вся очередь и статусы', 'Full queue and statuses', 9, ['crm']), D('Перестановки и исключения', 'Reordering and exceptions', 10, ['crm'])] },
+    { n: ['Общий планшет артисток', 'Performers’ shared tablet'], s: ['Планшет артисток', 'Performers’ tablet'], c: [D('Текущая ротация крупно', 'Current rotation in large type', 8, ['tablet']), D('Свой статус: готова, перерыв', 'Own status: ready, on a break', 8, ['tablet']), D('Вызов к сцене', 'Call to the stage', 4, ['tablet'])] }
+  ]},
+  { n: ['Службы клуба', 'Club departments'], d: ['Салон, костюмерная, ателье, охрана, хостес, сервис и вызовы сотрудников.', 'Salon, costume room, tailoring, security, hostesses, service and staff calls.'], c: [
+    { n: ['Салон красоты', 'Beauty salon'], s: ['Салон', 'Salon'], c: [D('Запись к мастерам', 'Booking the stylists', 12, ['departments']), D('Загрузка мастеров', 'Stylists’ workload', 6, ['departments'])] },
+    { n: ['Костюмерная и ателье', 'Costume room and tailoring'], s: ['Костюмерная', 'Costume room'], c: [D('Учёт костюмов', 'Costume inventory', 9, ['departments']), D('Выдача и возврат', 'Issue and return', 6, ['departments']), D('Заказы ателье', 'Tailoring orders', 6, ['departments'])] },
+    { n: ['Охрана', 'Security team'], c: [D('Журнал смены охраны', 'Security shift log', 6, ['security', 'departments']), D('Инциденты', 'Incidents', 6, ['security'])] },
+    { n: ['Хостес', 'Hostesses'], c: [D('Встреча и рассадка гостей', 'Greeting and seating guests', 12, ['departments', 'crm'])] },
+    { n: ['Сервисный отдел', 'Service department'], s: ['Сервис', 'Service'], c: [D('Заявки и их выполнение', 'Requests and their completion', 12, ['departments'])] },
+    { n: ['Уведомления и вызовы сотрудников', 'Notifications and staff calls'], s: ['Уведомления', 'Notifications'], c: [D('Вызов к столу или на сцену', 'Calling to a table or the stage', 9, ['crm', 'tablet', 'staff-app']), D('Внутренние сообщения', 'Internal messages', 9, ['staff-app', 'departments']), D('Push-уведомления', 'Push notifications', 6, ['staff-app'])] }
+  ]},
+  { n: ['Сверх программирования', 'Beyond coding'], s: ['Сверх программирования', 'Beyond coding'], extra: true, d: ['То, что обычно не включают в оценку: резерв на стабилизацию, поддержка запусков, управление проектом, ручное тестирование, дизайн, экраны настроек, перенос данных и документация.', 'What estimates usually leave out: a stabilisation reserve, launch support, project management, manual testing, design, settings screens, data migration and docs.'], c: [
+    { n: ['Резерв на стабилизацию (10%)', 'Stabilisation reserve (10%)'], s: ['Резерв на стабилизацию', 'Stabilisation reserve'], c: [D('Исправления и стыковка модулей', 'Fixes and joining modules together', 179, ['core'])] },
+    { n: ['Поддержка запусков на месте', 'On-site launch support'], s: ['Поддержка запусков', 'Launch support'], c: [D('Запуск сцены', 'Stage launch', 50, ['core']), D('Запуск денежной части', 'Money launch', 70, ['core']), D('Запуск всего клуба', 'Whole-club launch', 40, ['core'])] },
+    { n: ['Управление проектом (6%)', 'Project management (6%)'], s: ['Управление', 'Management'], c: [D('Демо, приёмка и оценка новых пожеланий', 'Demos, sign-off and quotes for new requests', 105, ['core'])] },
+    { n: ['Ручное тестирование (5%)', 'Manual testing (5%)'], s: ['Ручные тесты', 'Manual testing'], c: [D('Проверка каждого релиза', 'Checking every release', 85, ['core'])] },
+    { n: ['Дизайн экранов', 'Screen design'], s: ['Дизайн', 'Design'], c: [D('Этап «Сцена»', 'Stage phase', 40, ['core']), D('Этап «Деньги»', 'Money phase', 45, ['core']), D('Этап «Весь клуб»', 'Whole-club phase', 35, ['core'])] },
+    { n: ['Экраны настроек', 'Settings screens'], s: ['Настройки', 'Settings'], c: [D('Цены, пакеты, проценты и роли', 'Prices, packages, percentages and roles', 70, ['core'])] },
+    { n: ['Перенос данных', 'Data migration'], s: ['Перенос данных', 'Migration'], c: [D('Сотрудники, гости и долги из Excel', 'Staff, guests and debts from Excel', 50, ['core'])] },
+    { n: ['Документация и передача', 'Docs and handover'], s: ['Документация', 'Docs'], c: [D('Код, инструкции и передача проекта', 'Code, instructions and handover', 30, ['core'])] }
+  ]}
+]};
+
+const sumHours = n => (n.c ? n.c.reduce((s, c) => s + sumHours(c), 0) : n.h);
+
+// English copy. The Russian copy is the page's own text, read from the DOM on load.
+const EN = {
+  'pl.load': 'Let’s build the CRM',
+  'brand.sub': 'Proposal',
+  'nav.aria': 'Sections',
+  'dots.aria': 'Screens',
+  'g.offer': 'Proposal',
+  'g.project': 'Project',
+  'g.terms': 'Terms',
+  'nav.overview': 'Overview',
+  'nav.scope': 'Scope',
+  'nav.plan': 'Plan',
+  'nav.steps': 'Steps',
+  'st.lead': 'A demo every two weeks. We start the next step only after you’ve checked the last one.',
+  'st.aria': 'Steps by phase',
+  'sd.get': 'What you get',
+  'sd.check': 'How you check it',
+  'sd.parts': 'What’s included',
+  'sd.note': 'A step’s hours include its share of design, testing, management and the reserve. Its price is its share of the ceiling by hours, and the audit can only lower it.',
+  'sd.prev': 'Previous step',
+  'sd.next': 'Next step',
+  'nav.safety': 'Reliability',
+  'nav.team': 'Team',
+  'nav.price': 'Price',
+  'nav.rights': 'Rights',
+  'nav.faq': 'Questions',
+  'side.note': 'Estimate of 5 November 2026, based on your brief. Prices in US dollars.',
+  'ov.h': 'A system you can trust with the club’s money',
+  'ov.lead': 'The full scope with no hidden extras. The price can only go down, and the first launch in the club is about 3 months away.',
+  'ql.aria': 'Sections of the proposal',
+  'qs.safety': 'How the money is protected',
+  'qs.team': 'Gio, Luka and an architect',
+  'qs.rights': 'The code and data are yours',
+  'sc.lead': 'Amber is what estimates usually skip: testing, on-site launches, management, design, data migration. About a third of the work.',
+  'roles.aria': 'Whose screens to show',
+  'roles.h': 'Show screens for',
+  'lens.panel': 'Contents at this level',
+  'lens.crumbs': 'Level',
+  'lens.aria': 'Map of the parts of NOI: bubble size shows hours of work',
+  'lens.back': 'Back',
+  'lens.fwd': 'Forward',
+  'lens.fail': 'The bubble map needs the d3 library, which didn’t load. Reload the page to try again.',
+  'lg.code': 'Coding',
+  'lgx': 'Beyond coding',
+  'pl.h': 'Three launches, not one big bang',
+  'pl.lead': 'Each phase ends with a launch in the club and your sign-off. You only commit to the next phase.',
+  'ac.b': 'How a phase is signed off',
+  'ac.s': 'Your scenarios from the brief and your regression tests move into the new code. A phase is done when they pass, a club night runs with no critical errors, and you sign off.',
+  'wy.b': 'Why money is the second phase',
+  'wy.s': 'Money needs a foundation: roles, permissions and the action log. Phase 1 builds it and proves it on the stage, where a mistake costs nothing. Want money first? We’ll swap the order, and the ceiling stays the same.',
+  'sf.h': 'A mistake can’t quietly lose money',
+  'sf.lead': 'The money rules live in the database and are proven by tests, the way your brief already started.',
+  'sf1.b': 'An append-only ledger',
+  'sf1.s': 'Every operation is a new entry and nothing is deleted. A correction is an entry of its own.',
+  'sf2.b': 'No double charges',
+  'sf2.s': 'Each operation has its own key, so a double click or a dropped connection can’t create a second payment.',
+  'sf3.b': 'Rules in the database itself',
+  'sf3.s': 'A balance can’t go negative and a shift can’t close twice: PostgreSQL forbids it, not the screen.',
+  'sf4.b': 'Daily reconciliation',
+  'sf4.s': 'Automatic reconciliation with R‑Keeper and the till. Any mismatch goes straight to the manager’s report.',
+  'sf5.b': 'Refunds and cancellations',
+  'sf5.s': 'In scope, each with a reason, an author and a senior’s approval.',
+  'sf6.b': 'You see who did what',
+  'sf6.s': 'Permissions on every action and a log of who changed what and when. It can’t be quietly edited.',
+  'rd.h': 'Ready for a real club night',
+  'rd1': 'A separate test environment',
+  'rd2': 'Backups with tested restores',
+  'rd3': 'Updates that never stop the club',
+  'rd4': 'Server monitoring',
+  'rd5': 'A load test for a peak night',
+  'rd6': 'Integrations that retry on failure',
+  'rd7': 'A pilot in one club',
+  'rd8': 'Two-factor sign-in',
+  'tm.h': 'Who builds it',
+  'tm.lead': 'Two of us on the product and front end, and a senior architect who reviews the money and the data.',
+  'cv.photo': 'Photo',
+  'cv.noi': 'On NOI',
+  'cv.xp': 'Experience',
+  'cv.gio.name': 'Gio Kheladze',
+  'cv.gio.role': 'Senior UX designer · NOI front end',
+  'cv.gio.sum': 'Designs interfaces for complex working systems (HR, government, finance) that people find easy to use every day.',
+  'cv.gio.noi': 'The design system in Storybook, every screen and interaction, on-site launches.',
+  'cv.gio.x1': 'UX design for an HR system',
+  'cv.gio.x2': 'UX design for a government CRM',
+  'cv.gio.x3': 'Finance products',
+  'sk.ux': 'UX design',
+  'sk.ds': 'Design systems',
+  'sk.erp': 'ERP and CRM',
+  'sk.fin': 'Finance products',
+  'sk.motion': 'Motion design',
+  'cv.luka.name': 'Luka Skhiladze',
+  'cv.luka.role': 'Product engineer · NOI front end',
+  'cv.luka.sum': 'Takes products from idea to release: design, interface, motion and code. Speaks Russian, Georgian and English.',
+  'cv.luka.noi': 'The React front end, interaction and interface motion, on-site launches.',
+  'cv.luka.x1b': 'Startup app · 2025–2026',
+  'cv.luka.x1': 'The whole app, from idea to the App Store',
+  'cv.luka.x2b': 'Independent developer · 2023–2025',
+  'cv.luka.x2': 'Sites and apps from idea to release',
+  'cv.luka.x3b': 'Post-production · 2019–2021',
+  'cv.luka.x3': 'Supervising editing, sound and motion design; film colour grading',
+  'cv.ar.name': 'Senior backend architect',
+  'cv.ar.role': 'Name and CV before you sign',
+  'cv.ar.sum': 'We’re hiring for NOI. You can talk to them before we start and turn the candidate down.',
+  'cv.ar.noi': 'Sets the data model and the money rules, and reviews R‑Keeper and every change that touches money.',
+  'cv.ar.h': 'Who we hire',
+  'cv.ar.x1b': 'Financial systems',
+  'cv.ar.x1': 'Payments, balances and reconciliation',
+  'cv.ar.x2b': 'Your stack',
+  'cv.ar.x2': 'PostgreSQL and Node.js in production',
+  'cv.ar.x3b': 'Checked before hiring',
+  'cv.ar.x3': 'A test task on your money logic',
+  'r3.b': 'AI, under review:',
+  'r3.s': 'ChatGPT, Codex and Claude take the routine work under the architect’s rules, and a person reviews every change.',
+  'pr.h': 'The price can only go down',
+  'pr.lead': 'You know the ceiling now, and the audit can only lower it.',
+  'pr.cap': 'ceiling for the whole system; it won’t go up',
+  'calc.label': 'Code the audit keeps',
+  'calc.after': 'Your price',
+  'calc.note': 'Kept parts come off at 70% of their price, fixed ones at 30%. The audit counts too.',
+  'pp.h': 'By phase',
+  'bf.h': 'As your brief asks',
+  'bf.note': 'The same hours, split into the three parts from your brief: a new foundation, not patches, solves the current problems. Project management is spread across the three.',
+  't1.b': 'Pay per phase',
+  't1.s': 'A deposit when a phase starts, the rest after your sign-off.',
+  't2.b': 'A 3-month warranty',
+  't2.s': 'After each launch we fix defects free, then support under a contract.',
+  't3.b': 'Estimate risk is ours',
+  't3.s': 'If we underestimate, the price holds. New requests are priced up front.',
+  't4.b': 'Not in the price',
+  't4.s': 'Servers, R‑Keeper licences, an external pentest, travel.',
+  'rt.h': 'Everything we build is yours',
+  'rt.lead': 'The code, data, design and product rights belong to you. We’re the contractor, not a co-owner.',
+  'rt1.b': 'The rights pass to you',
+  'rt1.s': 'Exclusive rights to the code, design and docs become yours as each phase is paid.',
+  'rt2.b': 'Your servers and accounts',
+  'rt2.s': 'The repository, database and access are in your name from day one. You can leave at any point, with all the code.',
+  'rt3.b': 'An NDA before access',
+  'rt3.s': 'We sign an NDA before we see the code, and develop on an anonymised copy of the data.',
+  'rt4.b': 'You can sell NOI',
+  'rt4.s': 'You may sell and license NOI to other clubs. We don’t reuse your code or design elsewhere.',
+  'rt5.b': 'Your stack',
+  'rt5.s': 'We stay on Node.js, PostgreSQL, React and Socket.IO, so any strong developer can carry on.',
+  'rt6.b': 'Docs with every phase',
+  'rt6.s': 'The data schema, decisions and how-tos sit next to the code. Nothing lives only in our heads.',
+  'fq.h': 'The short answers',
+  'q1': 'Why build again instead of continuing my code?',
+  'a1': 'We don’t decide that up front. The audit rates every part, and everything that stays comes off the price.',
+  'q2': 'How is this different from the first map?',
+  'a2': 'The first map counted coding the traditional way: 2,440 h. Now AI agents write the first drafts and a person reviews every change, so we plan 28% less coding. On top come testing, launches, management and a reserve: about a third of the work.',
+  'q3': 'Who will the senior architect be?',
+  'a3': 'We’re hiring for NOI: experience with financial systems, PostgreSQL and Node.js. We’ll introduce them with a CV before you sign, so you can talk to them and turn the candidate down.',
+  'q4': 'Can I keep working with ChatGPT and Codex?',
+  'a4': 'Yes. AI stays in the process; the architect sets the rules and reviews everything that touches money or access. The product logic and priorities stay with you.',
+  'q5': 'What about R-Keeper?',
+  'a5': 'It depends on your version and dealer. We confirm it during the audit, before it affects the price or the timeline.',
+  'q6': 'Who runs the audit, and how independent is it?',
+  'a6': 'A partner of ours, and we say so up front. That’s why every finding cites a file, function or test that any developer can re-check. You’re welcome to bring in a second, independent reviewer.',
+  'q7': 'How does the club run during development?',
+  'a7': 'As it does today. Each part goes live only after your sign-off, we move data while the club is closed, and we’re on site for the first night.',
+  'q8': 'What if one of you leaves?',
+  'a8': 'The work doesn’t stop: the code, docs and design system live in your repository, two of us know the front end, and the architect documents the back end. We agree any replacement with you.',
+  'fq.end': 'Anything else? Write to us in the chat where you got this link.'
+};
+const PANES = ['overview', 'scope', 'plan', 'steps', 'safety', 'team', 'price', 'rights', 'faq'];
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const state = { lang: 'ru', pane: 'overview' };
+const langListeners = [], paneListeners = [];
+const onLang = f => langListeners.push(f);
+const onPane = f => paneListeners.push(f);
+
+const ruPlural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[a > 10 && a < 20 ? 2 : b === 1 ? 0 : b >= 2 && b <= 4 ? 1 : 2]; };
+const fmtNum = (v, lang) => Math.round(v).toLocaleString(lang === 'en' ? 'en-US' : 'ru-RU');
+const fmtHours = (v, lang) => fmtNum(v, lang) + (lang === 'en' ? ' h' : ' ч');
+const fmtMoney = (v, lang) => (lang === 'en' ? '$' + Math.round(v / 1000) + 'k' : '$' + fmtNum(Math.round(v / 1000) * 1000, lang));
+const fmtMonths = (n, lang) => (lang === 'en' ? n + (n === 1 ? ' month' : ' months') : n + ' ' + ruPlural(n, ['месяц', 'месяца', 'месяцев']));
+
+const TOTAL = sumHours(DATA);
+const PER_MONTH = 250;   // two people full-time: productive hours a month together
+const PRICE = 68125;    // price ceiling for the full scope
+const KEEP_CREDIT = 0.7; // a part the audit keeps comes off at 70% of its price
+const SPAN = 10;
+const PHASES = [
+  { name: ['Сцена', 'Stage'], what: ['Платформа, роли, журнал действий, ротация, пульт DJ, планшет артисток', 'Platform, roles, action log, rotation, DJ console, performers’ tablet'], hours: 735 },
+  { name: ['Деньги', 'Money'], what: ['Услуги и арт-касса, финансы, R‑Keeper для арт-кассы', 'Services and the art cash desk, finance, R‑Keeper for the art desk'], hours: 1035 },
+  { name: ['Весь клуб', 'Whole club'], what: ['Гости и залы, кадры, службы клуба, Mango Office, HandFlow, бар в R‑Keeper', 'Guests and halls, HR, club departments, Mango Office, HandFlow, the R‑Keeper bar'], hours: 775 }
+];
+let acc = 0;
+PHASES.forEach(p => { p.start = acc; p.end = acc + p.hours / PER_MONTH; acc = p.end; });
+// Her brief asks for separate estimates for fixing the current problems, completing the MVP and preparing for production.
+// The same hours cut that way: the shared platform; the product sections with design and settings; testing, launches,
+// migration, docs, manual testing and the stabilisation reserve. Management is spread across the three in proportion.
+const BRIEF = [
+  { name: ['Исправить текущие проблемы', 'Fix the current problems'], what: ['фундамент: вход, роли, права, журнал, сервер', 'the foundation: sign-in, roles, log, server'], hours: 330 },
+  { name: ['Довести MVP', 'Complete the MVP'], what: ['все разделы, интеграции, настройки и дизайн', 'all sections, integrations, settings, design'], hours: 1545 },
+  { name: ['Подготовить к работе', 'Prepare for production'], what: ['тесты, перенос данных, запуски, резерв', 'testing, migration, launches, the reserve'], hours: 670 }
+];
+// The same phases cut into steps of a few weeks, each ending in something she can open and check.
+// A step's hours: the coding of its parts, its own launch, migration or handover work, and a share of the phase's
+// design, settings, testing, management and reserve in proportion to its coding. They add up to each phase's hours.
+// Parts are named as in the scope map (a Russian name is looked up there); a pair is a name of its own.
+const STEPS = [
+  { ph: 0, h: 135, name: ['Сервер и вход', 'Server and sign-in'],
+    get: ['NOI работает на вашем сервере с ежедневными копиями. Вход по своему логину, а там, где есть доступ к деньгам, — ещё и с кодом из приложения.', 'NOI runs on your server with daily backups. Everyone signs in with their own login, and wherever there’s access to money, with a code from an app as well.'],
+    check: ['Восстанавливаем базу из вчерашней копии при вас. Без кода из приложения бухгалтер не войдёт даже с верным паролем.', 'We restore yesterday’s backup while you watch. Without the app code, the accountant can’t sign in even with the right password.'],
+    parts: ['Сервер, резервные копии, обновления', 'Вход и сессии', 'Двухфакторная авторизация'] },
+  { ph: 0, h: 105, name: ['Роли и журнал', 'Roles and the log'],
+    get: ['Права на каждое действие: каждый отдел видит только своё. Журнал «кто, что и когда изменил», который нельзя править.', 'Permissions for every action: each department sees only its own work. A log of who changed what and when, which nobody can edit.'],
+    check: ['Заходите под разными ролями — каждая видит только своё. Любая правка сразу видна в журнале.', 'Sign in as different roles: each sees only its own. Every edit shows up in the log straight away.'],
+    parts: ['Роли и права доступа', 'Журнал действий'] },
+  { ph: 0, h: 195, name: ['Экраны и синхронизация', 'Screens and live sync'],
+    get: ['Единый дизайн для компьютера, планшета и телефона. Изменения сразу видны на всех экранах, у каждого клуба свои данные.', 'One design for computer, tablet and phone. Changes appear on every screen at once, and each club keeps its own data.'],
+    check: ['Меняете запись на одном экране — через секунду она на других. Связь пропадает — работа продолжается.', 'Change a record on one screen and it shows on the others within a second. Drop the connection and work carries on.'],
+    parts: ['Интерфейс для компьютера, планшета и телефона', 'Синхронизация в реальном времени', 'Несколько клубов'] },
+  { ph: 0, h: 180, name: ['Ротация и пульт DJ', 'Rotation and DJ console'],
+    get: ['Очередь строится сама — с одним пилоном и с двумя. Пульт DJ с кнопками START, PAUSE, NEXT и экран очереди у менеджера.', 'The queue builds itself, with one pole or two. A DJ console with START, PAUSE and NEXT, and a queue screen for the manager.'],
+    check: ['Проводим тестовую ночь на тестовом сервере в обоих режимах сцены.', 'We run a test night on the test server in both stage modes.'],
+    parts: ['Автоматическая очередь', 'Режимы сцены', 'Пульт DJ', 'Экран очереди для менеджера'] },
+  { ph: 0, h: 120, name: ['Планшет и запуск сцены', 'Tablet and stage launch'],
+    get: ['Артистки видят ротацию и свой статус на общем планшете. Обучаем сотрудников — и сцена работает в NOI в вашем клубе.', 'Performers see the rotation and their status on the shared tablet. We train your staff, and the stage runs on NOI in your club.'],
+    check: ['Сценарии из ТЗ проходят, ночь в клубе прошла без критических ошибок — и вы подписываете приёмку этапа.', 'The scenarios from your brief pass and a night in the club goes without critical errors, then you sign off the phase.'],
+    parts: ['Общий планшет артисток', 'Пилот в одном клубе', 'Запуск сцены'] },
+  { ph: 1, h: 90, name: ['Посиделки, приваты, VIP', 'Sit-downs, privates, VIP'],
+    get: ['Каждая услуга запускается со своим таймером и предупреждением. Свободные комнаты видны сразу.', 'Each service starts with its own timer and warning. Free rooms are visible at a glance.'],
+    check: ['Проходим каждую услугу от начала до конца на тестовом сервере.', 'We run every service from start to finish on the test server.'],
+    parts: ['Посиделки 30 и 60 минут', 'Приваты: индивидуальные и групповые', 'VIP-комнаты «Клетка»'] },
+  { ph: 1, h: 140, name: ['«Гулять» и продления', '“Gulyat” and extensions'],
+    get: ['Пакеты «Гулять» с заменой на ходу. Продление, замена и досрочное завершение любой услуги; недопустимые сочетания система не пропустит.', '“Gulyat” packages that can be changed mid-way. Extending, changing or ending any service early, and the system blocks combinations that aren’t allowed.'],
+    check: ['Сценарии из вашего ТЗ — замены, продления, досрочное завершение — считаются без ошибок.', 'The scenarios from your brief with changes, extensions and early endings are all charged correctly.'],
+    parts: ['Услуга «Гулять»', 'Продления и замены', 'Что можно совмещать'] },
+  { ph: 1, h: 145, name: ['Арт-касса и смены', 'Art cash desk and shifts'],
+    get: ['Все таймеры на одном экране, оплата наличными и картой, частичная оплата и долги. Смена закрывается со сверкой наличных.', 'All timers on one screen; cash and card payments, part payments and debts. A shift closes with a cash count.'],
+    check: ['Тестовая смена со смешанными оплатами закрывается без расхождений.', 'A test shift with mixed payments closes with no discrepancies.'],
+    parts: ['Таймеры, долги, оплата', 'Наличные и безналичные', 'Кассовые смены'] },
+  { ph: 1, h: 140, name: ['R-Keeper для арт-кассы', 'R-Keeper for the art desk'],
+    get: ['Оплаты арт-кассы уходят в R-Keeper, а NOI и R-Keeper сверяются каждый день. При обрыве связи платёж не теряется и не задваивается.', 'Art desk payments go into R-Keeper, and NOI and R-Keeper reconcile every day. If the connection drops, no payment is lost or doubled.'],
+    check: ['Обрываем связь посреди оплаты: ни потери, ни двойного списания, сверка сходится.', 'We cut the connection mid-payment: nothing lost, nothing charged twice, and the reconciliation matches.'],
+    parts: [['R-Keeper: арт-касса', 'R-Keeper: art cash desk'], 'Сверка NOI и R-Keeper', 'Повторы и сбои связи'] },
+  { ph: 1, h: 170, name: ['Заработок и выплаты', 'Earnings and payouts'],
+    get: ['Заработок артисток за каждую услугу, доли сотрудников и проценты по вашим правилам. Ведомости с защитой от двойной выплаты.', 'Performers’ earnings for every service, staff shares and percentages by your rules. Payout sheets that can’t pay anyone twice.'],
+    check: ['Выплаты за тестовую неделю совпадают с ручным расчётом вашего бухгалтера.', 'Payouts for a test week match your accountant’s own calculation.'],
+    parts: ['Заработок артисток и доли сотрудников', 'Начисления и выплаты сотрудникам', 'Распределение процентов'] },
+  { ph: 1, h: 165, name: ['Долги, расходы, отчёты', 'Debts, expenses, reports'],
+    get: ['Долги гостей со сроками, расходы и доходы по категориям. Отчёты за смену, месяц и любой период, выгрузка в Excel.', 'Guest debts with due dates, and expenses and income by category. Reports for a shift, a month or any period, with Excel export.'],
+    check: ['Отчёт за прошлый месяц из ваших данных сходится с вашими цифрами.', 'Last month’s report, built from your data, matches your own figures.'],
+    parts: ['Долги гостей', 'Расходы и доходы', 'Отчёты', 'Загрузка данных из Excel'] },
+  { ph: 1, h: 185, name: ['Перенос и запуск денег', 'Migration and money launch'],
+    get: ['Сотрудники, гости и долги перенесены из Excel, наша проверка защиты и нагрузочный тест пройдены. Деньги работают в NOI в вашем клубе.', 'Staff, guests and debts are moved over from Excel, and our own security review and load test are passed. The money side runs on NOI in your club.'],
+    check: ['Сценарии из ТЗ проходят, ночь в клубе — без критических ошибок, смена сходится с R-Keeper. Затем вы подписываете приёмку этапа.', 'The scenarios from your brief pass, a night in the club has no critical errors and the shift matches R-Keeper. Then you sign off the phase.'],
+    parts: ['Перенос данных', 'Нагрузочное тестирование', 'Защита', 'Запуск денежной части'] },
+  { ph: 2, h: 165, name: ['Залы и брони', 'Halls and bookings'],
+    get: ['Схемы основного зала, караоке и VIP со статусами столов в реальном времени. Брони, лист ожидания, пересадки и сумма по столу.', 'Maps of the main hall, karaoke and VIP with live table status. Bookings, a waiting list, table moves and each table’s running total.'],
+    check: ['Моделируем загруженную субботу: статусы столов и брони не расходятся.', 'We simulate a busy Saturday: table status and bookings never disagree.'],
+    parts: ['Интерактивные схемы залов', 'Бронирование и лист ожидания', 'Пересадки и передача менеджеру', 'Расходы и активность по столам'] },
+  { ph: 2, h: 135, name: ['Гости и звонки', 'Guests and calls'],
+    get: ['Карточка гостя с историей визитов и покупок, лояльность, скидки и депозиты. Входящий звонок открывает карточку звонящего.', 'A guest profile with visit and purchase history; loyalty, discounts and deposits. An incoming call opens the caller’s profile.'],
+    check: ['Звоните на номер клуба — у менеджера открывается карточка гостя.', 'Call the club’s number and the guest’s profile opens for the manager.'],
+    parts: ['Карточки гостей', 'Лояльность, скидки, депозиты', 'Откуда пришли гости', 'Телефония Mango Office'] },
+  { ph: 2, h: 120, name: ['Кадры и кастинг', 'Staff records and casting'],
+    get: ['Карточки сотрудников, артисток и кандидатов, кастинг и стажировка. Кандидаты приходят из HandFlow, история условий сохраняется.', 'Records for staff, performers and candidates; casting and trials. Candidates arrive from HandFlow, and every change to terms is kept.'],
+    check: ['Кандидат из HandFlow проходит кастинг и стажировку и попадает в штат.', 'A candidate from HandFlow goes through casting and a trial and joins the staff.'],
+    parts: ['База сотрудников, артисток и кандидатов', 'Кастинг, стажировка, приём, увольнение', 'Кастинг HandFlow', 'История изменений по сотруднику'] },
+  { ph: 2, h: 105, name: ['Графики и ставки', 'Schedules and pay rates'],
+    get: ['График смен с заменами, отпусками и больничными, отметки прихода и ухода на посту охраны. Ставки, бонусы и удержания.', 'Shift schedules with swaps, leave and sick days; clocking in and out at the security post. Pay rates, bonuses and deductions.'],
+    check: ['Неделя по графику с заменами: опоздания видны в отчёте, удержания — в выплатах.', 'A week on the schedule with swaps: late arrivals show in the report and deductions in the payouts.'],
+    parts: ['Графики, замены, отпуска, больничные', 'Приход и уход через пост охраны', 'Ставки, проценты, бонусы, удержания'] },
+  { ph: 2, h: 135, name: ['Службы и вызовы', 'Departments and calls'],
+    get: ['Салон, костюмерная, охрана, хостес и сервисный отдел работают в NOI. Вызов сотрудника к столу или на сцену, push-уведомления.', 'The salon, costume room, security, hostesses and service desk work in NOI. Calling staff to a table or the stage, with push notifications.'],
+    check: ['Каждая служба проводит в NOI полную смену.', 'Each department runs a full shift in NOI.'],
+    parts: ['Салон красоты', 'Костюмерная и ателье', 'Охрана', 'Хостес', 'Сервисный отдел', 'Уведомления и вызовы сотрудников'] },
+  { ph: 2, h: 115, name: ['Бар и запуск клуба', 'Bar and club launch'],
+    get: ['Барная касса R-Keeper связана с NOI, и весь клуб работает в NOI. Код, доступы и документация передаются вам.', 'The R-Keeper bar till is linked to NOI, and the whole club runs on NOI. Code, access and documentation are handed over to you.'],
+    check: ['Сценарии из ТЗ проходят, ночь в клубе прошла без критических ошибок — и вы подписываете финальную приёмку.', 'The scenarios from your brief pass and a night in the club goes without critical errors, then you give final sign-off.'],
+    parts: [['R-Keeper: барная касса', 'R-Keeper: bar cash desk'], 'Запуск всего клуба', 'Документация и передача'] }
+];
+
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const setText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+const monthsRange = (p, lang) => (lang === 'en' ? 'months ' : 'мес. ') + (Math.round(p.start) + 1) + '–' + Math.round(p.end);
+const isNarrow = () => window.matchMedia('(max-width: 900px)').matches;
+const paneLabel = p => { const e = document.querySelector('.nav-item[data-pane="' + p + '"] [data-i18n]'); return e ? e.textContent : p; };
+const replay = (e, cls) => { e.classList.remove(cls); void e.offsetWidth; e.classList.add(cls); };
+
+// Numbers that change count to their new value instead of jumping.
+const counters = {};
+function countTo(id, to, fmt, animate) {
+  const e = document.getElementById(id);
+  const from = e.dataset.v != null ? Number(e.dataset.v) : to;
+  e.dataset.v = String(to);
+  cancelAnimationFrame(counters[id]);
+  if (!animate || REDUCE || from === to) { e.textContent = fmt(to); return; }
+  const t0 = performance.now();
+  const tick = now => {
+    const k = Math.min(1, (now - t0) / 420);
+    e.textContent = fmt(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) counters[id] = requestAnimationFrame(tick);
+  };
+  counters[id] = requestAnimationFrame(tick);
+}
+
+function renderPlan(lang) {
+  const i = lang === 'en' ? 1 : 0;
+  // One inner scale for labels and phases: 6px in from each end of the track, phases 6px apart and filling it exactly.
+  const INSET = 6, last = PHASES[PHASES.length - 1].end;
+  const at = f => INSET + 'px + (100% - ' + 2 * INSET + 'px) * ' + f.toFixed(5);
+  const ticks = document.getElementById('ticks');
+  ticks.replaceChildren();
+  for (let m = 0; m <= SPAN; m += 2) {
+    const t = el('span', null, String(m));
+    t.style.left = 'calc(' + at(m / SPAN) + ')';
+    ticks.append(t);
+  }
+  const track = document.getElementById('track');
+  track.replaceChildren();
+  const cols = document.getElementById('cols');
+  cols.replaceChildren();
+  PHASES.forEach((p, n) => {
+    const seg = el('div', 'seg p' + (n + 1), (n + 1) + ' · ' + p.name[i]);
+    const s = p.start / last, e = p.end / last, gl = n ? INSET / 2 : 0, gr = n < PHASES.length - 1 ? INSET / 2 : 0;
+    seg.style.left = 'calc(' + at(s) + ' + ' + gl + 'px)';
+    seg.style.width = 'calc((100% - ' + 2 * INSET + 'px) * ' + (e - s).toFixed(5) + ' - ' + (gl + gr) + 'px)';
+    track.append(seg);
+    const col = el('div', 'col');
+    col.append(
+      el('b', null, (n + 1) + ' · ' + p.name[i]),
+      el('span', 'when', monthsRange(p, lang) + ' · ≈ ' + fmtHours(p.hours, lang) + ' · ' + stepCount(STEPS.filter(x => x.ph === n).length, lang)),
+      el('span', 'what', p.what[i])
+    );
+    cols.append(col);
+    // A phase on the timeline and its column light up together.
+    const link = on => { seg.classList.toggle('hl', on); col.classList.toggle('hl', on); };
+    [seg, col].forEach(x => {
+      x.addEventListener('mouseenter', () => link(true));
+      x.addEventListener('mouseleave', () => link(false));
+    });
+  });
+}
+
+// The steps screen: a column of steps per phase, and the chosen step's detail under them.
+const stepWeeks = s => Math.max(1, Math.round(s.h / (PER_MONTH * 12 / 52)));
+const stepCount = (n, lang) => (lang === 'en' ? n + (n === 1 ? ' step' : ' steps') : n + ' ' + ruPlural(n, ['шаг', 'шага', 'шагов']));
+// A step's price to the nearest hundred, finer than the phase prices: $5 100, or $5.1k in English.
+const fmtMoneyFine = (v, lang) => (lang === 'en' ? '$' + Math.round(v / 100) / 10 + 'k' : '$' + fmtNum(Math.round(v / 100) * 100, lang));
+const partName = (() => {
+  const names = new Map();
+  const walk = n => { if (n.n) names.set(n.n[0], n.n); (n.c || []).forEach(walk); };
+  walk(DATA);
+  return p => (Array.isArray(p) ? p : names.get(p) || [p, p]);
+})();
+const steps = { sel: 0, rows: [], li: null };
+
+function renderSteps(lang) {
+  const i = lang === 'en' ? 1 : 0, en = lang === 'en';
+  const wk = STEPS.map(stepWeeks), lo = Math.min(...wk), hi = Math.max(...wk);
+  setText('stH', en ? STEPS.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(STEPS.length, lang) + ' по ' + lo + '–' + hi + ' ' + ruPlural(hi, ['неделе', 'недели', 'недель']));
+  setText('qsSteps', en ? STEPS.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(STEPS.length, lang) + ' по ' + lo + '–' + hi + ' нед.');
+  setText('nvSteps', String(STEPS.length));
+  // The detail may sit inside a list that is about to be rebuilt; park it on the screen first.
+  document.getElementById('pane-steps').append(document.getElementById('sdet'));
+  const board = document.getElementById('board');
+  board.replaceChildren();
+  steps.rows = [];
+  PHASES.forEach((p, n) => {
+    const card = el('section', 'sg'), head = el('div', 'sg-head'), bar = el('div', 'sg-bar'), list = el('ol', 'sg-list');
+    head.append(el('b', null, (n + 1) + ' · ' + p.name[i]), el('span', 'when', monthsRange(p, lang)),
+      el('span', 'sum', '≈ ' + fmtHours(p.hours, lang) + ' · ≈ ' + fmtMoney(PRICE * p.hours / TOTAL, lang)), bar);
+    STEPS.forEach((s, k) => {
+      if (s.ph !== n) return;
+      // Each step is also a slice of its phase's bar, as wide as its hours; a row and its slice light up together.
+      const seg = el('i');
+      seg.style.flexGrow = s.h;
+      bar.append(seg);
+      const b = el('button', 'srow rip');
+      b.type = 'button';
+      b.append(el('span', 'sn', String(k + 1)), el('span', 'snm', s.name[i]), el('span', 'sw', wk[k] + (en ? ' wk' : ' нед.')));
+      b.addEventListener('click', () => pickStep(k));
+      b.addEventListener('mouseenter', () => seg.classList.add('hl'));
+      b.addEventListener('mouseleave', () => seg.classList.remove('hl'));
+      const li = el('li');
+      li.append(b);
+      list.append(li);
+      steps.rows[k] = { b, seg, li };
+    });
+    card.append(head, list);
+    board.append(card);
+  });
+  showStep(false);
+}
+
+function showStep(animate) {
+  const lang = state.lang, i = lang === 'en' ? 1 : 0, en = lang === 'en';
+  const k = steps.sel, s = STEPS[k];
+  steps.rows.forEach((r, n) => { r.b.setAttribute('aria-pressed', String(n === k)); r.seg.classList.toggle('on', n === k); });
+  const inPhase = STEPS.filter(x => x.ph === s.ph), pos = inPhase.indexOf(s) + 1;
+  setText('sdN', String(k + 1));
+  setText('sdName', s.name[i]);
+  setText('sdMeta', (en ? 'Phase ' : 'Этап ') + (s.ph + 1) + ' · ' + PHASES[s.ph].name[i] + ' · ' + (en ? 'step ' + pos + ' of ' + inPhase.length : 'шаг ' + pos + ' из ' + inPhase.length));
+  document.getElementById('sdStats').replaceChildren(...[
+    '≈ ' + stepWeeks(s) + (en ? ' weeks' : ' нед.'), '≈ ' + fmtHours(s.h, lang), '≈ ' + fmtMoneyFine(PRICE * s.h / TOTAL, lang)
+  ].map(t => el('span', null, t)));
+  setText('sdGet', s.get[i]);
+  setText('sdCheck', s.check[i]);
+  document.getElementById('sdParts').replaceChildren(...s.parts.map(p => el('span', 'tag', partName(p)[i])));
+  document.getElementById('sdPrev').disabled = k === 0;
+  document.getElementById('sdNext').disabled = k === STEPS.length - 1;
+  placeStep();
+  if (animate && !REDUCE) replay(document.getElementById('sdIn'), 'swap');
+}
+
+// On a phone the detail opens under the chosen row; on a wider screen it sits under the three columns.
+function placeStep() {
+  const panel = document.getElementById('sdet'), pane = document.getElementById('pane-steps');
+  if (!steps.li) steps.li = el('li', 'sd-li');
+  if (isNarrow()) {
+    const row = steps.rows[steps.sel].li;
+    if (row.nextSibling !== steps.li) row.after(steps.li);
+    if (panel.parentElement !== steps.li) steps.li.append(panel);
+  } else if (panel.parentElement !== pane) {
+    pane.append(panel);
+    steps.li.remove();
+  }
+}
+
+function pickStep(k, focus) {
+  if (k < 0 || k >= STEPS.length) return;
+  if (k !== steps.sel) { steps.sel = k; showStep(true); }
+  if (focus) steps.rows[k].b.focus();
+}
+
+function priceRows(id, rows, lang, line) {
+  const list = document.getElementById(id);
+  list.replaceChildren();
+  rows.forEach((r, n) => {
+    const row = el('div', 'pp');
+    row.append(el('b', null, line(r, n)), el('span', 'amt', '≈ ' + fmtMoney(PRICE * r.hours / TOTAL, lang)), el('span', 'when', r.when));
+    list.append(row);
+  });
+}
+
+function renderPrice(lang, animate) {
+  const en = lang === 'en', i = en ? 1 : 0;
+  const input = document.getElementById('keep');
+  const keep = Number(input.value) / 100;
+  const after = PRICE * (1 - keep * KEEP_CREDIT);
+  input.style.setProperty('--p', (Number(input.value) / Number(input.max) * 100) + '%');
+  document.querySelectorAll('#keepTicks span').forEach((s, n) => s.classList.toggle('on', n * 10 === Number(input.value)));
+  setText('priceBig', fmtMoney(PRICE, lang));
+  setText('keepOut', Math.round(keep * 100) + '%');
+  countTo('priceAfter', after, v => '≈ ' + fmtMoney(v, lang), animate);
+  if (keep) countTo('priceSave', PRICE - after, v => (en ? 'you save ≈ ' : 'экономия ≈ ') + fmtMoney(v, lang), animate);
+  else {
+    const s = document.getElementById('priceSave');
+    s.dataset.v = '0';
+    s.textContent = en ? 'nothing kept: the ceiling applies' : 'ничего не осталось — действует потолок';
+  }
+  if (animate && !REDUCE) replay(document.getElementById('priceAfter'), 'bump');
+  priceRows('ppList', PHASES.map(p => ({ hours: p.hours, name: p.name, when: monthsRange(p, lang) + (en ? ' · fixed price' : ' · фиксированная цена') })), lang,
+    (r, n) => (en ? 'Phase ' : 'Этап ') + (n + 1) + ' · ' + r.name[i]);
+  priceRows('bfList', BRIEF.map(b => ({ hours: b.hours, name: b.name, when: '≈ ' + fmtHours(b.hours, lang) + ' · ' + b.what[i] })), lang,
+    (r, n) => (n + 1) + ' · ' + r.name[i]);
+}
+
+function renderDots() {
+  const dots = document.getElementById('dots');
+  dots.replaceChildren();
+  PANES.forEach(p => {
+    const b = el('button');
+    b.type = 'button';
+    b.dataset.label = paneLabel(p);
+    b.setAttribute('aria-label', paneLabel(p));
+    if (p === state.pane) b.setAttribute('aria-current', 'true');
+    b.addEventListener('click', () => showPane(p, PANES.indexOf(p) >= PANES.indexOf(state.pane) ? 1 : -1));
+    dots.append(b);
+  });
+}
+
+// The blurred footer: back to the previous screen, the round Next with progress around it, and where Next leads.
+function renderFoot() {
+  const en = state.lang === 'en';
+  const n = PANES.indexOf(state.pane), last = n === PANES.length - 1;
+  const back = document.getElementById('footBack');
+  back.hidden = n === 0;
+  if (n > 0) {
+    setText('footBackName', paneLabel(PANES[n - 1]));
+    back.setAttribute('aria-label', (en ? 'Back: ' : 'Назад: ') + paneLabel(PANES[n - 1]));
+  }
+  const next = document.getElementById('footNext');
+  next.classList.toggle('top', last);
+  setText('footNextLbl', last ? (en ? 'Top' : 'Наверх') : (en ? 'Next' : 'Далее'));
+  setText('footCapK', last ? (en ? 'That’s all' : 'Это всё') : (en ? 'Next up' : 'Дальше'));
+  setText('footNextName', last ? (en ? 'Back to the start' : 'В начало') : paneLabel(PANES[n + 1]));
+  next.setAttribute('aria-label', last ? (en ? 'Back to the start' : 'В начало') : (en ? 'Next: ' : 'Далее: ') + paneLabel(PANES[n + 1]));
+  setText('footCount', (n + 1) + ' / ' + PANES.length);
+  const ring = document.getElementById('footRing');
+  const C = 2 * Math.PI * 46;
+  ring.style.strokeDasharray = C.toFixed(1);
+  ring.style.strokeDashoffset = (C * (1 - (n + 1) / PANES.length)).toFixed(1);
+}
+
+function renderNumbers(lang) {
+  const en = lang === 'en';
+  const nq = document.querySelectorAll('.faq details').length;
+  setText('nvScope', fmtHours(TOTAL, lang));
+  setText('nvPlan', Math.round(TOTAL / PER_MONTH) + (en ? ' mo' : ' мес.'));
+  setText('nvPrice', fmtMoney(PRICE, lang));
+  setText('nvFaq', String(nq));
+  setText('qsScope', '≈ ' + fmtHours(TOTAL, lang) + (en ? ' of work' : ' работы'));
+  setText('qsPlan', en ? 'Live in ≈ ' + fmtMonths(Math.round(PHASES[0].end), lang) : 'Запуск через ≈ ' + Math.round(PHASES[0].end) + ' мес.');
+  setText('qsPrice', (en ? 'Ceiling: ' : 'Потолок ') + fmtMoney(PRICE, lang));
+  setText('qsFaq', en ? nq + ' short answers' : nq + ' ' + ruPlural(nq, ['короткий ответ', 'коротких ответа', 'коротких ответов']));
+  renderPlan(lang);
+  renderSteps(lang);
+  renderPrice(lang, false);
+  renderDots();
+  renderFoot();
+}
+
+// The highlight behind the current section slides to it.
+function moveInd() {
+  const groups = document.querySelector('.groups');
+  const ind = document.getElementById('navInd');
+  const cur = groups.querySelector('.nav-item[aria-current="page"]');
+  if (!cur) return;
+  const g = groups.getBoundingClientRect(), r = cur.getBoundingClientRect();
+  ind.style.width = r.width + 'px';
+  ind.style.height = r.height + 'px';
+  ind.style.transform = 'translate(' + (r.left - g.left + groups.scrollLeft) + 'px,' + (r.top - g.top + groups.scrollTop) + 'px)';
+}
+
+function setLang(lang) {
+  state.lang = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(e => {
+    const k = e.dataset.i18n;
+    e.textContent = lang === 'en' && EN[k] != null ? EN[k] : e.dataset.ru;
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(e => {
+    const k = e.dataset.i18nAria;
+    e.setAttribute('aria-label', lang === 'en' && EN[k] != null ? EN[k] : e.dataset.ruAria);
+  });
+  document.getElementById('lang').dataset.on = lang;
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  document.title = lang === 'en' ? 'NOI Build Proposal' : 'NOI: предложение по разработке';
+  langListeners.forEach(f => f(lang));
+  moveInd();
+}
+
+function showPane(id, dir) {
+  if (!PANES.includes(id)) id = 'overview';
+  const changed = id !== state.pane;
+  state.pane = id;
+  PANES.forEach(p => { document.getElementById('pane-' + p).hidden = p !== id; });
+  const pane = document.getElementById('pane-' + id);
+  pane.classList.remove('in-down', 'in-up');
+  if (changed && dir) { void pane.offsetWidth; pane.classList.add(dir < 0 ? 'in-up' : 'in-down'); }
+  document.querySelectorAll('.bg').forEach(b => b.classList.toggle('on', b.dataset.bg === id));
+  document.querySelectorAll('.nav-item').forEach(b => {
+    if (b.dataset.pane === id) {
+      b.setAttribute('aria-current', 'page');
+      if (changed && !REDUCE) replay(b.querySelector('.icon'), 'pop');
+      const groups = b.closest('.groups');
+      if (isNarrow()) groups.scrollTo({ left: b.offsetLeft - (groups.clientWidth - b.offsetWidth) / 2, behavior: REDUCE ? 'auto' : 'smooth' });
+    } else b.removeAttribute('aria-current');
+  });
+  moveInd();
+  document.querySelectorAll('#dots button').forEach((b, n) => {
+    if (PANES[n] === id) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+  });
+  renderFoot();
+  if (changed && !REDUCE) replay(document.getElementById('footCap'), 'in');
+  document.getElementById('main').scrollTop = 0;
+  if (isNarrow()) window.scrollTo(0, 0);
+  paneListeners.forEach(f => f(id));
+}
+
+function step(dir) {
+  const n = PANES.indexOf(state.pane) + dir;
+  if (n >= 0 && n < PANES.length) showPane(PANES[n], dir);
+}
+
+// Scrolling moves between screens once the current screen (or the list under the cursor) can't scroll further.
+function canScrollFurther(node, dir) {
+  const main = document.getElementById('main');
+  for (let e = node; e && e.nodeType === 1; e = e.parentElement) {
+    if (e === main || e.classList.contains('panel')) {
+      const max = e.scrollHeight - e.clientHeight;
+      if (max > 2 && ((dir > 0 && e.scrollTop < max - 2) || (dir < 0 && e.scrollTop > 2))) return true;
+    }
+    if (e === main) break;
+  }
+  return false;
+}
+
+(function init() {
+  document.querySelectorAll('[data-i18n]').forEach(e => { e.dataset.ru = e.textContent; });
+  document.querySelectorAll('[data-i18n-aria]').forEach(e => { e.dataset.ruAria = e.getAttribute('aria-label') || ''; });
+  onLang(renderNumbers);
+  // Russian unless the link asks for English with #en; #scope, #price and so on open that screen.
+  let lang = 'ru', pane = 'overview';
+  const h = location.hash.replace(/^#/, '');
+  if (h === 'en') lang = 'en';
+  else if (PANES.includes(h)) pane = h;
+  document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  document.querySelectorAll('[data-pane]').forEach(b => b.addEventListener('click', () => {
+    const target = b.dataset.pane;
+    showPane(target, PANES.indexOf(target) >= PANES.indexOf(state.pane) ? 1 : -1);
+  }));
+  document.getElementById('keep').addEventListener('input', () => renderPrice(state.lang, true));
+  document.getElementById('sdPrev').addEventListener('click', () => pickStep(steps.sel - 1));
+  document.getElementById('sdNext').addEventListener('click', () => pickStep(steps.sel + 1));
+  // While a step has focus, up and down move through the steps instead of changing screens.
+  document.getElementById('board').addEventListener('keydown', e => {
+    const d = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0;
+    const k = steps.rows.findIndex(r => r.b === e.target.closest('.srow'));
+    if (!d || k < 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    pickStep(k + d, true);
+  });
+  window.matchMedia('(max-width: 900px)').addEventListener('change', placeStep);
+  document.getElementById('footBack').addEventListener('click', () => step(-1));
+  document.getElementById('footNext').addEventListener('click', () => {
+    if (state.pane === PANES[PANES.length - 1]) showPane(PANES[0], -1); else step(1);
+  });
+
+  const main = document.getElementById('main');
+  const foot = document.getElementById('foot');
+  const footBlur = () => foot.classList.toggle('over', main.scrollHeight - main.clientHeight > 1);
+  if (window.ResizeObserver) { const ro = new ResizeObserver(footBlur); ro.observe(main); document.querySelectorAll('.pane').forEach(e => ro.observe(e)); }
+  onPane(() => requestAnimationFrame(footBlur));
+  let lockUntil = 0, wheelSum = 0;
+  main.addEventListener('wheel', e => {
+    if (isNarrow() || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    const dir = e.deltaY > 0 ? 1 : -1;
+    if (canScrollFurther(e.target, dir)) { wheelSum = 0; return; }
+    e.preventDefault();
+    const now = Date.now();
+    if (now < lockUntil) { lockUntil = Math.max(lockUntil, now + 260); return; }
+    wheelSum += e.deltaY;
+    if (Math.abs(wheelSum) >= 40) { wheelSum = 0; lockUntil = now + 800; step(dir); }
+  }, { passive: false });
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input, textarea, select')) return;
+    const down = e.key === 'ArrowDown' || e.key === 'PageDown';
+    const up = e.key === 'ArrowUp' || e.key === 'PageUp';
+    if (!down && !up) return;
+    const dir = down ? 1 : -1;
+    if (!isNarrow() && !canScrollFurther(main, dir)) { e.preventDefault(); step(dir); }
+  });
+  let touchY = null;
+  window.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchend', e => {
+    if (touchY == null || !isNarrow()) return;
+    const dy = touchY - e.changedTouches[0].clientY;
+    touchY = null;
+    const doc = document.documentElement;
+    if (dy > 80 && window.innerHeight + window.scrollY >= doc.scrollHeight - 4) step(1);
+    else if (dy < -80 && window.scrollY <= 0) step(-1);
+  }, { passive: true });
+
+  // A ripple from the pointer on press, and a light on cards that follows the pointer.
+  document.addEventListener('pointerdown', e => {
+    const host = e.target.closest('.rip');
+    if (!host || REDUCE) return;
+    const r = host.getBoundingClientRect(), size = Math.max(r.width, r.height) * 2.2;
+    const s = el('span', 'ripple');
+    s.style.width = s.style.height = size + 'px';
+    s.style.left = (e.clientX - r.left - size / 2) + 'px';
+    s.style.top = (e.clientY - r.top - size / 2) + 'px';
+    host.append(s);
+    s.addEventListener('animationend', () => s.remove());
+  });
+  document.addEventListener('pointermove', e => {
+    const c = e.target.closest && e.target.closest('.spot');
+    if (!c) return;
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, { passive: true });
+
+  if (window.ResizeObserver) new ResizeObserver(moveInd).observe(document.querySelector('.groups'));
+  else window.addEventListener('resize', moveInd);
+
+  // On phones the section strip scrolls sideways; mark which edges still have sections beyond them, so only those fade.
+  const strip = document.querySelector('.groups');
+  const stripEdges = () => {
+    strip.classList.toggle('more-l', strip.scrollLeft > 2);
+    strip.classList.toggle('more-r', strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 2);
+  };
+  strip.addEventListener('scroll', stripEdges, { passive: true });
+  window.addEventListener('resize', stripEdges);
+  stripEdges();
+
+  // The first screen appears as it is, without an entrance animation or a colour fade.
+  const shell = document.querySelector('.shell');
+  shell.classList.add('instant');
+  setLang(lang);
+  showPane(pane, 0);
+  requestAnimationFrame(() => requestAnimationFrame(() => shell.classList.remove('instant')));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveInd);
+  setTimeout(() => { const p = document.getElementById('preloader'); if (p) p.remove(); }, 2300);
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Overview hero: the system's sections as glossy spheres, packed like the lens and drifting slightly.
+(function () {
+  const host = document.getElementById('ovArt');
+  if (!window.d3 || !host) return;
+  const svg = d3.select(host).append('svg').attr('viewBox', '0 0 400 400').attr('focusable', 'false');
+  const defs = svg.append('defs');
+  const grad = (id, stops) => {
+    const g = defs.append('radialGradient').attr('id', id).attr('cx', '34%').attr('cy', '28%').attr('r', '80%');
+    stops.forEach(s => g.append('stop').attr('offset', s[0]).attr('stop-color', s[1]));
+  };
+  grad('artBlue', [['0%', '#e6f0ff'], ['38%', '#7fb2f5'], ['100%', '#2a5fb8']]);
+  grad('artAmber', [['0%', '#fff3cf'], ['38%', '#ffc943'], ['100%', '#b8760a']]);
+  // A planet and its moons, centred in the glass: work beyond coding in the middle, the product sections around it.
+  // Every sphere is sized by its hours; each moon keeps the same gap to the planet, and big and small alternate so the ring is balanced.
+  const secs = DATA.c.map(s => ({ v: sumHours(s), extra: !!s.extra }));
+  const core = secs.find(s => s.extra) || secs.reduce((a, b) => (b.v > a.v ? b : a));
+  const moons = secs.filter(s => s !== core).sort((a, b) => b.v - a.v);
+  const ring = [];
+  for (let i = 0, j = moons.length - 1; i <= j; i++, j--) { ring.push(moons[i]); if (i < j) ring.push(moons[j]); }
+  const C = 200, RIM = 199, GAP = 10, EDGE = 14;
+  let k = (RIM - EDGE - GAP) / (Math.sqrt(core.v) + 2 * Math.sqrt(moons[0].v)), turn = [];
+  for (let n = 0; n < 40; n++) {
+    core.r = k * Math.sqrt(core.v);
+    ring.forEach(m => { m.r = k * Math.sqrt(m.v); m.d = core.r + GAP + m.r; });
+    turn = ring.map((m, i) => {
+      const o = ring[(i + 1) % ring.length];
+      return Math.acos(Math.max(-1, Math.min(1, (m.d * m.d + o.d * o.d - (m.r + o.r + GAP) ** 2) / (2 * m.d * o.d))));
+    });
+    if (d3.sum(turn) <= 2 * Math.PI) break;
+    k *= 0.96;
+  }
+  const spare = (2 * Math.PI - d3.sum(turn)) / ring.length;
+  let ang = -0.75 * Math.PI;
+  ring.forEach((m, i) => { m.a = ang; m.x = C + m.d * Math.cos(ang); m.y = C + m.d * Math.sin(ang); ang += turn[i] + spare; });
+  svg.append('circle').attr('cx', C).attr('cy', C).attr('r', RIM)
+    .attr('fill', 'rgba(255,255,255,0.08)').attr('stroke', 'rgba(255,255,255,0.22)');
+  svg.append('circle').attr('cx', C).attr('cy', C).attr('r', core.r).attr('fill', 'url(#artAmber)');
+  // Moons breathe in and out along their own radius, so they never drift into a neighbour.
+  svg.selectAll('circle.s').data(ring).join('circle').attr('class', 's art-s')
+    .attr('cx', d => d.x).attr('cy', d => d.y).attr('r', d => d.r)
+    .attr('fill', 'url(#artBlue)')
+    .style('--dx', d => (Math.cos(d.a) * 3).toFixed(2) + 'px')
+    .style('--dy', d => (Math.sin(d.a) * 3).toFixed(2) + 'px')
+    .style('animation-delay', (d, i) => (-i * 0.8) + 's');
+})();
+
+// The space lens, after CleanMyMac: one level at a time, as glass bubbles floating in space, sized by hours.
+// Click a bubble or a row to open it; the arrows, Esc or a click on empty space step out and back in.
+(function () {
+  const svgEl = document.getElementById('lens');
+  if (!window.d3) { document.getElementById('lensFail').hidden = false; return; }
+  const UI = {
+    ru: {
+      whole: 'Весь объём', root: 'Вся система', of: ' из ', h: 'ч', ofShown: '% от показанного', productsLbl: 'Продукты: ',
+      shared: ' Общие части системы учтены в каждом продукте целиком.', guess: 'предположение, нужно подтвердить',
+      hint: 'Нажмите на пузырь или строку, чтобы открыть.', partDesc: 'Конкретные задачи внутри этой части.', picked: 'Выбрано: ',
+      sect: ['раздел', 'раздела', 'разделов'], part: ['часть', 'части', 'частей'], task: ['задача', 'задачи', 'задач'], locale: 'ru-RU', dec: ','
+    },
+    en: {
+      whole: 'The whole scope', root: 'Whole system', of: ' of ', h: 'h', ofShown: '% of what’s shown', productsLbl: 'Products: ',
+      shared: ' Shared parts are counted in full in each product.', guess: 'a guess, needs confirming',
+      hint: 'Click a bubble or a row to open it.', partDesc: 'The specific tasks inside this part.', picked: 'Selected: ',
+      sect: ['section', 'sections'], part: ['part', 'parts'], task: ['task', 'tasks'], locale: 'en-US', dec: '.'
+    }
+  };
+  // Glyphs for each product in the role row.
+  const ROLE = {
+    all: '<rect x="3" y="3" width="6" height="6" rx="1.6" fill="currentColor"/><rect x="11" y="3" width="6" height="6" rx="1.6" fill="currentColor" opacity=".7"/><rect x="3" y="11" width="6" height="6" rx="1.6" fill="currentColor" opacity=".7"/><rect x="11" y="11" width="6" height="6" rx="1.6" fill="currentColor"/>',
+    crm: '<rect x="4" y="3" width="12" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7 7.5h6M7 10.5h6M7 13.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    dj: '<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="10" r="2.2" fill="currentColor"/>',
+    tablet: '<rect x="5" y="2.5" width="10" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="14.5" r="1" fill="currentColor"/>',
+    security: '<path d="M10 2.8l5.5 2v4.4c0 3.6-2.4 6.3-5.5 7.6-3.1-1.3-5.5-4-5.5-7.6V4.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+    cash: '<rect x="2.5" y="5.5" width="15" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>',
+    finance: '<path d="M4 16V11M10 16V5M16 16V8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+    hr: '<rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8" cy="9" r="1.8" fill="currentColor"/><path d="M5.5 13.2c.5-1.3 1.4-2 2.5-2s2 .7 2.5 2M12 8.5h3M12 11.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>',
+    departments: '<rect x="4" y="3" width="12" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.5 6.5h1M11.5 6.5h1M7.5 9.5h1M11.5 9.5h1M9 17v-3.5h2V17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    'staff-app': '<rect x="6" y="2.5" width="8" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 15h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    core: '<rect x="5.5" y="5.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 3v2.5M12 3v2.5M8 14.5V17M12 14.5V17M3 8h2.5M3 12h2.5M14.5 8H17M14.5 12H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+  };
+  let lang = state.lang;
+  const U = () => UI[lang];
+  const L = x => (Array.isArray(x) ? x[lang === 'en' ? 1 : 0] : x);
+  const fmt = n => Math.round(n).toLocaleString(U().locale);
+  const plural = (n, f) => {
+    if (f.length === 2) return n === 1 ? f[0] : f[1];
+    const a = Math.abs(n) % 100, b = a % 10;
+    return f[a > 10 && a < 20 ? 2 : b === 1 ? 0 : b >= 2 && b <= 4 ? 1 : 2];
+  };
+  const pName = id => L((PRODUCTS.find(p => p.id === id) || { name: id }).name);
+  const shortName = d => (d.data.s ? L(d.data.s) : L(d.data.n));
+  const inX = d => d.ancestors().some(a => a.data.extra);
+  const hoursFor = pid => {
+    let s = 0;
+    DATA.c.forEach(a => a.c.forEach(pt => pt.c.forEach(t => { if (pid === 'all' || t.p.includes(pid)) s += t.h; })));
+    return s;
+  };
+
+  // Icons, as in a file browser: a folder for anything that opens, a page for a single task; amber for work beyond coding.
+  const folder = (x, grad) => '<path d="M2 8A2.5 2.5 0 0 1 4.5 5.5h7.6l2.7 2.6h12.7A2.5 2.5 0 0 1 30 10.6V13H2z" fill="' + (x ? '#d8921a' : '#3a8ae4') + '"/>'
+    + '<rect x="2" y="10" width="28" height="17.5" rx="2.6" fill="' + (grad ? 'url(#' + (x ? 'fdA' : 'fdB') + ')' : (x ? '#f6be3e' : '#69b3f6')) + '"/>';
+  const PAGE = '<path d="M7.5 3h11.8L25 8.7V29H7.5z" fill="#f4f1fb"/><path d="M19.3 3v5.7H25z" fill="#d3cbe7"/><path d="M11.5 14.5h10M11.5 18.5h10M11.5 22.5h6.5" stroke="#b3aacb" stroke-width="1.6" stroke-linecap="round"/>';
+  const ORBS = '<circle cx="13" cy="15" r="8" fill="#ffffff"/><circle cx="23.5" cy="21.5" r="5" fill="#ffffff" fill-opacity="0.7"/><circle cx="23" cy="8" r="3.4" fill="#ffffff" fill-opacity="0.85"/>';
+  const icon = (n, grad) => (n.depth === 0 ? ORBS : n.children ? folder(inX(n), grad) : PAGE);
+  const svg32 = inner => '<svg viewBox="0 0 32 32" aria-hidden="true">' + inner + '</svg>';
+
+  // Names inside bubbles: measured, up to two lines, cut with an ellipsis when they still don't fit.
+  const FONT = getComputedStyle(document.body).fontFamily;
+  const ctx = document.createElement('canvas').getContext('2d');
+  const tw = (t, fs) => { ctx.font = '600 ' + fs + 'px ' + FONT; return ctx.measureText(t).width; };
+  const clip = (t, w, fs) => {
+    if (tw(t, fs) <= w) return t;
+    while (t.length > 1 && tw(t + '…', fs) > w) t = t.slice(0, -1);
+    return t.trimEnd() + '…';
+  };
+  function fitName(name, w, fs) {
+    const words = name.split(' ');
+    const l1 = [];
+    let i = 0;
+    while (i < words.length && (!l1.length || tw(l1.concat(words[i]).join(' '), fs) <= w)) l1.push(words[i++]);
+    // A one- or two-letter word (в, и, &) moves down with the word after it.
+    if (i < words.length && l1.length > 1 && l1[l1.length - 1].length <= 2) { l1.pop(); i--; }
+    const out = [clip(l1.join(' '), w, fs)];
+    if (i < words.length) out.push(clip(words.slice(i).join(' '), w, fs));
+    return out;
+  }
+
+  const svg = d3.select(svgEl);
+  const defs = svg.append('defs');
+  const radial = (id, stops, at) => {
+    const g = defs.append('radialGradient').attr('id', id).attr('cx', at[0]).attr('cy', at[1]).attr('r', at[2]);
+    stops.forEach(s => g.append('stop').attr('offset', s[0]).attr('stop-color', s[1]).attr('stop-opacity', s[2]));
+  };
+  const linear = (id, stops) => {
+    const g = defs.append('linearGradient').attr('id', id).attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 1);
+    stops.forEach(s => g.append('stop').attr('offset', s[0]).attr('stop-color', s[1]).attr('stop-opacity', s[2] == null ? 1 : s[2]));
+  };
+  // Glass: nearly clear in the middle and brighter towards the rim; warmer for work beyond coding.
+  radial('gl', [['0%', '#ffffff', 0.03], ['60%', '#cbb9ff', 0.07], ['88%', '#ddd0ff', 0.2], ['100%', '#f5f0ff', 0.42]], ['50%', '42%', '60%']);
+  radial('glX', [['0%', '#ffd27a', 0.08], ['60%', '#ffc251', 0.14], ['88%', '#ffd27a', 0.34], ['100%', '#fff0c8', 0.62]], ['50%', '42%', '60%']);
+  radial('neb', [['0%', '#a77bff', 0.34], ['50%', '#7044dd', 0.14], ['100%', '#2a1270', 0]], ['50%', '50%', '50%']);
+  linear('sheen', [['0%', '#ffffff', 0.1], ['100%', '#ffffff', 0]]);
+  linear('fdB', [['0%', '#bfe4ff'], ['100%', '#5aa8f2']]);
+  linear('fdA', [['0%', '#ffe6a3'], ['100%', '#f1ab26']]);
+  const gStars = svg.append('g').attr('aria-hidden', 'true');
+  const neb = svg.append('circle').attr('r', 0).attr('fill', 'url(#neb)');
+  const gB = svg.append('g');
+
+  let product = 'all', root, total, focus, selected = null, W = 600, H = 600;
+  let bubbleOf = new Map(), rowOf = new Map();
+  const fwd = [];
+  const tip = document.getElementById('tip');
+  const lensBox = document.querySelector('.lens');
+  const rolesBox = document.getElementById('roles');
+  const backBtn = document.getElementById('lensBack');
+  const fwdBtn = document.getElementById('lensFwd');
+
+  function filtered(pid) {
+    const keep = d => pid === 'all' || d.p.includes(pid);
+    return { n: DATA.n, c: DATA.c.map(a => ({ ...a, c: a.c.map(pt => ({ ...pt, c: pt.c.filter(keep) })).filter(pt => pt.c.length) })).filter(a => a.c.length) };
+  }
+
+  function build(fresh) {
+    root = d3.hierarchy(filtered(product), d => d.c).sum(d => (d.c ? 0 : d.h)).sort((a, b) => b.value - a.value);
+    total = root.value;
+    focus = root; selected = null; fwd.length = 0;
+    renderCard();
+    renderPanel();
+    updateStats();
+    draw(0, null, false, fresh);
+  }
+
+  // One level packed loosely in the middle of the lens. Sizes follow hours, softened so small parts stay readable.
+  function layout(node) {
+    const n = node.children.length;
+    const side = Math.max(220, Math.min(W, H) * (n <= 2 ? 0.58 : n <= 4 ? 0.76 : 0.92));
+    const h = d3.hierarchy({ c: node.children.map(k => ({ k })) }, d => d.c)
+      .sum(d => (d.k ? Math.pow(d.k.value, 0.8) : 0)).sort((a, b) => b.value - a.value);
+    d3.pack().size([side, side]).padding(Math.max(8, side * 0.03))(h);
+    return { r: h.r, items: h.children.map(l => ({ node: l.data.k, x: l.x - side / 2, y: l.y - side / 2, r: l.r })) };
+  }
+
+  // A faint starfield, the same on every visit.
+  function stars() {
+    gStars.selectAll('*').remove();
+    let seed = 11;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let i = 0, n = Math.round(W * H / 7000); i < n; i++) {
+      const x = (rnd() - 0.5) * W, y = (rnd() - 0.5) * H;
+      gStars.append('circle').datum({ x, y }).attr('class', i % 3 ? 'star' : 'star tw')
+        .attr('cx', x.toFixed(1)).attr('cy', y.toFixed(1))
+        .attr('r', (0.4 + rnd() * 0.9).toFixed(2)).attr('opacity', (0.12 + rnd() * 0.5).toFixed(2))
+        .style('animation-delay', (-rnd() * 3.6).toFixed(2) + 's');
+    }
+  }
+
+  // A bubble: glass, a soft sheen on top, the icon, the name and the hours.
+  function dress(g, d) {
+    const r = d.r, x = inX(d.node);
+    const bi = g.select('.bi');
+    bi.selectAll('*').remove();
+    bi.append('circle').attr('class', x ? 'body x' : 'body').attr('r', r).attr('fill', x ? 'url(#glX)' : 'url(#gl)');
+    bi.append('ellipse').attr('cy', -r * 0.7).attr('rx', r * 0.46).attr('ry', r * 0.17).attr('fill', 'url(#sheen)');
+    const s = Math.max(16, Math.min(70, r * 0.42));
+    // The name gets two lines in a roomy bubble and one in a small one; the type shrinks a little before anything is cut.
+    let fs = Math.max(r < 44 ? 10.5 : 11.5, Math.min(17, r / 4.8)), lines = [];
+    if (r >= 32) {
+      const name = shortName(d.node), room = r < 44 ? 1 : 2;
+      for (let f = fs; f >= 10.5; f -= 0.5) {
+        fs = f;
+        lines = fitName(name, r * 1.5, f);
+        if (lines.length <= room && !lines.some(t => t.endsWith('…'))) break;
+      }
+      if (lines.length > room) lines = [clip(name, r * 1.5, fs)];
+    }
+    const hs = Math.round(fs * 9) / 10;
+    const hours = r >= 30;
+    const block = s + (lines.length ? 7 + lines.length * fs * 1.2 : 0) + (hours ? (lines.length ? 2 : 6) + hs * 1.2 : 0);
+    let y = -block / 2;
+    bi.append('g').attr('transform', 'translate(' + (-s / 2) + ',' + y + ') scale(' + (s / 32) + ')').html(icon(d.node, true));
+    y += s + (lines.length ? 7 : 6);
+    lines.forEach(t => { bi.append('text').attr('class', 'lbl-n').attr('y', y + fs * 0.9).attr('font-size', fs).text(t); y += fs * 1.2; });
+    if (hours) bi.append('text').attr('class', 'lbl-h').attr('y', y + (lines.length ? 2 : 0) + hs * 0.9).attr('font-size', hs).text(fmt(d.node.value) + ' ' + U().h);
+  }
+
+  // dir 1 opens `from` (it swells and fades as its children float in), -1 steps out, 0 redraws in place.
+  function draw(dir, from, still, fresh) {
+    const lay = layout(focus);
+    const quick = REDUCE || still;
+    // Stars stay behind the glass: one showing through a bubble reads as a stray dot on its label.
+    gStars.selectAll('circle').classed('hid', s => lay.items.some(b => (s.x - b.x) ** 2 + (s.y - b.y) ** 2 < (b.r + 6) ** 2));
+    neb.transition().duration(quick ? 0 : 600).attr('r', lay.r * 1.3);
+    const old = gB.selectAll('g.bub').classed('bub', false).style('pointer-events', 'none');
+    if (quick || fresh) old.remove();
+    else old.transition().duration(320).ease(d3.easeCubicIn).attr('opacity', 0)
+      .attr('transform', d => (dir > 0 && d.node === from)
+        ? 'translate(0,0) scale(' + (lay.r / d.r).toFixed(3) + ')'
+        : 'translate(' + d.x * (dir < 0 ? 0.4 : 1.35) + ',' + d.y * (dir < 0 ? 0.4 : 1.35) + ') scale(' + (dir < 0 ? 0.4 : 0.85) + ')')
+      .remove();
+
+    bubbleOf = new Map();
+    let seed = 3;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const g = gB.selectAll(null).data(lay.items).enter().append('g').attr('class', 'bub')
+      .classed('sel', d => d.node === selected)
+      .attr('opacity', quick ? 1 : 0)
+      .attr('transform', d => (quick ? 'translate(' + d.x + ',' + d.y + ')'
+        : 'translate(' + d.x * (dir < 0 ? 1.4 : 0.5) + ',' + d.y * (dir < 0 ? 1.4 : 0.5) + ') scale(' + (dir < 0 ? 1.3 : 0.4) + ')'))
+      .each(function (d) { bubbleOf.set(d.node, this); });
+    // Each bubble drifts a little on its own, as if floating.
+    g.append('g').attr('class', 'fl')
+      .style('--fx', () => ((rnd() - 0.5) * 6).toFixed(1) + 'px')
+      .style('--fy', () => ((rnd() - 0.5) * 8).toFixed(1) + 'px')
+      .style('animation-duration', () => (8 + rnd() * 5).toFixed(1) + 's')
+      .style('animation-delay', () => (-rnd() * 10).toFixed(2) + 's')
+      .append('g').attr('class', 'bi');
+    g.each(function (d) { dress(d3.select(this), d); });
+    if (!quick) g.transition().delay((d, i) => (dir ? 170 : 50) + i * 30).duration(620).ease(d3.easeBackOut.overshoot(1.2))
+      .attr('opacity', 1).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+    g.on('mouseenter', (e, d) => { hover(d.node, true); showTip(d); })
+      .on('mouseleave', (e, d) => { hover(d.node, false); hideTip(); })
+      .on('click', (e, d) => { e.stopPropagation(); hideTip(); pick(d.node); });
+    backBtn.disabled = !focus.parent;
+    fwdBtn.disabled = !fwd.length;
+  }
+
+  // A bubble and its row light up together, and the other bubbles step back.
+  function hover(node, on) {
+    const b = bubbleOf.get(node), r = rowOf.get(node);
+    if (b) b.classList.toggle('hov', on);
+    if (r) r.classList.toggle('hl', on);
+    svgEl.classList.toggle('hovering', on && !!b);
+  }
+
+  function setFocus(node, dir, from) {
+    focus = node; selected = null;
+    svgEl.classList.remove('hovering');
+    hideTip();
+    draw(dir, from);
+    renderPanel();
+    updateStats();
+  }
+  function pick(d) {
+    if (d.children) {
+      if (fwd.length && fwd[fwd.length - 1] === d) fwd.pop(); else fwd.length = 0;
+      setFocus(d, 1, d);
+      return;
+    }
+    selected = selected === d ? null : d;
+    gB.selectAll('g.bub').classed('sel', x => x.node === selected);
+    rowOf.forEach((row, n) => row.classList.toggle('on', n === selected));
+    updateStats();
+  }
+  function out() { if (focus && focus.parent) { fwd.push(focus); setFocus(focus.parent, -1, focus); } }
+  function forward() { const n = fwd.pop(); if (n) setFocus(n, 1, n); }
+  function goTo(n) {
+    for (let c = focus; c && c !== n; c = c.parent) fwd.push(c);
+    setFocus(n, -1, null);
+  }
+
+  // The card on top: what is shown, its share of the whole and how much of it is beyond coding.
+  function renderCard() {
+    const u = U();
+    let code = 0, x = 0;
+    root.leaves().forEach(l => { if (inX(l)) x += l.data.h; else code += l.data.h; });
+    setText('dName', product === 'all' ? u.whole : pName(product));
+    setText('dHours', product === 'all' ? '≈ ' + fmt(TOTAL) + ' ' + u.h : '≈ ' + fmt(total) + u.of + fmt(TOTAL) + ' ' + u.h);
+    document.getElementById('barCode').style.width = (code / TOTAL * 100) + '%';
+    document.getElementById('barX').style.width = (x / TOTAL * 100) + '%';
+    setText('lgCode', fmt(code) + ' ' + u.h);
+    setText('lgX', fmt(x) + ' ' + u.h);
+  }
+
+  function renderRoles() {
+    rolesBox.replaceChildren();
+    PRODUCTS.forEach(p => {
+      const b = el('button', 'rl');
+      b.type = 'button';
+      b.dataset.id = p.id;
+      b.dataset.label = L(p.name) + ' · ≈ ' + fmt(hoursFor(p.id)) + ' ' + U().h + (p.guess ? ' · ' + U().guess : '');
+      b.setAttribute('aria-label', b.dataset.label);
+      b.setAttribute('aria-pressed', String(p.id === product));
+      b.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true">' + (ROLE[p.id] || '') + '</svg>';
+      if (p.guess) b.append(el('i', 'gq'));
+      b.addEventListener('click', () => {
+        if (p.id === product) return;
+        product = p.id;
+        rolesBox.querySelectorAll('.rl').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.id === product)));
+        hideTip();
+        build();
+      });
+      rolesBox.append(b);
+    });
+  }
+
+  function renderPanel() {
+    const u = U();
+    const p = PRODUCTS.find(x => x.id === product);
+    const ico = document.getElementById('fIcon');
+    ico.className = 'lp-ico' + (focus.depth === 0 ? ' root' : '');
+    ico.innerHTML = svg32(icon(focus, false));
+    document.getElementById('fName').textContent = focus.depth === 0 ? (product === 'all' ? u.root : pName(product)) : L(focus.data.n);
+    const kids = focus.children.length;
+    document.getElementById('fMeta').textContent = '≈ ' + fmt(focus.value) + ' ' + u.h + '  |  ' + kids + ' ' + plural(kids, focus.depth === 0 ? u.sect : focus.depth === 1 ? u.part : u.task);
+    const desc = document.getElementById('fDesc');
+    if (focus.depth === 0) {
+      desc.textContent = (product === 'all' ? '' : L(p.note) + (product !== 'core' ? u.shared : '') + ' ') + u.hint;
+      if (p.guess) desc.append(el('span', 'q', u.guess));
+    } else desc.textContent = focus.depth === 1 ? (focus.data.d ? L(focus.data.d) : '') : u.partDesc;
+
+    const list = document.getElementById('list');
+    list.replaceChildren();
+    rowOf = new Map();
+    focus.children.forEach((c, n) => {
+      const b = el('button', 'item rip' + (c === selected ? ' on' : ''));
+      b.type = 'button';
+      b.style.animationDelay = (n * 0.025) + 's';
+      const ic = el('span', 'ri');
+      ic.innerHTML = svg32(icon(c, false));
+      b.append(ic, el('span', 'nm', L(c.data.n)), el('span', 'hr', fmt(c.value) + ' ' + u.h));
+      if (!c.children) b.append(el('span', 'sub', c.data.p.map(pName).join(', ')));
+      b.addEventListener('click', () => pick(c));
+      b.addEventListener('mouseenter', () => hover(c, true));
+      b.addEventListener('mouseleave', () => hover(c, false));
+      b.addEventListener('focus', () => hover(c, true));
+      b.addEventListener('blur', () => hover(c, false));
+      rowOf.set(c, b);
+      const li = el('li');
+      li.append(b);
+      list.append(li);
+    });
+    document.querySelector('.panel').scrollTop = 0;
+
+    const crumbs = document.getElementById('crumbs');
+    crumbs.replaceChildren();
+    focus.ancestors().reverse().forEach((n, i) => {
+      if (i) { const sep = el('span', null, '›'); sep.setAttribute('aria-hidden', 'true'); crumbs.append(sep); }
+      const b = el('button', 'crumb');
+      b.type = 'button';
+      b.style.animationDelay = (i * 0.04) + 's';
+      b.innerHTML = svg32(n.depth === 0 ? ORBS : folder(inX(n), false));
+      b.append(n.depth === 0 ? (product === 'all' ? 'NOI' : pName(product)) : shortName(n));
+      if (n === focus) b.setAttribute('aria-current', 'true');
+      else b.addEventListener('click', () => goTo(n));
+      crumbs.append(b);
+    });
+  }
+
+  // The line under the bubbles: what this view holds, or the task that is selected.
+  function updateStats() {
+    const u = U(), box = document.getElementById('lensStats');
+    box.replaceChildren();
+    const add = t => { if (box.childNodes.length) box.append(el('i', 'sep')); box.append(el('span', null, t)); };
+    if (selected) { add(u.picked + L(selected.data.n)); add('≈ ' + fmt(selected.value) + ' ' + u.h); return; }
+    const areas = root.children ? root.children.length : 0;
+    const parts = root.descendants().filter(d => d.depth === 2).length;
+    const tasks = root.leaves().length;
+    add(areas + ' ' + plural(areas, u.sect));
+    add(parts + ' ' + plural(parts, u.part));
+    add(tasks + ' ' + plural(tasks, u.task));
+  }
+
+  function describe(d) {
+    const u = U();
+    if (d.depth === 1) return d.data.d ? L(d.data.d) : '';
+    if (d.depth === 2) { const n = d.children.length; return n + ' ' + plural(n, u.task); }
+    return u.productsLbl + d.data.p.map(pName).join(', ');
+  }
+  // The tooltip sits beside the bubble it describes, never over its label: to the right, else to the left, else below or above.
+  function showTip(b) {
+    const u = U(), d = b.node;
+    tip.replaceChildren(
+      el('b', null, L(d.data.n)),
+      el('div', null, '≈ ' + fmt(d.value) + ' ' + u.h + ' · ' + (d.value / total * 100).toFixed(1).replace('.', u.dec) + u.ofShown),
+      el('div', null, describe(d))
+    );
+    tip.hidden = false;
+    const w = tip.offsetWidth, h = tip.offsetHeight, gap = 12;
+    const cx = W / 2 + b.x, cy = H / 2 + b.y, r = b.r * 1.06;
+    let x = cx + r + gap, y = cy - h / 2;
+    if (x + w > W) x = cx - r - gap - w;
+    if (x < 0) {
+      x = Math.min(Math.max(0, cx - w / 2), W - w);
+      y = cy + r + gap;
+      if (y + h > H) y = cy - r - gap - h;
+    }
+    tip.style.left = Math.max(0, x) + 'px';
+    tip.style.top = Math.min(Math.max(0, y), Math.max(0, H - h)) + 'px';
+  }
+  function hideTip() { tip.hidden = true; }
+
+  svg.on('click', out);
+  backBtn.addEventListener('click', out);
+  fwdBtn.addEventListener('click', forward);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.pane === 'scope') out(); });
+  onLang(l => {
+    lang = l;
+    hideTip();
+    if (!root) return;
+    renderRoles(); renderCard(); renderPanel(); updateStats();
+    gB.selectAll('g.bub').each(function (d) { dress(d3.select(this), d); });
+  });
+
+  // The lens fills its box; a hidden screen measures zero, so it is measured again whenever the screen opens.
+  function measure() {
+    const r = lensBox.getBoundingClientRect();
+    const w = Math.round(r.width), h = Math.round(r.height);
+    if (!w || !h || (w === W && h === H)) return false;
+    W = w; H = h;
+    svg.attr('viewBox', [-W / 2, -H / 2, W, H].join(' '));
+    stars();
+    return true;
+  }
+  onPane(id => {
+    if (id !== 'scope') { hideTip(); return; }
+    measure();
+    if (root) draw(0, null, false, true);
+  });
+  measure();
+  renderRoles();
+  build(true);
+  if (window.ResizeObserver) new ResizeObserver(() => { if (measure() && root) draw(0, null, true); }).observe(lensBox);
+  else window.addEventListener('resize', () => { if (measure() && root) draw(0, null, true); });
+})();
+</script>
+</body>
+</html>
