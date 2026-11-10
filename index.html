@@ -690,6 +690,33 @@ svg text { pointer-events: none; }
   * { transition: none !important; animation: none !important; }
   .preloader { display: none; }
 }
+
+/* After version 1: a «позже» badge with a hollow dot, the later blocks as a strip under the three columns, and the
+   later line in the price list. */
+.lt { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 700; line-height: 1.3; color: rgba(255, 255, 255, 0.88); background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24); white-space: nowrap; }
+.lt::before { content: ""; width: 6px; height: 6px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; }
+.sg-later .sg-bar { display: none; }
+.sg-later .srow .sn { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4); }
+.sg-later .srow[aria-pressed="true"] .sn { background: #ffffff; box-shadow: none; }
+.sd-stats .lt { padding: 4px 10px 4px 9px; font-size: 12px; }
+@media (min-width: 901px) {
+  .sg-later { grid-column: 1 / -1; }
+  .sg-later .sg-head { display: flex; align-items: center; gap: 10px; padding: 8px 12px 6px; }
+  .sg-later .sg-head .sum { margin-left: auto; }
+  .sg-later .sg-list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px 6px; }
+}
+@media (max-height: 820px) and (min-width: 901px) {
+  .sg-later .sg-head { padding: 6px 12px 4px; }
+  .sg-later .sg-head .sum { display: inline; }
+}
+.pp-later { width: 100%; margin: 0; padding: 9px 0; border: 0; border-top: 1px dashed rgba(255, 255, 255, 0.26); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.pp-later b { display: inline-flex; align-items: center; gap: 8px; }
+.pp-later .amt { color: var(--ink-2); }
+.pp-later:hover b { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255, 255, 255, 0.4); }
+@media (max-height: 880px) and (min-width: 901px) { .pricebox { margin-top: 18px; } .phase-list .pp { padding-block: 7px; } .phase-list h3.gap { margin-top: 12px; } }
+@media (max-height: 820px) and (min-width: 901px) { .pricebox { margin-top: 16px; } }
+@media (max-height: 780px) and (min-width: 901px) { .phase-list .note { display: none; } }
+.pp-later:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; border-radius: 6px; }
 </style>
 </head>
 <body>
@@ -846,6 +873,7 @@ svg text { pointer-events: none; }
             <div class="sd-col"><b data-i18n="sd.get">Что ты получишь</b><p id="sdGet"></p></div>
             <div class="sd-col"><b data-i18n="sd.check">Как проверишь</b><p id="sdCheck"></p></div>
             <div class="sd-col sd-inc"><b data-i18n="sd.parts">Что входит</b><div class="sd-parts" id="sdParts"></div></div>
+            <p class="sd-note sd-later" data-i18n="sd.later" hidden>Ориентир по ставке аудита за экран версии 1: сами эти модули аудит не оценивал. Цену блока фиксируем перед стартом, в потолок $26 000 он не входит; бэкенд — отдельно.</p>
             <p class="sd-note" data-i18n="sd.note">Дни — наша работа: Гио — дизайн, Лука — фронтенд. Ревью архитектуры и DevOps (10–15 дней Луки) идут через весь проект и в шаги не входят.</p>
           </div>
         </div>
@@ -948,6 +976,7 @@ svg text { pointer-events: none; }
           <div class="glass phase-list spot">
             <h3 data-i18n="pp.h">Наша часть по работам</h3>
             <div id="ppList"></div>
+            <div id="ppLater"></div>
             <h3 class="gap" data-i18n="bf.h">Вся версия 1 — по аудиту</h3>
             <div id="bfList"></div>
             <p class="note" data-i18n="bf.note">Всего 217–353 чел.-дня: бэкенд 94–157, фронтенд 53–84, дизайн 17–28, тестирование 39–61, DevOps 14,5–23.</p>
@@ -1067,6 +1096,7 @@ const EN = {
  "sd.get": "What you get",
  "sd.check": "How you check it",
  "sd.parts": "What’s included",
+ "sd.later": "A guide based on the audit’s per-screen rate for version 1: the audit didn’t estimate these modules. We fix each block’s price before it starts; it isn’t part of the $26,000 ceiling, and the back end is separate.",
  "sd.note": "Days are our work: Gio on design, Luka on the front end. Architecture review and DevOps (10–15 of Luka’s days) run through the whole project and aren’t counted in the steps.",
  "sf.h": "The database itself guards the money",
  "sf.lead": "The audit checked 16 money rules, and PostgreSQL already enforces 12. Four are held only by code, so we move them into the database in weeks 2–6.",
@@ -1203,16 +1233,21 @@ const weeksLabel = (w, lang, long) => (lang === 'en' ? (long ? (w[0] === w[1] ? 
 // Our part, in person-days [low, high], as the audit estimates it; a day is 8 hours at $25.
 const DAY_RATE = 200;
 const FAST = 0.35;   // the 12–15-screen fast path cuts our part by 30–40%
-const OUR = [{"name": ["Дизайн", "Design"], "who": ["Гио", "Gio"], "d": [19, 31], "what": ["знакомство, дизайн-система, все экраны", "discovery, the design system, every screen"]}, {"name": ["Фронтенд", "Front end"], "who": ["Лука", "Luka"], "d": [53, 84], "what": ["каркас, экраны ролей, интеграции, пилот", "the foundation, role screens, integrations, the pilot"]}, {"name": ["Ревью архитектуры и DevOps", "Architecture review and DevOps"], "who": ["Лука", "Luka"], "d": [10, 15], "what": ["проверка бэкенда на каждом этапе, сервер и копии", "reviewing the back end at each stage, the server and backups"]}];
+const OUR = [{"name": ["Дизайн", "Design"], "who": ["Гио", "Gio"], "d": [19, 31], "what": ["знакомство, дизайн-система, все экраны", "discovery, the design system, every screen"]}, {"name": ["Фронтенд", "Front end"], "who": ["Лука", "Luka"], "d": [53, 84], "what": ["каркас, экраны ролей, интеграции, пилот", "foundation, screens, integrations, pilot"]}, {"name": ["Ревью архитектуры и DevOps", "Architecture review and DevOps"], "who": ["Лука", "Luka"], "d": [10, 15], "what": ["проверка бэкенда, сервер и копии", "back-end review, the server and backups"]}];
 const OUR_D = [OUR.reduce((a, x) => a + x.d[0], 0), OUR.reduce((a, x) => a + x.d[1], 0)];
 // The whole of version 1, split as her brief asks: fix the current problems, complete the MVP, prepare for production.
-const V1 = [{"name": ["Исправить текущие проблемы", "Fix the current problems"], "d": [45, 75], "what": ["сохранить, собрать, один расчёт зарплаты, правила денег, контракт API", "save, assemble, one payroll engine, money rules, the API contract"]}, {"name": ["Довести MVP", "Complete the MVP"], "d": [154, 248], "what": ["≈25 экранов, касса и смена, интеграции", "≈25 screens, the cash desk and shift, integrations"]}, {"name": ["Подготовить к работе", "Prepare for production"], "d": [18, 30], "what": ["сервер, копии, мониторинг, пилот", "the server, backups, monitoring, the pilot"]}];
+const V1 = [{"name": ["Исправить текущие проблемы", "Fix the current problems"], "d": [45, 75], "what": ["сохранить, собрать, одна зарплата, контракт API", "save, assemble, one payroll, the API contract"]}, {"name": ["Довести MVP", "Complete the MVP"], "d": [154, 248], "what": ["≈25 экранов, касса и смена, интеграции", "≈25 screens, the cash desk and shift, integrations"]}, {"name": ["Подготовить к работе", "Prepare for production"], "d": [18, 30], "what": ["сервер, копии, мониторинг, пилот", "the server, backups, monitoring, the pilot"]}];
 // Five stages over thirteen weeks; the API contract lands at the end of week 5 and gates the screens.
 const WEEKS = 13, GATE = 5;
 const STAGES = [{"n": 0, "w": [1, 1], "name": ["Сохранить", "Save"], "who": ["ты и бэкенд", "you and the back end"], "what": ["Репозиторий, коммит ~100 файлов, дамп базы, миграции 001–040.", "A repository, a commit of the ~100 files, a database dump, migrations 001–040."]}, {"n": 1, "w": [2, 6], "name": ["Собрать бэкенд", "Assemble the back end"], "who": ["бэкенд; Лука проверяет", "back end; Luka reviews"], "what": ["Одно приложение, один расчёт зарплаты, правила денег в базе, контракт API.", "One app, one payroll engine, money rules in the database, the API contract."]}, {"n": 2, "w": [3, 11], "name": ["Продукт", "Product"], "who": ["Гио и Лука; бэкенд", "Gio and Luka; back end"], "what": ["≈25 экранов для 9 ролей на компьютере, планшете и ТВ; касса и смена.", "≈25 screens for 9 roles on computer, tablet and TV; the cash desk and shift."]}, {"n": 3, "w": [6, 12], "name": ["Интеграции", "Integrations"], "who": ["бэкенд", "back end"], "what": ["Журнал событий и сверка; R‑Keeper — при доступе, иначе вручную.", "An event log and reconciliation; R‑Keeper with access, otherwise by hand."]}, {"n": 4, "w": [10, 13], "name": ["Запуск", "Launch"], "who": ["все", "everyone"], "what": ["Сервер, копии и учебное восстановление, мониторинг, пилот.", "The server, backups and a restore drill, monitoring, the pilot."]}];
 // Our steps, in three groups, each ending in something she can open and check. Days: Gio on design, Luka on the front end.
 const GROUPS = [["Основа", "Foundation"], ["Экраны", "Screens"], ["Запуск", "Launch"]];
 const STEPS = [{"g": 0, "w": [2, 3], "gio": [3, 5], "luka": [2, 3], "name": ["Знакомство и решения", "Discovery and decisions"], "get": ["Карта ролей и экранов версии 1, согласованная с тобой. Решения по общему планшету, правам охраны и готовности после привата — записаны.", "A map of the roles and screens in version 1, agreed with you. Decisions on the shared tablet, security’s access and readiness after a private, written down."], "check": ["Проходим ночь по ролям — от прихода артисток до закрытия смены — и отмечаем, что попадает в первую версию.", "We walk through a night role by role, from performers arriving to closing the shift, and mark what goes into the first version."], "parts": [["Роли и сценарии", "Roles and scenarios"], ["Решения 2, 4 и 5", "Decisions 2, 4 and 5"], ["Приоритеты версии 1", "Version 1 priorities"]]}, {"g": 0, "w": [2, 6], "gio": [8, 12], "luka": [0, 0], "name": ["Дизайн-система", "Design system"], "get": ["Тёмная тема под свет клуба, крупные кнопки для планшета, таймеры и статусы с одной логикой цвета — в Figma и Storybook.", "A dark theme for club lighting, big buttons for tablets, and timers and statuses with one colour logic, in Figma and Storybook."], "check": ["Смотришь компоненты на планшете и ТВ прямо в клубе, при рабочем свете.", "You look at the components on a tablet and the TV in the club itself, under working light."], "parts": [["Цвета, шрифты, компоненты", "Colours, type, components"], ["Таймеры и статусы", "Timers and statuses"], ["Компьютер · планшет · ТВ", "Computer · tablet · TV"]]}, {"g": 0, "w": [3, 5], "gio": [0, 0], "luka": [10, 15], "name": ["Каркас приложения", "App foundation"], "get": ["Вход, устройства и оболочка с ролями и живым обновлением — на твоём рабочем API. Ошибки — понятным русским текстом.", "Sign-in, devices and a role-aware shell with live updates, on your working API. Errors in plain Russian."], "check": ["Входишь под разными ролями. Выключаем сеть — появляется баннер; включаем — данные догоняют сами.", "Sign in as different roles. We turn the network off and a banner appears; we turn it on and the data catches up by itself."], "parts": [["Вход и устройства", "Sign-in and devices"], ["Оболочка и навигация", "Shell and navigation"], ["Живое обновление", "Live updates"], ["Контракт API", "The API contract"]]}, {"g": 1, "w": [5, 7], "gio": [2, 3], "luka": [10, 16], "name": ["Сцена", "Stage"], "get": ["Пульт DJ с START, PAUSE, RESUME и NEXT, доска ротации для менеджера, приход и готовность артисток, табло на ТВ.", "A DJ console with START, PAUSE, RESUME and NEXT, a rotation board for managers, performers’ arrival and readiness, and the TV board."], "check": ["Проводим тестовую ночь на рабочем сервере в обоих режимах сцены — с перерывами и выходом вне очереди.", "We run a test night on the working server in both stage modes, with breaks and an out-of-turn set."], "parts": [["Пульт DJ", "DJ console"], ["Доска ротации", "Rotation board"], ["Приход и готовность", "Arrival and readiness"], ["Душ и шоу", "Shower and show"], ["Табло на ТВ", "TV board"]]}, {"g": 1, "w": [7, 9], "gio": [2, 4], "luka": [13, 20], "name": ["Деньги", "Money"], "get": ["Посиделки, приваты, «Гулять» и «Клетка» с таймерами. Касса с ручным подтверждением оплаты, сдачей наличных и кассовой сменой. Начисления, выплаты, долги.", "Sit-downs, privates, “Gulyat” and “Kletka” with timers. The cash desk with manual payment confirmation, cash handover and a cash shift. Accruals, payouts, debts."], "check": ["Тестовая смена со смешанными оплатами закрывается без расхождений, а выплаты за неделю совпадают с расчётом твоего бухгалтера.", "A test shift with mixed payments closes with no discrepancies, and a week’s payouts match your accountant’s own calculation."], "parts": [["Услуги и таймеры", "Services and timers"], ["Арт-касса", "Art cash desk"], ["Кассовая смена", "Cash shift"], ["Начисления и выплаты", "Accruals and payouts"], ["Долги", "Debts"], ["Согласования", "Approvals"]]}, {"g": 1, "w": [9, 11], "gio": [2, 3], "luka": [12, 19], "name": ["Зал и руководитель", "Floor and management"], "get": ["Столы и гости для менеджеров, VIP-комнаты, пост охраны. Панель руководителя: смена, персонал, каталог и тарифы, устройства, отчёт за смену, уведомления.", "Tables and guests for managers, VIP rooms, the security post. A management dashboard: the shift, staff, the catalogue and tariffs, devices, the shift report, notifications."], "check": ["Руководитель открывает и закрывает смену и видит итог ночи на одном экране; охрана отмечает приход, не видя денег.", "The manager opens and closes the shift and sees the night’s result on one screen; security clocks people in without seeing any money."], "parts": [["Столы и гости", "Tables and guests"], ["VIP «Клетка»", "“Kletka” VIP"], ["Пост охраны", "Security post"], ["Панель руководителя", "Management dashboard"], ["Персонал и устройства", "Staff and devices"], ["Отчёт за смену", "Shift report"]]}, {"g": 2, "w": [10, 12], "gio": [1, 2], "luka": [3, 5], "name": ["Интеграции и сверка", "Integrations and reconciliation"], "get": ["Экран расхождений с решением по каждому и настройки интеграций. Если к 6-й неделе будет доступ к R‑Keeper — сверка арт-кассы; если нет — остаётся ручное подтверждение.", "A mismatch screen with a decision on each, and integration settings. If R‑Keeper access arrives by week 6, art desk reconciliation; if not, manual confirmation stays."], "check": ["Подаём повторное и неверное событие — система ловит его и показывает в расхождениях, ничего не задвоив.", "We send a repeated and a wrong event: the system catches it and lists it as a mismatch without doubling anything."], "parts": [["Расхождения", "Mismatches"], ["Настройки интеграций", "Integration settings"], ["R‑Keeper при доступе", "R‑Keeper with access"]]}, {"g": 2, "w": [12, 13], "gio": [1, 2], "luka": [3, 6], "name": ["Пилот в клубе", "Pilot in the club"], "get": ["2–3 пилотные смены с нами на связи, исправления по ходу, проверка на настоящих планшетах и ТВ. Код, Storybook и записи разборов — в твоём репозитории.", "2–3 pilot shifts with us on call, fixes as we go, and checks on real tablets and the TV. The code, Storybook and recorded walkthroughs are in your repository."], "check": ["Сценарии из ТЗ проходят, ночь в клубе — без критических ошибок, и ты подписываешь приёмку.", "The scenarios from your brief pass, a night in the club has no critical errors, and you sign off."], "parts": [["Пилотные смены", "Pilot shifts"], ["Проверка устройств", "Device checks"], ["Передача", "Handover"]]}];
+// After version 1: the modules her brief asks for that the audit leaves for later, as four blocks of our work, marked «позже».
+// The audit didn't estimate them (licences aside), so the days use its own per-screen rate for version 1 and are a guide.
+GROUPS.push(['После версии 1', 'After version 1']);
+STEPS.push(...JSON.parse("[{\"g\": 3, \"later\": true, \"w\": null, \"gio\": [3, 5], \"luka\": [11, 21], \"name\": [\"Гости и залы\", \"Guests and halls\"], \"get\": [\"Схемы залов с живыми столами, брони и лист ожидания, база гостей с лояльностью и депозитами, источники гостей, звонки Mango Office.\", \"Hall maps with live tables, bookings and the waiting list, the guest base with loyalty and deposits, guest sources, Mango Office calls.\"], \"check\": [\"Бронируешь стол, гость садится по схеме; звонок с тестового номера открывает его карточку.\", \"You book a table and the guest is seated from the map; a call from a test number opens their card.\"], \"parts\": [[\"Схемы залов\", \"Hall maps\"], [\"Брони\", \"Bookings\"], [\"Лояльность и депозиты\", \"Loyalty and deposits\"], [\"Источники гостей\", \"Guest sources\"], [\"Mango Office\", \"Mango Office\"]]}, {\"g\": 3, \"later\": true, \"w\": null, \"gio\": [4, 7], \"luka\": [13, 23], \"name\": [\"Персонал\", \"Staff\"], \"get\": [\"Графики, замены, отпуска и больничные; кастинг из HandFlow, стажировка, приём и увольнение; приложение сотрудника на телефоне.\", \"Schedules, swaps, vacations and sick leave; casting from HandFlow, trial, hiring and dismissal; the staff app on each phone.\"], \"check\": [\"Артистка просит замену в телефоне, менеджер одобряет — график меняется у всех.\", \"A performer asks for a swap on her phone, the manager approves, and the schedule changes for everyone.\"], \"parts\": [[\"Графики и замены\", \"Schedules and swaps\"], [\"Кастинг и HandFlow\", \"Casting and HandFlow\"], [\"Увольнение\", \"Dismissal\"], [\"Приложение сотрудника\", \"Staff app\"]]}, {\"g\": 3, \"later\": true, \"w\": null, \"gio\": [3, 5], \"luka\": [10, 19], \"name\": [\"Службы клуба\", \"Club departments\"], \"get\": [\"Салон, костюмерная и ателье, хостес, сервисный отдел, журнал охраны и вызовы сотрудников — каждый отдел видит только своё.\", \"The salon, costume room and tailoring, hostesses, the service department, the security log and staff calls; each department sees only its own.\"], \"check\": [\"Записываешь артистку к мастеру, выдаёшь костюм, вызываешь сервис к столу — и смотришь, кто что видит.\", \"You book a performer with a stylist, issue a costume and call service to a table, then check who sees what.\"], \"parts\": [[\"Салон\", \"Salon\"], [\"Костюмерная и ателье\", \"Costume room and tailoring\"], [\"Хостес\", \"Hostesses\"], [\"Сервис\", \"Service\"], [\"Журнал охраны\", \"Security log\"]]}, {\"g\": 3, \"later\": true, \"w\": null, \"gio\": [3, 5], \"luka\": [11, 19], \"name\": [\"Финансы и клубы\", \"Finance and clubs\"], \"get\": [\"Доходы и расходы, загрузка из Excel, барная касса R‑Keeper в NOI, настройки клуба, полный журнал действий, новые клубы и лицензии.\", \"Income and expenses, Excel import, the R‑Keeper bar till in NOI, club settings, the full action log, new clubs and licences.\"], \"check\": [\"Загружаешь расходы за месяц из Excel и видишь результат клуба; данные тестового клуба не видны другим.\", \"You load a month of expenses from Excel and see the club’s result; a test club’s data stays hidden from the others.\"], \"parts\": [[\"Доходы и расходы\", \"Income and expenses\"], [\"Загрузка из Excel\", \"Excel import\"], [\"Бар в R‑Keeper\", \"Bar till in R‑Keeper\"], [\"Настройки и журнал\", \"Settings and log\"], [\"Лицензии\", \"Licences\"]]}]"));
+const LATER_D = [0, 1].map(e => STEPS.filter(s => s.later).reduce((a, s) => a + s.gio[e] + s.luka[e], 0));
 const stepDays = s => [s.gio[0] + s.luka[0], s.gio[1] + s.luka[1]];
 const MOD_WORKS = MODS.filter(m => m.s === 'w').length, MOD_AFTER = MODS.filter(m => m.s === 'w' || m.v === 1).length;
 
@@ -1289,10 +1324,10 @@ const steps = { sel: 0, rows: [], li: null };
 
 function renderSteps(lang) {
   const i = lang === 'en' ? 1 : 0, en = lang === 'en';
-  const wk = STEPS.map(s => s.w[1] - s.w[0] + 1), lo = Math.min(...wk), hi = Math.max(...wk);
-  setText('stH', en ? STEPS.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(STEPS.length, lang) + ' по ' + lo + '–' + hi + ' ' + ruPlural(hi, ['неделе', 'недели', 'недель']));
-  setText('qsSteps', en ? STEPS.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(STEPS.length, lang) + ' по ' + lo + '–' + hi + ' нед.');
-  setText('nvSteps', String(STEPS.length));
+  const v1 = STEPS.filter(s => !s.later), wk = v1.map(s => s.w[1] - s.w[0] + 1), lo = Math.min(...wk), hi = Math.max(...wk);
+  setText('stH', en ? v1.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(v1.length, lang) + ' по ' + lo + '–' + hi + ' ' + ruPlural(hi, ['неделе', 'недели', 'недель']));
+  setText('qsSteps', en ? v1.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(v1.length, lang) + ' по ' + lo + '–' + hi + ' нед.');
+  setText('nvSteps', String(v1.length));
   // The detail may sit inside a list that is about to be rebuilt; park it on the screen first.
   document.getElementById('pane-steps').append(document.getElementById('sdet'));
   const board = document.getElementById('board');
@@ -1301,9 +1336,10 @@ function renderSteps(lang) {
   GROUPS.forEach((g, n) => {
     const mine = STEPS.filter(s => s.g === n);
     const d = [mine.reduce((a, s) => a + stepDays(s)[0], 0), mine.reduce((a, s) => a + stepDays(s)[1], 0)];
-    const w = [Math.min(...mine.map(s => s.w[0])), Math.max(...mine.map(s => s.w[1]))];
-    const card = el('section', 'sg'), head = el('div', 'sg-head'), bar = el('div', 'sg-bar'), list = el('ol', 'sg-list');
-    head.append(el('b', null, (n + 1) + ' · ' + g[i]), el('span', 'when', weeksLabel(w, lang)),
+    const later = mine.length > 0 && mine[0].later;
+    const w = later ? null : [Math.min(...mine.map(s => s.w[0])), Math.max(...mine.map(s => s.w[1]))];
+    const card = el('section', later ? 'sg sg-later' : 'sg'), head = el('div', 'sg-head'), bar = el('div', 'sg-bar'), list = el('ol', 'sg-list');
+    head.append(el('b', null, later ? g[i] : (n + 1) + ' · ' + g[i]), el('span', later ? 'lt' : 'when', later ? (en ? 'later' : 'позже') : weeksLabel(w, lang)),
       el('span', 'sum', days(d, lang) + ' · ' + usdRange(d[0] * DAY_RATE, d[1] * DAY_RATE, lang)), bar);
     STEPS.forEach((s, k) => {
       if (s.g !== n) return;
@@ -1313,7 +1349,7 @@ function renderSteps(lang) {
       bar.append(seg);
       const b = el('button', 'srow rip');
       b.type = 'button';
-      b.append(el('span', 'sn', String(k + 1)), el('span', 'snm', s.name[i]), el('span', 'sw', weeksLabel(s.w, lang)));
+      b.append(el('span', 'sn', String(k + 1)), el('span', 'snm', s.name[i]), el('span', 'sw', s.later ? days(stepDays(s), lang) : weeksLabel(s.w, lang)));
       b.addEventListener('click', () => pickStep(k));
       b.addEventListener('mouseenter', () => seg.classList.add('hl'));
       b.addEventListener('mouseleave', () => seg.classList.remove('hl'));
@@ -1335,13 +1371,16 @@ function showStep(animate) {
   const inGroup = STEPS.filter(x => x.g === s.g), pos = inGroup.indexOf(s) + 1;
   setText('sdN', String(k + 1));
   setText('sdName', s.name[i]);
-  setText('sdMeta', GROUPS[s.g][i] + ' · ' + weeksLabel(s.w, lang, true) + ' · ' + (en ? 'step ' + pos + ' of ' + inGroup.length : 'шаг ' + pos + ' из ' + inGroup.length));
+  setText('sdMeta', GROUPS[s.g][i] + ' · ' + (s.later ? (en ? 'after the pilot' : 'после пилота') : weeksLabel(s.w, lang, true)) + ' · '
+    + (s.later ? (en ? 'block ' : 'блок ') : (en ? 'step ' : 'шаг ')) + pos + (en ? ' of ' : ' из ') + inGroup.length);
+  document.querySelector('#sdet .sd-note:not(.sd-later)').hidden = !!s.later;
+  document.querySelector('#sdet .sd-later').hidden = !s.later;
   const who = [];
   if (s.gio[1]) who.push((en ? 'Gio ' : 'Гио ') + s.gio[0] + '–' + s.gio[1]);
   if (s.luka[1]) who.push((en ? 'Luka ' : 'Лука ') + s.luka[0] + '–' + s.luka[1]);
   document.getElementById('sdStats').replaceChildren(...[
     who.join(' · ') + (en ? ' days' : ' дн.'), '≈ ' + usdRange(d[0] * DAY_RATE, d[1] * DAY_RATE, lang)
-  ].map(t => el('span', null, t)));
+  ].map(t => el('span', null, t)), ...(s.later ? [el('span', 'lt', en ? 'later' : 'позже')] : []));
   setText('sdGet', s.get[i]);
   setText('sdCheck', s.check[i]);
   document.getElementById('sdParts').replaceChildren(...s.parts.map(p => el('span', 'tag', p[i])));
@@ -1413,6 +1452,13 @@ function renderPrice(lang, animate) {
     : (en ? 'fast path: −' : 'быстрый путь: −') + Math.round((1 - k) * 100) + (en ? '% and an earlier pilot' : '% и пилот раньше');
   if (animate && !REDUCE) replay(document.getElementById('priceAfter'), 'bump');
   priceRows('ppList', OUR.map(r => ({ name: r.name[i], amt: usdRange(r.d[0] * DAY_RATE, r.d[1] * DAY_RATE, lang), when: r.who[i] + ' · ' + days(r.d, lang) + ' · ' + r.what[i] })));
+  const lt = document.getElementById('ppLater'), row = el('button', 'pp pp-later rip'), nm = el('b', null, en ? 'After version 1' : 'После версии 1');
+  row.type = 'button';
+  nm.append(el('span', 'lt', en ? 'later' : 'позже'));
+  row.append(nm, el('span', 'amt', '≈ ' + usdRange(LATER_D[0] * DAY_RATE, LATER_D[1] * DAY_RATE, lang)),
+    el('span', 'when', (en ? '4 blocks · ' : '4 блока · ') + days(LATER_D, lang) + (en ? ' · not in the ceiling' : ' · не входит в потолок')));
+  row.addEventListener('click', () => { showPane('steps', 1); pickStep(STEPS.findIndex(x => x.later)); });
+  lt.replaceChildren(row);
   priceRows('bfList', V1.map((r, n2) => ({ name: (n2 + 1) + ' · ' + r.name[i], amt: days(r.d, lang), when: r.what[i] })));
 }
 
