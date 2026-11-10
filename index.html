@@ -518,6 +518,71 @@ svg text { pointer-events: none; }
 .tip { position: absolute; z-index: 3; pointer-events: none; max-width: 280px; padding: 9px 12px; border-radius: 10px; font-size: 12.5px; line-height: 1.45; color: rgba(255, 255, 255, 0.86); background: rgba(58, 52, 78, 0.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 12px 28px rgba(0, 0, 0, 0.4); }
 .tip b { display: block; margin-bottom: 2px; font-size: 13.5px; font-weight: 600; color: #ffffff; }
 
+
+/* Plan: five stages over thirteen weeks, one lane each. Lanes sit 6px inside the track and 6px apart, segments keep
+   the track's 12px inner corners, and week labels, lanes and the API-contract line share one inner scale. */
+.timeline.wide, .cols.five { max-width: 940px; }
+.ticks.wk span, .ticks.wk span:first-child, .ticks.wk span:last-child { transform: translateX(-50%); }
+.track.gantt { height: auto; padding: 6px; display: grid; gap: 6px; }
+.lane { position: relative; height: 30px; }
+.track.gantt .seg { top: 0; bottom: 0; font-size: 13px; }
+.gate { position: absolute; top: 2px; bottom: 2px; width: 0; border-left: 1.5px dashed rgba(255, 255, 255, 0.75); pointer-events: none; }
+.gate span { position: absolute; top: calc(100% + 5px); left: 0; transform: translateX(-50%); padding: 1px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); color: #0b4a46; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.cols.five { margin-top: 30px; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.cols.five .col { padding: 8px 10px; }
+.cols.five .col b { font-size: 14.5px; }
+.cols.five .col .when { font-size: 12px; }
+.cols.five .col span.what { margin-top: 6px; font-size: 12.5px; line-height: 1.45; }
+/* Her eight decisions: a numbered grid under the plan, four to a row. */
+.decide { width: 100%; max-width: 940px; margin-top: 18px; display: grid; justify-items: center; gap: 8px; }
+.decide h3 { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.dgrid { width: 100%; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; text-align: left; }
+.dgrid li { display: grid; grid-template-columns: 20px minmax(0, 1fr); align-items: center; gap: 9px; min-height: 46px; padding: 6px 10px 6px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); font-size: 12.5px; line-height: 1.35; transition: background 0.2s ease, transform 0.35s var(--spring); }
+.dgrid li:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-2px); }
+.dgrid i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.92); color: #0b4a46; font: 700 11px/1 var(--font); font-style: normal; font-variant-numeric: tabular-nums; }
+
+/* Your modules: the status colours, the Today / After version 1 switch and the legend. */
+.view { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 12px; background: rgba(0, 0, 0, 0.22); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+.view::before { content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 9px; background: rgba(255, 255, 255, 0.94); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); transition: transform 0.4s var(--spring); }
+.view[data-on="v1"]::before { transform: translateX(100%); }
+.view button { position: relative; z-index: 1; border: 0; background: none; padding: 6px 8px; border-radius: 9px; font-size: 12.5px; font-weight: 600; color: rgba(255, 255, 255, 0.78); cursor: pointer; white-space: nowrap; transition: color 0.25s ease; }
+.view button:hover { color: #ffffff; }
+.view button[aria-pressed="true"] { color: #1b1532; }
+.view button:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.disk-bar i.st-w { background: linear-gradient(90deg, #a5f5c6, #4fd18b); }
+.disk-bar i.st-p, .disk-bar i.st-m { background: linear-gradient(90deg, #ffd36a, #fab219); }
+.disk-bar i.st-b { background: linear-gradient(90deg, #ffb0b0, #ff6b6b); }
+.disk-bar i.st-a, .disk-bar i.st-l { background: rgba(255, 255, 255, 0.28); }
+.dot.st-w { background: radial-gradient(circle at 35% 30%, #d4ffe6, #4fd18b 60%); }
+.dot.st-p, .dot.st-m { background: radial-gradient(circle at 35% 30%, #ffe6ad, #fab219 60%); }
+.dot.st-b { background: radial-gradient(circle at 35% 30%, #ffd4d4, #ff6b6b 60%); }
+.dot.st-a, .dot.st-l { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6); }
+.item .hr.st-w { color: #a5f5c6; }
+.item .hr.st-p, .item .hr.st-m { color: #ffd36a; }
+.item .hr.st-b { color: #ffb0b0; }
+.item .hr.st-a, .item .hr.st-l { color: var(--muted); }
+#lens .body.st-w { stroke: rgba(165, 245, 198, 0.7); }
+#lens .body.st-p, #lens .body.st-m { stroke: rgba(255, 214, 140, 0.7); }
+#lens .body.st-b { stroke: rgba(255, 170, 170, 0.75); }
+#lens .body.st-a, #lens .body.st-l { stroke: rgba(255, 255, 255, 0.42); stroke-dasharray: 4 4; }
+/* Questions: a little less air per row, so all ten fit above the footer. */
+.faq summary { padding-block: 11px; }
+@media (max-height: 820px) and (min-width: 901px) {
+  .faq { margin-top: 16px; }
+  .faq summary { padding-block: 9px; }
+  .lane { height: 26px; }
+  .track.gantt .seg { font-size: 12.5px; }
+  .cols.five { margin-top: 26px; }
+  .cols.five .col span.what { margin-top: 4px; font-size: 12px; line-height: 1.4; }
+  .decide { margin-top: 12px; }
+  .dgrid li { min-height: 40px; padding-block: 4px; font-size: 12px; }
+}
+@media (max-width: 900px) {
+  .cols.five { grid-template-columns: minmax(0, 1fr); }
+  .dgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lane { height: 28px; }
+}
+
 /* Short windows: less air above each screen */
 @media (max-height: 820px) and (min-width: 901px) {
   .pane { padding-top: 22px; }
@@ -639,7 +704,7 @@ svg text { pointer-events: none; }
       <i class="b" style="left:36px;top:116px;width:30px;height:30px;animation-delay:0.55s"></i>
       <i class="b" style="left:6px;top:10px;width:30px;height:30px;animation-delay:0.65s"></i>
     </div>
-    <div class="pl-title" data-i18n="pl.load">Давайте построим CRM</div>
+    <div class="pl-title" data-i18n="pl.load">Соберём NOI</div>
     <div class="pl-bar"><i></i></div>
   </div>
 </div>
@@ -672,15 +737,15 @@ svg text { pointer-events: none; }
         </div>
         <div class="group">
           <div class="group-h" data-i18n="g.project">Проект</div>
-          <button type="button" class="nav-item rip" data-pane="scope"><span class="icon t-scope"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><span data-i18n="nav.scope">Объём</span><span class="nv" id="nvScope">3 970 ч</span></button>
-          <button type="button" class="nav-item rip" data-pane="plan"><span class="icon t-plan"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="8" height="3.4" rx="1.7" fill="#fff"/><rect x="6" y="8.3" width="9" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.85"/><rect x="10" y="13.1" width="7.5" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.7"/></svg></span><span data-i18n="nav.plan">План</span><span class="nv" id="nvPlan">16 мес.</span></button>
-          <button type="button" class="nav-item rip" data-pane="steps"><span class="icon t-steps"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V13.5h3.6V10h3.6V6.5h3.6V3H17v14z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></span><span data-i18n="nav.steps">Шаги</span><span class="nv" id="nvSteps">18</span></button>
+          <button type="button" class="nav-item rip" data-pane="scope"><span class="icon t-scope"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><span data-i18n="nav.scope">Твои модули</span><span class="nv" id="nvScope">7 → 41</span></button>
+          <button type="button" class="nav-item rip" data-pane="plan"><span class="icon t-plan"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="8" height="3.4" rx="1.7" fill="#fff"/><rect x="6" y="8.3" width="9" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.85"/><rect x="10" y="13.1" width="7.5" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.7"/></svg></span><span data-i18n="nav.plan">План</span><span class="nv" id="nvPlan">13 нед.</span></button>
+          <button type="button" class="nav-item rip" data-pane="steps"><span class="icon t-steps"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V13.5h3.6V10h3.6V6.5h3.6V3H17v14z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></span><span data-i18n="nav.steps">Шаги</span><span class="nv" id="nvSteps">8</span></button>
           <button type="button" class="nav-item rip" data-pane="safety"><span class="icon t-safety"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2.2v4.6c0 3.9-2.6 6.8-6 8.2-3.4-1.4-6-4.3-6-8.2V4.7z" fill="#fff"/></svg></span><span data-i18n="nav.safety">Надёжность</span><span class="nv"></span></button>
           <button type="button" class="nav-item rip" data-pane="team"><span class="icon t-team"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="7" r="3" fill="#fff"/><path d="M2.6 16.6c.5-3 2.5-4.6 4.9-4.6s4.4 1.6 4.9 4.6z" fill="#fff"/><circle cx="14" cy="6.6" r="2.3" fill="#fff" fill-opacity="0.75"/><path d="M13.6 11.4c2.2 0 3.6 1.5 4 4.2h-3.4c-.2-1.7-.8-3.1-1.8-4.1z" fill="#fff" fill-opacity="0.75"/></svg></span><span data-i18n="nav.team">Команда</span><span class="nv"></span></button>
         </div>
         <div class="group">
           <div class="group-h" data-i18n="g.terms">Условия</div>
-          <button type="button" class="nav-item rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><span data-i18n="nav.price">Цена</span><span class="nv" id="nvPrice">$120 000</span></button>
+          <button type="button" class="nav-item rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><span data-i18n="nav.price">Цена</span><span class="nv" id="nvPrice">$26 000</span></button>
           <button type="button" class="nav-item rip" data-pane="rights"><span class="icon t-rights"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="#fff"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.8"/></svg></span><span data-i18n="nav.rights">Права</span><span class="nv"></span></button>
           <button type="button" class="nav-item rip" data-pane="faq"><span class="icon t-faq"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5h10a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5H9.5L6 17v-2.5H5A2.5 2.5 0 0 1 2.5 12V6A2.5 2.5 0 0 1 5 3.5z" fill="#fff"/></svg></span><span data-i18n="nav.faq">Вопросы</span><span class="nv" id="nvFaq">8</span></button>
         </div>
@@ -694,7 +759,7 @@ svg text { pointer-events: none; }
           <button type="button" data-lang="ru" aria-pressed="true">RU</button>
           <button type="button" data-lang="en" aria-pressed="false">EN</button>
         </div>
-        <p class="side-note" data-i18n="side.note">Оценка от 5 ноября 2026 года по вашему ТЗ. Цены в долларах США.</p>
+        <p class="side-note" data-i18n="side.note">Предложение от 10 ноября 2026 года, по итогам аудита. Цены в долларах США.</p>
       </div>
     </aside>
 
@@ -703,17 +768,17 @@ svg text { pointer-events: none; }
     <main class="main" id="main">
       <section class="pane" id="pane-overview">
         <div class="hero big" id="ovArt" aria-hidden="true"></div>
-        <h1 data-i18n="ov.h">Система, которой можно доверить деньги клуба</h1>
-        <p class="lead" data-i18n="ov.lead">Полный объём без скрытых доплат. Цена может только снизиться, а первый запуск в клубе — примерно через 3 месяца.</p>
+        <h1 data-i18n="ov.h">Твоё ядро оставляем. Строим на нём продукт</h1>
+        <p class="lead" data-i18n="ov.lead">Аудит показал: база данных и ядро сервера сильные, переписывать их незачем. Не хватает сборки и интерфейса. Мы делаем дизайн и фронтенд, помогаем собрать бэкенд — и примерно через 13 недель NOI работает в твоём клубе.</p>
         <nav class="quick stagger" data-i18n-aria="ql.aria" aria-label="Разделы предложения">
-          <button type="button" class="ql spot rip" data-pane="scope"><span class="icon t-scope"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.scope">Объём</b><span class="qs" id="qsScope">≈ 3 970 ч работы</span></button>
-          <button type="button" class="ql spot rip" data-pane="plan"><span class="icon t-plan"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="8" height="3.4" rx="1.7" fill="#fff"/><rect x="6" y="8.3" width="9" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.85"/><rect x="10" y="13.1" width="7.5" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.7"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.plan">План</b><span class="qs" id="qsPlan">Запуск через ≈ 4 мес.</span></button>
-          <button type="button" class="ql spot rip" data-pane="steps"><span class="icon t-steps"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V13.5h3.6V10h3.6V6.5h3.6V3H17v14z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.steps">Шаги</b><span class="qs" id="qsSteps">18 шагов по 3–5 нед.</span></button>
-          <button type="button" class="ql spot rip" data-pane="safety"><span class="icon t-safety"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2.2v4.6c0 3.9-2.6 6.8-6 8.2-3.4-1.4-6-4.3-6-8.2V4.7z" fill="#fff"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.safety">Надёжность</b><span class="qs" data-i18n="qs.safety">Как защищены деньги</span></button>
-          <button type="button" class="ql spot rip" data-pane="team"><span class="icon t-team"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="7" r="3" fill="#fff"/><path d="M2.6 16.6c.5-3 2.5-4.6 4.9-4.6s4.4 1.6 4.9 4.6z" fill="#fff"/><circle cx="14" cy="6.6" r="2.3" fill="#fff" fill-opacity="0.75"/><path d="M13.6 11.4c2.2 0 3.6 1.5 4 4.2h-3.4c-.2-1.7-.8-3.1-1.8-4.1z" fill="#fff" fill-opacity="0.75"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.team">Команда</b><span class="qs" data-i18n="qs.team">Гио, Лука и архитектор</span></button>
-          <button type="button" class="ql spot rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.price">Цена</b><span class="qs" id="qsPrice">Потолок $120 000</span></button>
-          <button type="button" class="ql spot rip" data-pane="rights"><span class="icon t-rights"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="#fff"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.8"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.rights">Права</b><span class="qs" data-i18n="qs.rights">Код и данные — ваши</span></button>
-          <button type="button" class="ql spot rip" data-pane="faq"><span class="icon t-faq"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5h10a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5H9.5L6 17v-2.5H5A2.5 2.5 0 0 1 2.5 12V6A2.5 2.5 0 0 1 5 3.5z" fill="#fff"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.faq">Вопросы</b><span class="qs" id="qsFaq">8 коротких ответов</span></button>
+          <button type="button" class="ql spot rip" data-pane="scope"><span class="icon t-scope"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="9" r="5" fill="#fff"/><circle cx="14.5" cy="13.5" r="3" fill="#fff" fill-opacity="0.7"/><circle cx="14.2" cy="5" r="2" fill="#fff" fill-opacity="0.85"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.scope">Твои модули</b><span class="qs" id="qsScope">7 работают → 41 после v1</span></button>
+          <button type="button" class="ql spot rip" data-pane="plan"><span class="icon t-plan"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="8" height="3.4" rx="1.7" fill="#fff"/><rect x="6" y="8.3" width="9" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.85"/><rect x="10" y="13.1" width="7.5" height="3.4" rx="1.7" fill="#fff" fill-opacity="0.7"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.plan">План</b><span class="qs" id="qsPlan">Пилот через ≈ 13 нед.</span></button>
+          <button type="button" class="ql spot rip" data-pane="steps"><span class="icon t-steps"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17V13.5h3.6V10h3.6V6.5h3.6V3H17v14z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.steps">Шаги</b><span class="qs" id="qsSteps">8 шагов по 2–5 нед.</span></button>
+          <button type="button" class="ql spot rip" data-pane="safety"><span class="icon t-safety"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l6 2.2v4.6c0 3.9-2.6 6.8-6 8.2-3.4-1.4-6-4.3-6-8.2V4.7z" fill="#fff"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.safety">Надёжность</b><span class="qs" data-i18n="qs.safety">12 из 16 правил денег — в базе</span></button>
+          <button type="button" class="ql spot rip" data-pane="team"><span class="icon t-team"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="7" r="3" fill="#fff"/><path d="M2.6 16.6c.5-3 2.5-4.6 4.9-4.6s4.4 1.6 4.9 4.6z" fill="#fff"/><circle cx="14" cy="6.6" r="2.3" fill="#fff" fill-opacity="0.75"/><path d="M13.6 11.4c2.2 0 3.6 1.5 4 4.2h-3.4c-.2-1.7-.8-3.1-1.8-4.1z" fill="#fff" fill-opacity="0.75"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.team">Команда</b><span class="qs" data-i18n="qs.team">Гио, Лука и бэкенд</span></button>
+          <button type="button" class="ql spot rip" data-pane="price"><span class="icon t-price"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.4V4.6C3 3.7 3.7 3 4.6 3h5.8l7 7-7.2 7.2z" fill="#fff"/><circle cx="7" cy="7" r="1.5" fill="#973c13"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.price">Цена</b><span class="qs" id="qsPrice">Наша часть $16 400–26 000</span></button>
+          <button type="button" class="ql spot rip" data-pane="rights"><span class="icon t-rights"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="#fff"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.8"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.rights">Права</b><span class="qs" data-i18n="qs.rights">Код и данные — твои</span></button>
+          <button type="button" class="ql spot rip" data-pane="faq"><span class="icon t-faq"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5h10a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5H9.5L6 17v-2.5H5A2.5 2.5 0 0 1 2.5 12V6A2.5 2.5 0 0 1 5 3.5z" fill="#fff"/></svg></span><svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h8.5M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b data-i18n="nav.faq">Вопросы</b><span class="qs" id="qsFaq">10 коротких ответов</span></button>
         </nav>
       </section>
 
@@ -721,18 +786,14 @@ svg text { pointer-events: none; }
         <div class="scope">
           <div class="scope-side">
             <div class="disk">
-              <div class="disk-row"><h2 id="dName">Весь объём</h2><span class="disk-h" id="dHours">3 970 ч</span></div>
-              <div class="disk-bar" aria-hidden="true"><i class="bc" id="barCode"></i><i class="bx" id="barX"></i></div>
-              <div class="disk-legend">
-                <span class="key"><i class="dot l3"></i><span data-i18n="lg.code">Программирование</span><b id="lgCode"></b></span>
-                <span class="key"><i class="dot lx"></i><span data-i18n="lgx">Сверх программирования</span><b id="lgX"></b></span>
-              </div>
-              <p class="disk-note" data-i18n="sc.lead">Янтарное — то, что обычно не считают: тесты, запуски на месте, управление, дизайн, перенос данных. Около трети работы.</p>
-              <div class="roles-h" data-i18n="roles.h" aria-hidden="true">Чьи экраны показать</div>
-              <div class="roles" id="roles" role="group" data-i18n-aria="roles.aria" aria-label="Чьи экраны показать"></div>
+              <div class="disk-row"><h2 id="dName">59 модулей ТЗ</h2><span class="disk-h" id="dHours">7 работают</span></div>
+              <div class="disk-bar" id="dBar" aria-hidden="true"></div>
+              <div class="disk-legend" id="dLegend"></div>
+              <p class="disk-note" id="dNote"></p>
+              <div class="view" id="view" data-on="now" role="group" data-i18n-aria="vw.aria" aria-label="Что показать"><button type="button" data-view="now" aria-pressed="true" data-i18n="vw.now">Сегодня</button><button type="button" data-view="v1" aria-pressed="false" data-i18n="vw.v1">После версии 1</button></div>
             </div>
             <aside class="panel" data-i18n-aria="lens.panel" aria-label="Состав на этом уровне">
-              <div class="lp-head"><span class="lp-ico" id="fIcon" aria-hidden="true"></span><div><h3 id="fName">Вся система</h3><span class="lp-meta" id="fMeta"></span></div></div>
+              <div class="lp-head"><span class="lp-ico" id="fIcon" aria-hidden="true"></span><div><h3 id="fName">Все модули</h3><span class="lp-meta" id="fMeta"></span></div></div>
               <p class="lp-desc" id="fDesc"></p>
               <ol class="list" id="list"></ol>
             </aside>
@@ -744,9 +805,9 @@ svg text { pointer-events: none; }
               <nav class="crumbs" id="crumbs" data-i18n-aria="lens.crumbs" aria-label="Уровень"></nav>
             </div>
             <div class="lens">
-              <svg id="lens" role="img" data-i18n-aria="lens.aria" aria-label="Карта частей системы NOI: размер пузыря показывает часы работы"></svg>
+              <svg id="lens" role="img" data-i18n-aria="lens.aria" aria-label="Карта модулей из твоего ТЗ: цвет показывает, что работает"></svg>
               <div class="tip" id="tip" hidden></div>
-              <p class="lens-fail" id="lensFail" hidden data-i18n="lens.fail">Для карты нужна библиотека d3, а она не загрузилась. Обновите страницу.</p>
+              <p class="lens-fail" id="lensFail" hidden data-i18n="lens.fail">Для карты нужна библиотека d3, а она не загрузилась. Обнови страницу.</p>
             </div>
             <p class="lens-stats" id="lensStats" aria-live="polite"></p>
           </div>
@@ -754,26 +815,23 @@ svg text { pointer-events: none; }
       </section>
 
       <section class="pane" id="pane-plan" hidden>
-        <div class="hero bob" aria-hidden="true">
-          <svg viewBox="0 0 140 140"><defs><linearGradient id="capA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b5f0dc"/></linearGradient><linearGradient id="capB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9fff6"/><stop offset="1" stop-color="#7fdcbc"/></linearGradient><linearGradient id="capC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d2f7ea"/><stop offset="1" stop-color="#4fbf98"/></linearGradient></defs><rect x="12" y="24" width="66" height="26" rx="13" fill="url(#capA)"/><rect x="36" y="57" width="82" height="26" rx="13" fill="url(#capB)"/><rect x="66" y="90" width="62" height="26" rx="13" fill="url(#capC)"/><circle cx="78" cy="37" r="5" fill="#0e655f" fill-opacity="0.55"/><circle cx="118" cy="70" r="5" fill="#0e655f" fill-opacity="0.55"/><circle cx="128" cy="103" r="5" fill="#0e655f" fill-opacity="0.55"/></svg>
+        <h2 data-i18n="pl.h">Пилот через 13 недель</h2>
+        <p class="lead" data-i18n="pl.lead">Сначала сохраняем то, что нельзя потерять, потом собираем бэкенд и фиксируем контракт API — и только после этого экраны и интеграции.</p>
+        <div class="timeline wide">
+          <div class="ticks wk" id="ticks"></div>
+          <div class="track gantt" id="track"></div>
         </div>
-        <h2 data-i18n="pl.h">Три запуска, а не один большой</h2>
-        <p class="lead" data-i18n="pl.lead">Каждый этап заканчивается запуском в клубе и вашей приёмкой. Вы обязуетесь только на следующий этап.</p>
-        <div class="timeline">
-          <div class="ticks" id="ticks"></div>
-          <div class="track" id="track"></div>
-        </div>
-        <div class="cols" id="cols"></div>
-        <div class="cards two stagger">
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M6.8 10.2l2.2 2.2 4.2-4.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="ac.b">Как принимаем этап</b><span data-i18n="ac.s">Ваши сценарии из ТЗ и регрессионные тесты переносим в новый код. Этап принят, когда они проходят, ночь в клубе прошла без критических ошибок и вы подписали приёмку.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3l7 3.8-7 3.8-7-3.8z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 10.2l7 3.8 7-3.8M3 13.6l7 3.8 7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></span><b data-i18n="wy.b">Почему деньги — вторым этапом</b><span data-i18n="wy.s">Деньгам нужен фундамент: роли, права и журнал действий. Этап 1 строит его и проверяет на сцене, где ошибка не стоит денег. Хотите начать с денег — поменяем порядок, потолок цены тот же.</span></div>
+        <div class="cols five" id="cols"></div>
+        <div class="decide">
+          <h3 data-i18n="dc.h">Восемь решений — только за тобой</h3>
+          <ol class="dgrid stagger"><li><i>1</i><span data-i18n="dc1">Оплата: наличные, карта или смешанно</span></li><li><i>2</i><span data-i18n="dc2">Общий планшет: оставить заявки и вызовы или убрать</span></li><li><i>3</i><span data-i18n="dc3">Перезапуск посреди ротации: сам или вручную</span></li><li><i>4</i><span data-i18n="dc4">Права охраны и арт-менеджера на просмотр</span></li><li><i>5</i><span data-i18n="dc5">Готовность после привата: подтверждать вручную?</span></li><li><i>6</i><span data-i18n="dc6">Списанный долг, оплаченный позже</span></li><li><i>7</i><span data-i18n="dc7">Хостинг: Linux-сервер или ноутбук</span></li><li><i>8</i><span data-i18n="dc8">Доступ к R‑Keeper, Mango Office и HandFlow</span></li></ol>
         </div>
       </section>
 
       <section class="pane" id="pane-steps" hidden>
-        <h2 id="stH">18 шагов по 3–5 недель</h2>
-        <p class="lead" data-i18n="st.lead">Демо каждые две недели. Следующий шаг начинаем только после вашей проверки.</p>
-        <div class="board stagger" id="board" role="group" aria-label="Шаги по этапам" data-i18n-aria="st.aria"></div>
+        <h2 id="stH">8 шагов по 2–5 недель</h2>
+        <p class="lead" data-i18n="st.lead">Демо каждые две недели. Следующий шаг начинаем после твоей проверки.</p>
+        <div class="board stagger" id="board" role="group" aria-label="Шаги по группам" data-i18n-aria="st.aria"></div>
         <div class="sdet" id="sdet">
           <div class="sd-in" id="sdIn">
             <div class="sd-head">
@@ -785,10 +843,10 @@ svg text { pointer-events: none; }
                 <button type="button" class="arrow-btn" id="sdNext" data-i18n-aria="sd.next" aria-label="Следующий шаг"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4.5l5.5 5.5L8 15.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
             </div>
-            <div class="sd-col"><b data-i18n="sd.get">Что вы получите</b><p id="sdGet"></p></div>
-            <div class="sd-col"><b data-i18n="sd.check">Как проверите</b><p id="sdCheck"></p></div>
+            <div class="sd-col"><b data-i18n="sd.get">Что ты получишь</b><p id="sdGet"></p></div>
+            <div class="sd-col"><b data-i18n="sd.check">Как проверишь</b><p id="sdCheck"></p></div>
             <div class="sd-col sd-inc"><b data-i18n="sd.parts">Что входит</b><div class="sd-parts" id="sdParts"></div></div>
-            <p class="sd-note" data-i18n="sd.note">Часы шага включают его долю дизайна, тестов, управления и резерва. Цена — доля потолка по часам; аудит может её только снизить.</p>
+            <p class="sd-note" data-i18n="sd.note">Дни — наша работа: Гио — дизайн, Лука — фронтенд. Ревью архитектуры и DevOps (10–15 дней Луки) идут через весь проект и в шаги не входят.</p>
           </div>
         </div>
       </section>
@@ -797,41 +855,33 @@ svg text { pointer-events: none; }
         <div class="hero bob" aria-hidden="true">
           <svg viewBox="0 0 140 140"><defs><linearGradient id="shG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9fe3f2"/></linearGradient></defs><path d="M70 12l46 17v35c0 30-20 53-46 64-26-11-46-34-46-64V29z" fill="url(#shG)"/><path d="M49 70l15 15 28-31" fill="none" stroke="#0a5873" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <h2 data-i18n="sf.h">Ошибка не сможет тихо потерять деньги</h2>
-        <p class="lead" data-i18n="sf.lead">Правила денег живут в базе данных и проверяются тестами — как вы и начали в своём ТЗ.</p>
+        <h2 data-i18n="sf.h">Деньги защищает сама база</h2>
+        <p class="lead" data-i18n="sf.lead">Аудит проверил 16 правил денег: 12 уже держит PostgreSQL. Четыре держит только код — переносим их в базу на 2–6-й неделе.</p>
         <div class="cards stagger">
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M7 7h6M7 10h6M7 13h3" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="sf1.b">Журнал без правок</b><span data-i18n="sf1.s">Каждая операция — новая запись, ничего не удаляется. Исправление — отдельная запись.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M8.6 7.6l1.8-1.1V14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="sf2.b">Без двойных списаний</b><span data-i18n="sf2.s">У каждой операции свой ключ: повторный клик или обрыв сети не создадут второй платёж.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6" ry="2.5" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M4 5.5v9c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-9M4 10c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5" fill="none" stroke="#fff" stroke-width="1.7"/></svg></span><b data-i18n="sf3.b">Правила — в самой базе</b><span data-i18n="sf3.s">Баланс не уйдёт в минус, смена не закроется дважды: это запрещает PostgreSQL, а не экран.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 8a6 6 0 0 1 10.4-2.6M15.5 12a6 6 0 0 1-10.4 2.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M15.4 2.8v3.2h-3.2M4.6 17.2V14h3.2" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="sf4.b">Сверка каждый день</b><span data-i18n="sf4.s">Автоматическая сверка с R‑Keeper и кассой. Расхождение сразу попадает в отчёт управляющему.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 5L4 9l4 4" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9H12a4 4 0 0 1 0 8H9" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="sf5.b">Возвраты и отмены</b><span data-i18n="sf5.s">Входят в объём: с причиной, автором и подтверждением старшего.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="7" r="3" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M3 16.5c.6-2.8 2.5-4.3 5-4.3" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="14" cy="14" r="3.5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M14 12.4V14l1 .8" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg></span><b data-i18n="sf6.b">Видно, кто что сделал</b><span data-i18n="sf6.s">Права на каждое действие и журнал: кто, что и когда изменил. Тихо поправить его нельзя.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M8.6 7.6l1.8-1.1V14" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="sf1.b">Без двойных денег</b><span data-i18n="sf1.s">40 кассиров одновременно — ни одного задвоенного или потерянного платежа.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.7"/></svg></span><b data-i18n="sf2.b">Клубы не видят друг друга</b><span data-i18n="sf2.s">79 правил доступа прямо в базе. Все 25 попыток заглянуть в чужой клуб отклонены.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M7 7h6M7 10h6M7 13h3" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="sf3.b">История без правок</b><span data-i18n="sf3.s">48 таблиц только на добавление, деньги — в целых копейках. Исправление — новая запись.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6" ry="2.5" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M4 5.5v9c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-9M4 10c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5" fill="none" stroke="#fff" stroke-width="1.7"/></svg></span><b data-i18n="sf4.b">Четыре правила — в базу</b><span data-i18n="sf4.s">Доля не уйдёт чужому профилю, выплата — после сдачи наличных, оплата привязана к команде, замены — по верным связям.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3v4.5c0 2 1.5 3 5 3s5 1 5 3V17" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M15 3v4.5c0 2-1.5 3-5 3" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="sf5.b">Один расчёт зарплаты</b><span data-i18n="sf5.s">Сейчас их три, и правила уже расходятся. Оставляем один — в самой базе — до кассы и R‑Keeper.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="7" r="3" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M3 16.5c.6-2.8 2.5-4.3 5-4.3" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M12.5 14.2l1.6 1.6 3.2-3.4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="sf6.b">Деньги — через человека</b><span data-i18n="sf6.s">Каждую миграцию и каждое изменение денег проверяет человек. CI обязателен, тесты аудита — раз в месяц.</span></div>
         </div>
         <div class="ready">
-          <h3 data-i18n="rd.h">Готовность к работе в клубе</h3>
-          <div class="chips stagger">
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd1">Отдельная тестовая среда</span></span>
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd2">Восстановление из копий</span></span>
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd3">Обновления без простоя</span></span>
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd4">Мониторинг сервера</span></span> <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd8">Двухфакторный вход</span></span>
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd5">Тест на пиковую нагрузку</span></span>
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd6">Интеграции с повтором при сбое</span></span>
-            <span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd7">Пилот в одном клубе</span></span>
-          </div>
+          <h3 data-i18n="rd.h">Готовность к первой смене</h3>
+          <div class="chips stagger"><span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd1">Копии и учебное восстановление</span></span><span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd2">Linux-сервер, а не ноутбук</span></span><span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd4">Мониторинг и журналы</span></span><span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd5">Сервер не падает при обрыве базы</span></span><span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd6">Нагрузочный прогон</span></span><span class="chk"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="rd7">2–3 пилотные смены</span></span></div>
         </div>
       </section>
 
       <section class="pane" id="pane-team" hidden>
-        <h2 data-i18n="tm.h">Кто будет делать</h2>
-        <p class="lead" data-i18n="tm.lead">Двое — на продукте и фронтенде, старший архитектор проверяет деньги и данные.</p>
+        <h2 data-i18n="tm.h">Кто что делает</h2>
+        <p class="lead" data-i18n="tm.lead">Мы — дизайн и фронтенд, плюс ревью архитектуры. Бэкенд — отдельный старший разработчик: твой или наш, на твой выбор.</p>
         <div class="crew stagger">
           <article class="cv spot">
             <header class="cv-top">
               <div class="avatar"><svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="avG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6cf0"/><stop offset="1" stop-color="#d0569a"/></linearGradient></defs><rect width="128" height="128" fill="url(#avG)"/><circle cx="64" cy="52" r="22" fill="#ffffff" fill-opacity="0.85"/><path d="M22 128c3-26 20-40 42-40s39 14 42 40z" fill="#ffffff" fill-opacity="0.85"/></svg><span class="ph-tag" data-i18n="cv.photo">Фото</span></div>
-              <div><div class="cv-name" data-i18n="cv.gio.name">Гио Хеладзе</div><div class="cv-role" data-i18n="cv.gio.role">Старший UX-дизайнер · фронтенд NOI</div></div>
+              <div><div class="cv-name" data-i18n="cv.gio.name">Гио Хеладзе</div><div class="cv-role" data-i18n="cv.gio.role">Старший UX-дизайнер</div></div>
             </header>
-            <p class="cv-sum" data-i18n="cv.gio.sum">Проектирует интерфейсы для сложных рабочих систем — HR, госсектор, финансы — так, чтобы ими было просто пользоваться каждый день.</p>
-            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.gio.noi">Дизайн-система в Storybook, все экраны и взаимодействия, запуски на месте.</span></p>
+            <p class="cv-sum" data-i18n="cv.gio.sum">Проектирует интерфейсы для сложных рабочих систем: HR, госсектор, финансы.</p>
+            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.gio.noi">Дизайн-система для компьютера, планшета и ТВ и все экраны версии 1. 19–31 день.</span></p>
             <div>
               <h3 data-i18n="cv.xp">Опыт</h3>
               <div class="xp-row"><div><b>Webiz ERP</b><span data-i18n="cv.gio.x1">UX-дизайн HR-системы</span></div></div>
@@ -843,81 +893,81 @@ svg text { pointer-events: none; }
           <article class="cv spot">
             <header class="cv-top">
               <div class="avatar"><svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="avL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fae8a"/><stop offset="1" stop-color="#2a6fd6"/></linearGradient></defs><rect width="128" height="128" fill="url(#avL)"/><circle cx="64" cy="52" r="22" fill="#ffffff" fill-opacity="0.85"/><path d="M22 128c3-26 20-40 42-40s39 14 42 40z" fill="#ffffff" fill-opacity="0.85"/></svg><span class="ph-tag" data-i18n="cv.photo">Фото</span></div>
-              <div><div class="cv-name" data-i18n="cv.luka.name">Лука Схиладзе</div><div class="cv-role" data-i18n="cv.luka.role">Продуктовый инженер · фронтенд NOI</div></div>
+              <div><div class="cv-name" data-i18n="cv.luka.name">Лука Схиладзе</div><div class="cv-role" data-i18n="cv.luka.role">Продуктовый инженер</div></div>
             </header>
-            <p class="cv-sum" data-i18n="cv.luka.sum">Ведёт продукт от идеи до релиза: дизайн, интерфейс, анимация и код. Говорит по-русски, по-грузински и по-английски.</p>
-            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.luka.noi">Фронтенд на React, интерактив и анимации интерфейса, запуски на месте.</span></p>
+            <p class="cv-sum" data-i18n="cv.luka.sum">Провёл аудит твоего кода. Ведёт продукт от идеи до релиза: интерфейс, анимация и код.</p>
+            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.luka.noi">Фронтенд на React по контракту API, экраны ролей и пилот; ревью архитектуры и DevOps. 63–99 дней.</span></p>
             <div>
               <h3 data-i18n="cv.xp">Опыт</h3>
               <div class="xp-row"><div><b data-i18n="cv.luka.x1b">Стартап-приложение · 2025–2026</b><span data-i18n="cv.luka.x1">Приложение целиком — от идеи до App Store</span></div></div>
               <div class="xp-row"><div><b data-i18n="cv.luka.x2b">Независимый разработчик · 2023–2025</b><span data-i18n="cv.luka.x2">Сайты и приложения от идеи до релиза</span></div></div>
-              <div class="xp-row"><div><b data-i18n="cv.luka.x3b">Постпродакшн · 2019–2021</b><span data-i18n="cv.luka.x3">Руководство монтажом, звуком и моушн-дизайном; цветокоррекция фильмов</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.luka.x3b">Постпродакшн · 2019–2021</b><span data-i18n="cv.luka.x3">Руководство монтажом, звуком и моушн-дизайном</span></div></div>
             </div>
-            <div class="tags"><span class="tag">React</span><span class="tag">React Native</span><span class="tag">Figma</span><span class="tag">Rive</span><span class="tag">Lottie</span><span class="tag" data-i18n="sk.motion">Моушн-дизайн</span></div>
+            <div class="tags"><span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">OpenAPI</span><span class="tag">Figma</span><span class="tag" data-i18n="sk.motion">Моушн-дизайн</span></div>
           </article>
           <article class="cv spot">
             <header class="cv-top">
               <div class="avatar tbd" aria-hidden="true">?</div>
-              <div><div class="cv-name" data-i18n="cv.ar.name">Старший backend‑архитектор</div><div class="cv-role" data-i18n="cv.ar.role">Имя и CV — до подписания договора</div></div>
+              <div><div class="cv-name" data-i18n="cv.be.name">Старший бэкенд-разработчик</div><div class="cv-role" data-i18n="cv.be.role">Твой или наш — на твой выбор</div></div>
             </header>
-            <p class="cv-sum" data-i18n="cv.ar.sum">Подбираем под NOI. Вы сможете поговорить с ним до старта и отказаться от кандидата.</p>
-            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.ar.noi">Задаёт модель данных и правила денег, проверяет R‑Keeper и каждое изменение, где есть деньги.</span></p>
+            <p class="cv-sum" data-i18n="cv.be.sum">С 2-й недели на полную ставку. Нашего кандидата увидишь с CV до старта и можешь отказаться.</p>
+            <p class="cv-noi"><b data-i18n="cv.noi">В NOI</b><span data-i18n="cv.be.noi">Сборка приложения, один расчёт зарплаты, правила денег в базе, контракт API, интеграции. 94–157 дней.</span></p>
             <div>
-              <h3 data-i18n="cv.ar.h">Кого берём</h3>
-              <div class="xp-row"><div><b data-i18n="cv.ar.x1b">Финансовые системы</b><span data-i18n="cv.ar.x1">Платежи, балансы и сверки</span></div></div>
-              <div class="xp-row"><div><b data-i18n="cv.ar.x2b">Ваш стек</b><span data-i18n="cv.ar.x2">PostgreSQL и Node.js в продакшене</span></div></div>
-              <div class="xp-row"><div><b data-i18n="cv.ar.x3b">Проверка до найма</b><span data-i18n="cv.ar.x3">Тестовое задание на вашей логике денег</span></div></div>
+              <h3 data-i18n="cv.be.h">Кого ищем</h3>
+              <div class="xp-row"><div><b data-i18n="cv.be.x1b">Финансовые системы</b><span data-i18n="cv.be.x1">Платежи, балансы и сверки</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.be.x2b">Твой стек</b><span data-i18n="cv.be.x2">PostgreSQL и Node.js в продакшене</span></div></div>
+              <div class="xp-row"><div><b data-i18n="cv.be.x3b">Проверка до найма</b><span data-i18n="cv.be.x3">Тестовое задание на твоей логике денег</span></div></div>
             </div>
             <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">Node.js</span><span class="tag">Socket.IO</span><span class="tag">R‑Keeper</span></div>
           </article>
         </div>
-        <p class="ai-strip"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l1.7 4.6L16.3 9l-4.6 1.7L10 15.5l-1.7-4.8L3.7 9l4.6-1.9z" fill="#fff"/></svg></span><b data-i18n="r3.b">ИИ под контролем:</b><span data-i18n="r3.s">ChatGPT, Codex и Claude берут рутину по правилам архитектора, а каждое изменение проверяет человек.</span></p>
+        <p class="ai-strip"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l1.7 4.6L16.3 9l-4.6 1.7L10 15.5l-1.7-4.8L3.7 9l4.6-1.9z" fill="#fff"/></svg></span><b data-i18n="r3.b">Твой процесс с ИИ остаётся:</b><span data-i18n="r3.s">ChatGPT и Codex пишут тесты и черновики по контракту, а миграции и деньги проверяет человек.</span></p>
       </section>
 
       <section class="pane" id="pane-price" hidden>
-        <h2 data-i18n="pr.h">Цена может только снизиться</h2>
-        <p class="lead" data-i18n="pr.lead">Потолок известен сразу — аудит может его только уменьшить.</p>
+        <h2 data-i18n="pr.h">Наша часть — с потолком</h2>
+        <p class="lead" data-i18n="pr.lead">Мы называем цену своей работы: дизайн, фронтенд и ревью архитектуры. Бэкенд и тестирование — отдельно, когда выберешь людей.</p>
         <div class="pricebox">
           <div class="glass spot">
-            <div class="big"><b id="priceBig">$120 000</b><span data-i18n="pr.cap">потолок за всю систему — не вырастет</span></div>
+            <div class="big"><b id="priceBig">$26 000</b><span data-i18n="pr.cap">потолок за нашу часть версии 1 — не вырастет</span></div>
             <div class="calc">
-              <div class="row"><label for="keep" data-i18n="calc.label">Аудит оставит из вашего кода</label><output id="keepOut" for="keep">20%</output></div>
-              <input type="range" class="range" id="keep" min="0" max="40" step="5" value="20">
-              <div class="ticks5" id="keepTicks" aria-hidden="true"><span style="--t: 0">0%</span><span style="--t: 0.25">10%</span><span style="--t: 0.5">20%</span><span style="--t: 0.75">30%</span><span style="--t: 1">40%</span></div>
-              <div class="row after"><span data-i18n="calc.after">Ваша цена</span><strong id="priceAfter">≈ $103 000</strong></div>
-              <div class="save" id="priceSave">экономия ≈ $17 000</div>
-              <p class="note" data-i18n="calc.note">Оставленное вычитаем с 70% цены, доработанное — с 30%. Аудит тоже засчитывается.</p>
+              <div class="row"><label for="screens" data-i18n="calc.label">Экранов в версии 1</label><output id="screensOut" for="screens">≈ 25</output></div>
+              <input type="range" class="range" id="screens" min="13" max="25" step="1" value="25">
+              <div class="ticks5" id="screensTicks" aria-hidden="true"><span style="--t: 0">13</span><span style="--t: 0.25">16</span><span style="--t: 0.5">19</span><span style="--t: 0.75">22</span><span style="--t: 1">25</span></div>
+              <div class="row after"><span data-i18n="calc.after">Наша цена</span><strong id="priceAfter">≈ $16 400–26 000</strong></div>
+              <div class="save" id="priceSave">полная версия 1</div>
+              <p class="note" data-i18n="calc.note">Быстрый путь — пульт DJ, ротация, касса и панель руководителя. Согласования, долги и VIP — во втором релизе.</p>
             </div>
             <div class="terms">
-              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="t1.b">Оплата по этапам</b><span data-i18n="t1.s">Аванс при старте этапа, остальное — после вашей приёмки.</span></div>
-              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8l5.5 2v4.4c0 3.6-2.4 6.3-5.5 7.6-3.1-1.3-5.5-4-5.5-7.6V4.8z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.5 10l1.8 1.8 3.4-3.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="t2.b">Гарантия 3 месяца</b><span data-i18n="t2.s">После каждого запуска чиним ошибки бесплатно, дальше — поддержка по договору.</span></div>
-              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.2V4.5c0-.8.7-1.5 1.5-1.5h5.7l7 7-7.2 7.2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="#fff"/></svg></span><b data-i18n="t3.b">Риск оценки — наш</b><span data-i18n="t3.s">Ошиблись — цена не растёт. Новые пожелания — с ценой заранее.</span></div>
-              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M6.5 10h7" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="t4.b">Не входит в цену</b><span data-i18n="t4.s">Серверы, лицензии R‑Keeper, внешний пентест, дорога.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="t1.b">Оплата по шагам</b><span data-i18n="t1.s">Аванс в начале шага, остальное — после проверки.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8l5.5 2v4.4c0 3.6-2.4 6.3-5.5 7.6-3.1-1.3-5.5-4-5.5-7.6V4.8z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.5 10l1.8 1.8 3.4-3.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="t2.b">Гарантия 3 месяца</b><span data-i18n="t2.s">Ошибки после запуска чиним бесплатно, дальше — по договору.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.2V4.5c0-.8.7-1.5 1.5-1.5h5.7l7 7-7.2 7.2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="#fff"/></svg></span><b data-i18n="t3.b">Риск оценки — наш</b><span data-i18n="t3.s">Задержка бэкенда двигает календарь, но не наши дни и цену.</span></div>
+              <div class="term"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M6.5 10h7" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="t4.b">Не входит в цену</b><span data-i18n="t4.s">Бэкенд, тестирование, серверы, лицензии R‑Keeper, дорога.</span></div>
             </div>
           </div>
           <div class="glass phase-list spot">
-            <h3 data-i18n="pp.h">По этапам</h3>
+            <h3 data-i18n="pp.h">Наша часть по работам</h3>
             <div id="ppList"></div>
-            <h3 class="gap" data-i18n="bf.h">Как просили в ТЗ</h3>
+            <h3 class="gap" data-i18n="bf.h">Вся версия 1 — по аудиту</h3>
             <div id="bfList"></div>
-            <p class="note" data-i18n="bf.note">Те же часы, разложенные на три части из вашего ТЗ: текущие проблемы решает новый фундамент, а не заплатки. Управление проектом распределено между частями.</p>
+            <p class="note" data-i18n="bf.note">Всего 217–353 чел.-дня: бэкенд 94–157, фронтенд 53–84, дизайн 17–28, тестирование 39–61, DevOps 14,5–23.</p>
           </div>
         </div>
-</section>
+      </section>
 
       <section class="pane" id="pane-rights" hidden>
         <div class="hero bob" aria-hidden="true">
           <svg viewBox="0 0 140 140"><defs><linearGradient id="lkG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d8"/><stop offset="1" stop-color="#f2c661"/></linearGradient></defs><path d="M44 62V46a26 26 0 0 1 52 0v16" fill="none" stroke="#fff1c4" stroke-width="11" stroke-linecap="round"/><rect x="26" y="60" width="88" height="66" rx="17" fill="url(#lkG)"/><circle cx="70" cy="89" r="8.5" fill="#7a5a10"/><rect x="66" y="91" width="8" height="17" rx="4" fill="#7a5a10"/></svg>
         </div>
-        <h2 data-i18n="rt.h">Всё, что мы создадим, — ваше</h2>
-        <p class="lead" data-i18n="rt.lead">Код, данные, дизайн и права на продукт принадлежат вам. Мы подрядчик, а не совладелец.</p>
+        <h2 data-i18n="rt.h">Всё, что мы создадим, — твоё</h2>
+        <p class="lead" data-i18n="rt.lead">Код, данные, дизайн и права на продукт — твои. Мы подрядчик, а не совладелец, и не единственная команда, от которой ты зависишь.</p>
         <div class="cards stagger">
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h7l3.5 3.5v11.5H5z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.5 11l2 2 3.5-4" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b data-i18n="rt1.b">Права переходят вам</b><span data-i18n="rt1.s">Исключительные права на код, дизайн и документацию — ваши по мере оплаты этапов.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="5.5" rx="1.6" fill="none" stroke="#fff" stroke-width="1.7"/><rect x="3.5" y="11" width="13" height="5.5" rx="1.6" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="6.5" cy="6.2" r="1" fill="#fff"/><circle cx="6.5" cy="13.7" r="1" fill="#fff"/></svg></span><b data-i18n="rt2.b">Ваши серверы и аккаунты</b><span data-i18n="rt2.s">Репозиторий, база и доступы — на ваше имя с первого дня. Уйти можно в любой момент, со всем кодом.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="9" width="11" height="8" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="#fff" stroke-width="1.7"/></svg></span><b data-i18n="rt3.b">NDA до доступа</b><span data-i18n="rt3.s">Подписываем NDA до того, как увидим код. Для разработки — обезличенная копия данных.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.2V4.5c0-.8.7-1.5 1.5-1.5h5.7l7 7-7.2 7.2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="#fff"/></svg></span><b data-i18n="rt4.b">NOI можно продавать</b><span data-i18n="rt4.s">Вы вправе продавать и лицензировать NOI другим клубам. Мы не используем ваш код и дизайн в других проектах.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3l7 3.8-7 3.8-7-3.8z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 10.2l7 3.8 7-3.8M3 13.6l7 3.8 7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></span><b data-i18n="rt5.b">Ваш стек</b><span data-i18n="rt5.s">Остаёмся на Node.js, PostgreSQL, React и Socket.IO — продолжить сможет любой сильный разработчик.</span></div>
-          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5c2.2-.9 4.3-.9 6 .5 1.7-1.4 3.8-1.4 6-.5v11c-2.2-.9-4.3-.9-6 .5-1.7-1.4-3.8-1.4-6-.5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 5v11" stroke="#fff" stroke-width="1.6"/></svg></span><b data-i18n="rt6.b">Документация к каждому этапу</b><span data-i18n="rt6.s">Схема данных, решения и инструкции лежат рядом с кодом. Ничего не держится только у нас в голове.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="5.5" rx="1.6" fill="none" stroke="#fff" stroke-width="1.7"/><rect x="3.5" y="11" width="13" height="5.5" rx="1.6" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="6.5" cy="6.2" r="1" fill="#fff"/><circle cx="6.5" cy="13.7" r="1" fill="#fff"/></svg></span><b data-i18n="rt1.b">Всё — в твоём репозитории</b><span data-i18n="rt1.s">Код и вся история — в твоём репозитории с первого дня. Уйти можно в любой момент, со всем кодом.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="6" height="14" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M9 6.5l4.2-2.4 3 5.2L9 13.6" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6" cy="13.5" r="1.2" fill="#fff"/></svg></span><b data-i18n="rt2.b">Дизайн-система — твоя</b><span data-i18n="rt2.s">Компоненты, токены и Storybook переходят тебе — с правом использовать их в любых продуктах NOI.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4" width="14" height="10" rx="2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M8.6 7l3.6 2-3.6 2z" fill="#fff"/><path d="M7 16.5h6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span><b data-i18n="rt3.b">Передача с первого дня</b><span data-i18n="rt3.s">Документация, Storybook и записанные разборы экранов входят в цену, чтобы продолжить мог любой разработчик.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10.2V4.5c0-.8.7-1.5 1.5-1.5h5.7l7 7-7.2 7.2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.4" fill="#fff"/></svg></span><b data-i18n="rt4.b">NOI можно продавать</b><span data-i18n="rt4.s">Ты вправе продавать и лицензировать NOI другим клубам. Мы не используем твой код и дизайн в других проектах.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3l7 3.8-7 3.8-7-3.8z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 10.2l7 3.8 7-3.8M3 13.6l7 3.8 7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></span><b data-i18n="rt5.b">Твой стек</b><span data-i18n="rt5.s">Остаёмся на Node.js, PostgreSQL, React и Socket.IO и ничего не переписываем без нужды.</span></div>
+          <div class="card spot"><span class="pi"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5c2.2-.9 4.3-.9 6 .5 1.7-1.4 3.8-1.4 6-.5v11c-2.2-.9-4.3-.9-6 .5-1.7-1.4-3.8-1.4-6-.5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 5v11" stroke="#fff" stroke-width="1.6"/></svg></span><b data-i18n="rt6.b">Документы на русском</b><span data-i18n="rt6.s">Решения, схема данных и инструкции — по-русски, рядом с кодом.</span></div>
         </div>
       </section>
 
@@ -927,16 +977,18 @@ svg text { pointer-events: none; }
         </div>
         <h2 data-i18n="fq.h">Коротко о главном</h2>
         <div class="faq">
-          <details name="faq"><summary data-i18n="q1">Зачем строить заново, а не продолжить мой код?</summary><p data-i18n="a1">Мы не решаем это заранее. Аудит оценивает каждую часть, и всё, что остаётся, вычитается из цены.</p></details>
-          <details name="faq"><summary data-i18n="q2">Чем эта оценка отличается от первой карты?</summary><p data-i18n="a2">Первая карта считала программирование по старинке — 2 440 ч. Теперь черновики кода пишут ИИ-агенты, а человек проверяет каждое изменение, поэтому кода закладываем на 28% меньше. Сверху — тесты, запуски, управление и резерв: около трети работы.</p></details>
-          <details name="faq"><summary data-i18n="q3">Кто будет старшим архитектором?</summary><p data-i18n="a3">Подбираем под NOI: опыт в финансовых системах, PostgreSQL и Node.js. Представим его с CV до подписания договора — вы сможете поговорить с ним и отказаться от кандидата.</p></details>
-          <details name="faq"><summary data-i18n="q4">Можно дальше работать с ChatGPT и Codex?</summary><p data-i18n="a4">Да. ИИ остаётся в работе, архитектор задаёт правила и проверяет всё, что касается денег и доступа. Логика продукта и приоритеты — за вами.</p></details>
-          <details name="faq"><summary data-i18n="q5">Как будет с R-Keeper?</summary><p data-i18n="a5">Зависит от вашей версии и дилера. Уточним на аудите, до того как это повлияет на цену или сроки.</p></details>
-          <details name="faq"><summary data-i18n="q6">Кто проводит аудит и насколько он независим?</summary><p data-i18n="a6">Наш партнёр — мы говорим об этом прямо. Поэтому каждый вывод подкреплён ссылкой на файл, функцию или тест, и его может перепроверить любой разработчик. Хотите — пригласите второго, независимого эксперта.</p></details>
-          <details name="faq"><summary data-i18n="q7">Как клуб будет работать во время разработки?</summary><p data-i18n="a7">Как сейчас. Каждую часть запускаем только после вашей приёмки, данные переносим, пока клуб закрыт, а на первой ночи мы рядом.</p></details>
-          <details name="faq"><summary data-i18n="q8">Что если кто-то из вас уйдёт?</summary><p data-i18n="a8">Работа не встанет: код, документация и дизайн-система лежат в вашем репозитории, фронтенд знают двое, бэкенд описан архитектором. Замену согласуем с вами.</p></details>
+          <details name="faq"><summary data-i18n="q1">Почему не переписать с нуля?</summary><p data-i18n="a1">Ядро и SQL-слой — твой главный актив: 930 проверок проходят трижды без единого сбоя. Переписать их — 120–200 дней старшего бэкенда только для того, чтобы вернуться туда, где ты уже есть.</p></details>
+          <details name="faq"><summary data-i18n="q2">Что изменилось после аудита?</summary><p data-i18n="a2">Сначала мы оценивали постройку всего с нуля: 2 545 ч и 10 месяцев. Аудит показал, что сервер у тебя есть, а продукта нет: модули не собраны в одно приложение, а интерфейс — прототип без сервера. Поэтому теперь — сборка и интерфейс, пилот примерно через 13 недель.</p></details>
+          <details name="faq"><summary data-i18n="q3">Кто будет бэкенд-разработчиком?</summary><p data-i18n="a3">Решать тебе — свой человек или наш. Если наш, представим его с CV и тестовым заданием на твоей логике денег, и ты можешь отказаться. Бэкенд считаем отдельно от нашей части, чтобы ты не зависела от одного подрядчика.</p></details>
+          <details name="faq"><summary data-i18n="q4">Можно дальше работать с ChatGPT и Codex?</summary><p data-i18n="a4">Да — твой процесс уже дал хорошее ядро. Три правила: готово — значит видно в работающем приложении; каждую миграцию и изменение денег проверяет человек; CI обязателен.</p></details>
+          <details name="faq"><summary data-i18n="q5">Как будет с R‑Keeper?</summary><p data-i18n="a5">В версии 1 кассир подтверждает оплату вручную. Живая интеграция — когда будут документация API и тестовая касса: ещё 33–55 дней бэкенда. Дату до этого не обещаем: сейчас адаптер — заглушка на 11 строк.</p></details>
+          <details name="faq"><summary data-i18n="q6">Можно быстрее?</summary><p data-i18n="a6">Да: 12–15 экранов — пульт DJ, ротация, касса и панель руководителя. Наша часть меньше на 30–40%, пилот раньше; согласования, долги и VIP — во втором релизе.</p></details>
+          <details name="faq"><summary data-i18n="q7">Что нужно от тебя на этой неделе?</summary><p data-i18n="a7">Удалённый репозиторий со всеми ветками, коммит ~100 файлов в отдельную ветку, дамп рабочей базы и прогон миграций 001–040 на чистом кластере. Это ничего не стоит, но защищает всё остальное.</p></details>
+          <details name="faq"><summary data-i18n="q8">Кто проводил аудит и насколько он независим?</summary><p data-i18n="a8">Лука, наш партнёр, — говорим об этом прямо. Каждый вывод ссылается на файл, функцию или тест, и его может перепроверить любой разработчик. Хочешь — пригласи второго, независимого эксперта.</p></details>
+          <details name="faq"><summary data-i18n="q9">А несколько клубов и продажа NOI?</summary><p data-i18n="a9">Архитектура уже многоклубная. Готовность к лицензированию — после 2–3 месяцев стабильной работы: ещё 30–49 дней. В первую версию не входит.</p></details>
+          <details name="faq"><summary data-i18n="q10">Будет двухфакторный вход?</summary><p data-i18n="a10">Экран входа рисуем сразу под второй фактор. На сервере это небольшая доработка — включим её в версию 1, если решишь, что она нужна до пилота.</p></details>
         </div>
-        <p class="faq-end" data-i18n="fq.end">Остались вопросы — напишите в чат, где вы получили эту ссылку.</p>
+        <p class="faq-end" data-i18n="fq.end">Остались вопросы — напиши в чат, где ты получила эту ссылку.</p>
       </section>
 
       <footer class="foot" id="foot">
@@ -955,272 +1007,181 @@ svg text { pointer-events: none; }
 </div>
 
 <script>
-const PRODUCTS = [
-  { id: 'all', name: ['Всё', 'All'], note: ['Вся система целиком.', 'The whole system.'] },
-  { id: 'crm', name: ['CRM менеджера', 'Manager CRM'], note: ['Рабочее место управляющей и менеджеров зала: очередь, гости, столы, услуги, смены.', 'The workplace for the club manager and floor managers: queue, guests, tables, services, shifts.'] },
-  { id: 'dj', name: ['Пульт DJ', 'DJ console'], note: ['Отдельный экран для DJ: управление сценой.', 'A separate screen the DJ uses to run the stage.'] },
-  { id: 'tablet', name: ['Планшет артисток', 'Performers’ tablet'], note: ['Общий планшет: текущая ротация и свои статусы.', 'A shared tablet with the current rotation and each performer’s status.'] },
-  { id: 'security', name: ['Пост охраны', 'Security post'], note: ['Отметка прихода и ухода, журнал охраны.', 'Marking arrivals and departures, and the security log.'] },
-  { id: 'cash', name: ['Арт-касса', 'Art cash desk'], note: ['Запуск и оплата услуг артисток, таймеры, долги.', 'Starting and taking payment for artist services, timers, debts.'] },
-  { id: 'finance', name: ['Финансовый отдел', 'Finance office'], note: ['Платежи, начисления, выплаты, отчёты, загрузка из Excel.', 'Payments, accruals, payouts, reports, Excel import.'] },
-  { id: 'hr', name: ['Кадры и кастинг', 'HR & casting'], note: ['Сотрудники, кастинг, графики, условия работы.', 'Staff, casting, schedules, pay terms.'] },
-  { id: 'departments', name: ['Службы клуба', 'Club departments'], note: ['Салон, костюмерная, ателье, охрана, хостес, сервис.', 'Salon, costume room, tailoring, security, hostesses, service.'] },
-  { id: 'staff-app', name: ['Приложение сотрудника', 'Staff app'], guess: true, note: ['Телефон сотрудника: график, замены, заявки на отпуск и больничный, уведомления.', 'On each employee’s phone: schedule, swaps, time-off and sick-leave requests, notifications.'] },
-  { id: 'core', name: ['Ядро системы', 'Core system'], note: ['То, что не видно на экранах, но без чего ничего не работает: права, сервер, интеграции, тесты.', 'What you don’t see on screen but nothing works without: permissions, server, integrations, tests.'] }
-];
-
-const D = (ru, en, h, p) => ({ n: [ru, en], h, p });
-const DATA = { n: ['Вся система', 'Whole system'], c: [
-  { n: ['Общая платформа', 'Shared platform'], s: ['Платформа', 'Platform'], d: ['Фундамент, на котором работают все экраны: вход, права, журнал действий, несколько клубов, сервер.', 'The foundation every screen runs on: sign-in, permissions, action log, multiple clubs, server.'], c: [
-    { n: ['Вход и сессии', 'Sign-in and sessions'], c: [D('Вход по логину и паролю', 'Login and password', 6, ['core']), D('Быстрый вход на общих планшетах', 'Quick sign-in on shared tablets', 8, ['core', 'tablet', 'dj', 'security']), D('Сессии и выход со всех устройств', 'Sessions and sign-out on all devices', 9, ['core']), D('Двухфакторная авторизация', 'Two-factor authentication', 15, ['core', 'crm', 'finance'])] },
-    { n: ['Роли и права доступа', 'Roles and permissions'], c: [D('Роли сотрудников и отделов', 'Staff and department roles', 11, ['core']), D('Права на каждое действие', 'Permission for every action', 19, ['core']), D('Каждый отдел видит только своё', 'Each department sees only its own', 15, ['core'])] },
-    { n: ['Журнал действий', 'Action log'], c: [D('Кто, что и когда изменил', 'Who changed what, and when', 11, ['core']), D('История каждой записи', 'History of every record', 11, ['core']), D('Защита истории от правок', 'History protected from edits', 8, ['core'])] },
-    { n: ['Несколько клубов', 'Multiple clubs'], c: [D('Отдельные данные каждого клуба', 'Separate data for each club', 19, ['core']), D('Свои настройки и правила клуба', 'Each club’s own settings and rules', 11, ['core']), D('Переключение между клубами', 'Switching between clubs', 8, ['core', 'crm'])] },
-    { n: ['Синхронизация в реальном времени', 'Real-time sync'], s: ['Синхронизация', 'Sync'], c: [D('Мгновенные обновления на всех экранах', 'Instant updates on every screen', 19, ['core']), D('Работа при обрыве связи', 'Working through dropped connections', 15, ['core']), D('Одновременные действия сотрудников', 'Staff acting at the same time', 11, ['core'])] },
-    { n: ['Интерфейс для компьютера, планшета и телефона', 'Interface for computer, tablet and phone'], s: ['Интерфейс', 'Interface'], c: [D('Единый дизайн и компоненты', 'One design and component set', 26, ['core']), D('Версия для планшетов', 'Tablet version', 19, ['core', 'tablet', 'dj', 'security']), D('Версия для телефона', 'Phone version', 15, ['core', 'staff-app'])] },
-    { n: ['Сервер, резервные копии, обновления', 'Server, backups, updates'], s: ['Сервер и копии', 'Server & backups'], c: [D('Установка на вашем сервере', 'Setup on your server', 19, ['core']), D('Резервные копии и восстановление', 'Backups and restore', 15, ['core']), D('Мониторинг и оповещения о сбоях', 'Monitoring and failure alerts', 11, ['core']), D('Обновления без потери данных', 'Updates without data loss', 15, ['core'])] }
-  ]},
-  { n: ['Коммерческие услуги и арт-касса', 'Commercial services and art cash desk'], s: ['Услуги и арт-касса', 'Services & cash desk'], d: ['Посиделки, приваты, «Гулять», «Клетка»: запуск, таймеры, продления и оплата.', 'Sit-downs, private dances, “Gulyat”, “Kletka”: starting, timers, extensions and payment.'], c: [
-    { n: ['Посиделки 30 и 60 минут', 'Sit-downs, 30 and 60 minutes'], s: ['Посиделки', 'Sit-downs'], c: [D('Запуск: стол и артистка', 'Start: table and performer', 7, ['cash', 'crm']), D('Таймер и предупреждение', 'Timer and warning', 7, ['cash', 'crm']), D('Продление', 'Extension', 7, ['cash', 'crm'])] },
-    { n: ['Приваты: индивидуальные и групповые', 'Private dances: individual and group'], s: ['Приваты', 'Private dances'], c: [D('Индивидуальный приват', 'Individual private dance', 8, ['cash']), D('Групповой приват', 'Group private dance', 10, ['cash']), D('Свободные комнаты', 'Free rooms', 6, ['cash', 'crm'])] },
-    { n: ['Услуга «Гулять»', 'The “Gulyat” service'], s: ['«Гулять»', '“Gulyat”'], c: [D('Пакеты по времени', 'Time packages', 10, ['cash']), D('Замена пакета на ходу', 'Changing the package mid-service', 18, ['cash']), D('Досрочное завершение и перерасчёт', 'Early end and recalculation', 14, ['cash', 'finance'])] },
-    { n: ['VIP-комнаты «Клетка»', '“Kletka” VIP rooms'], s: ['«Клетка»', '“Kletka”'], c: [D('Занятость комнат', 'Room occupancy', 10, ['cash', 'crm']), D('Таймер и продление', 'Timer and extension', 10, ['cash'])] },
-    { n: ['Продления и замены', 'Extensions and changes'], c: [D('Продление любой услуги', 'Extending any service', 10, ['cash']), D('Замена артистки или пакета', 'Changing the performer or package', 14, ['cash']), D('Досрочное завершение', 'Ending early', 10, ['cash'])] },
-    { n: ['Что можно совмещать', 'What can run together'], s: ['Совмещение', 'Combinations'], c: [D('Правила совмещения услуг', 'Rules for combining services', 18, ['core']), D('Запрет недопустимых сочетаний', 'Blocking forbidden combinations', 10, ['cash', 'crm'])] },
-    { n: ['Таймеры, долги, оплата', 'Timers, debts, payment'], c: [D('Все таймеры на одном экране', 'All timers on one screen', 10, ['cash', 'crm']), D('Пробитие в кассе', 'Ringing up at the till', 14, ['cash']), D('Долги и частичная оплата', 'Debts and partial payment', 18, ['cash', 'finance'])] },
-    { n: ['Заработок артисток и доли сотрудников', 'Performer earnings and staff shares'], s: ['Заработок и доли', 'Earnings & shares'], c: [D('Заработок за каждую услугу', 'Earnings for each service', 18, ['finance']), D('Доли менеджеров и сотрудников', 'Manager and staff shares', 14, ['finance']), D('Итоги смены для артистки', 'Shift summary for each performer', 10, ['finance', 'staff-app'])] }
-  ]},
-  { n: ['Финансы и отчёты', 'Finance and reporting'], s: ['Финансы', 'Finance'], d: ['Платежи, кассовые смены, начисления и выплаты, долги, отчёты.', 'Payments, cash-register shifts, accruals and payouts, debts, reports.'], c: [
-    { n: ['Наличные и безналичные', 'Cash and cashless'], s: ['Платежи', 'Payments'], c: [D('Учёт всех платежей', 'Recording every payment', 19, ['finance']), D('Связь платежа с услугой или заказом', 'Linking a payment to a service or order', 19, ['finance', 'cash'])] },
-    { n: ['Кассовые смены', 'Cash-register shifts'], c: [D('Открытие и закрытие смены', 'Opening and closing a shift', 11, ['finance', 'cash']), D('Сверка наличных', 'Counting the cash', 15, ['finance', 'cash'])] },
-    { n: ['Начисления и выплаты сотрудникам', 'Staff accruals and payouts'], s: ['Начисления и выплаты', 'Accruals & payouts'], c: [D('Начисления по услугам и ставкам', 'Accruals from services and rates', 19, ['finance']), D('Защита от двойных выплат', 'Protection from double payouts', 19, ['finance', 'core']), D('Выплаты и ведомости', 'Payouts and pay sheets', 15, ['finance'])] },
-    { n: ['Долги гостей', 'Guest debts'], c: [D('Учёт долгов', 'Tracking debts', 11, ['finance', 'crm']), D('Частичное погашение', 'Partial repayment', 11, ['finance', 'cash']), D('Контроль сроков', 'Due-date control', 8, ['finance'])] },
-    { n: ['Распределение процентов', 'Percentage splits'], s: ['Проценты', 'Percentages'], c: [D('Правила процентов по услугам', 'Percentage rules per service', 19, ['finance']), D('Индивидуальные условия', 'Individual terms', 11, ['finance', 'hr'])] },
-    { n: ['Расходы и доходы', 'Expenses and income'], c: [D('Расходы по категориям', 'Expenses by category', 11, ['finance']), D('Доходы клуба', 'Club income', 11, ['finance'])] },
-    { n: ['Отчёты', 'Reports'], c: [D('Отчёт за смену', 'Shift report', 15, ['finance', 'crm']), D('Отчёт за месяц и любой период', 'Monthly and any-period report', 19, ['finance']), D('Выгрузка в Excel', 'Export to Excel', 11, ['finance'])] },
-    { n: ['Загрузка данных из Excel', 'Importing data from Excel'], s: ['Загрузка из Excel', 'Excel import'], c: [D('Импорт файла', 'File import', 11, ['finance']), D('Проверка и сопоставление полей', 'Checking and matching fields', 11, ['finance'])] }
-  ]},
-  { n: ['Гости и залы', 'Guests and halls'], s: ['Гости и залы', 'Guests & halls'], d: ['Схемы залов, брони, карточки гостей, лояльность и депозиты.', 'Hall maps, bookings, guest profiles, loyalty and deposits.'], c: [
-    { n: ['Интерактивные схемы залов', 'Interactive hall maps'], s: ['Схемы залов', 'Hall maps'], c: [D('Основной зал', 'Main hall', 20, ['crm']), D('Караоке', 'Karaoke', 13, ['crm']), D('VIP-зоны', 'VIP areas', 13, ['crm']), D('Статусы столов в реальном времени', 'Live table statuses', 13, ['crm'])] },
-    { n: ['Бронирование и лист ожидания', 'Bookings and waiting list'], s: ['Брони', 'Bookings'], c: [D('Бронь стола', 'Table booking', 13, ['crm']), D('Лист ожидания свободных столов', 'Waiting list for free tables', 13, ['crm'])] },
-    { n: ['Пересадки и передача менеджеру', 'Table moves and handover'], s: ['Пересадки', 'Table moves'], c: [D('Пересадка гостей', 'Moving guests', 8, ['crm']), D('Передача стола другому менеджеру', 'Handing a table to another manager', 8, ['crm'])] },
-    { n: ['Карточки гостей', 'Guest profiles'], c: [D('История визитов', 'Visit history', 10, ['crm']), D('История покупок', 'Purchase history', 6, ['crm']), D('Заметки менеджеров', 'Manager notes', 6, ['crm'])] },
-    { n: ['Лояльность, скидки, депозиты', 'Loyalty, discounts, deposits'], s: ['Лояльность', 'Loyalty'], c: [D('Карты лояльности', 'Loyalty cards', 13, ['crm']), D('Скидки', 'Discounts', 6, ['crm', 'cash']), D('Депозиты', 'Deposits', 13, ['crm', 'cash'])] },
-    { n: ['Откуда пришли гости', 'Where guests come from'], s: ['Источники гостей', 'Guest sources'], c: [D('Сайт, звонок, промоутер', 'Website, call, promoter', 10, ['crm'])] },
-    { n: ['Расходы и активность по столам', 'Spend and activity per table'], s: ['Активность столов', 'Table activity'], c: [D('Сумма по столу сейчас', 'Current table total', 10, ['crm']), D('Активность стола за вечер', 'Table activity over the night', 10, ['crm'])] }
-  ]},
-  { n: ['Внешние системы', 'Outside systems'], d: ['Подключение кассы R-Keeper, телефонии Mango Office и системы кастинга HandFlow.', 'Connecting the R-Keeper POS, Mango Office telephony and the HandFlow casting system.'], c: [
-    { n: ['Касса R-Keeper', 'R-Keeper POS'], s: ['R-Keeper', 'R-Keeper'], c: [D('Барная касса', 'Bar cash desk', 34, ['core', 'finance']), D('Арт-касса', 'Art cash desk', 42, ['core', 'cash']), D('Сверка NOI и R-Keeper', 'Reconciling NOI and R-Keeper', 34, ['core', 'finance']), D('Повторы и сбои связи', 'Retries and connection failures', 26, ['core'])] },
-    { n: ['Телефония Mango Office', 'Mango Office telephony'], s: ['Mango Office', 'Mango Office'], c: [D('Входящие звонки', 'Incoming calls', 13, ['core', 'crm']), D('Карточка гостя по номеру', 'Guest profile from the caller’s number', 13, ['crm']), D('История звонков', 'Call history', 8, ['crm'])] },
-    { n: ['Кастинг HandFlow', 'HandFlow casting'], s: ['HandFlow', 'HandFlow'], c: [D('Кандидаты', 'Candidates', 13, ['core', 'hr']), D('Этапы кастинга', 'Casting stages', 8, ['hr']), D('Перевод в штат', 'Moving to staff', 8, ['hr'])] }
-  ]},
-  { n: ['Тестирование и запуск', 'Testing and launch'], s: ['Тесты и запуск', 'Tests & launch'], d: ['Тесты, проверка безопасности и пилотный запуск в одном клубе. Технический аудит — отдельный шаг.', 'Tests, security checks and a pilot launch in one club. The technical audit is a separate step.'], c: [
-    { n: ['Автоматические тесты', 'Automated tests'], s: ['Тесты', 'Tests'], c: [D('Финансовые правила', 'Financial rules', 22, ['core']), D('Сквозные сценарии', 'End-to-end scenarios', 22, ['core']), D('Одновременные действия', 'Simultaneous actions', 15, ['core'])] },
-    { n: ['Нагрузочное тестирование', 'Load testing'], s: ['Нагрузка', 'Load'], c: [D('Десятки сотрудников одновременно', 'Dozens of staff at once', 19, ['core'])] },
-    { n: ['Защита', 'Data protection'], c: [D('Проверка на взлом', 'Penetration test', 15, ['core']), D('Защита персональных данных', 'Personal data protection', 15, ['core'])] },
-    { n: ['Пилот в одном клубе', 'Pilot in one club'], s: ['Пилот', 'Pilot'], c: [D('Обучение сотрудников', 'Staff training', 11, ['core']), D('Запуск и доработки по ходу', 'Launch and fixes along the way', 19, ['core'])] }
-  ]},
-  { n: ['Сотрудники', 'Staff'], d: ['База, кастинг, графики, приход через пост охраны, условия работы.', 'Staff database, casting, schedules, arrival at the security post, pay terms.'], c: [
-    { n: ['База сотрудников, артисток и кандидатов', 'Database of staff, performers and candidates'], s: ['База сотрудников', 'Staff database'], c: [D('Карточка сотрудника', 'Employee profile', 12, ['hr']), D('Документы и контакты', 'Documents and contacts', 6, ['hr']), D('Поиск и фильтры', 'Search and filters', 6, ['hr', 'crm'])] },
-    { n: ['Кастинг, стажировка, приём, увольнение', 'Casting, trial, hiring, dismissal'], s: ['Кастинг и приём', 'Casting & hiring'], c: [D('Этапы кастинга', 'Casting stages', 9, ['hr']), D('Стажировка', 'Trial period', 6, ['hr']), D('Приём в штат и увольнение', 'Hiring and dismissal', 9, ['hr'])] },
-    { n: ['Графики, замены, отпуска, больничные', 'Schedules, swaps, vacations, sick leave'], s: ['Графики', 'Schedules'], c: [D('График смен', 'Shift schedule', 15, ['hr', 'crm']), D('Замены', 'Swaps', 9, ['hr', 'crm', 'staff-app']), D('Заявки на отпуск и больничный', 'Vacation and sick-leave requests', 12, ['hr', 'staff-app'])] },
-    { n: ['Приход и уход через пост охраны', 'Arrival and departure at the security post'], s: ['Пост охраны', 'Security post'], c: [D('Отметка прихода и ухода', 'Marking arrival and departure', 9, ['security']), D('Опоздания и отсутствия', 'Late arrivals and absences', 6, ['security', 'hr', 'crm'])] },
-    { n: ['Ставки, проценты, бонусы, удержания', 'Rates, percentages, bonuses, deductions'], s: ['Условия работы', 'Pay terms'], c: [D('Индивидуальные условия', 'Individual terms', 12, ['hr', 'finance']), D('Бонусы', 'Bonuses', 6, ['hr', 'finance']), D('Удержания и штрафы', 'Deductions and fines', 9, ['hr', 'finance'])] },
-    { n: ['История изменений по сотруднику', 'Change history per employee'], s: ['История', 'History'], c: [D('Кто и когда менял условия', 'Who changed terms, and when', 12, ['hr'])] }
-  ]},
-  { n: ['Сцена и ротация', 'Stage and rotation'], s: ['Сцена и ротация', 'Stage & rotation'], d: ['Очередь артисток, режимы сцены, пульт DJ и общий планшет.', 'The performer queue, stage modes, the DJ console and the shared tablet.'], c: [
-    { n: ['Автоматическая очередь', 'Automatic queue'], s: ['Очередь', 'Queue'], c: [D('Приход и готовность', 'Arrival and readiness', 15, ['crm', 'tablet']), D('Перерывы и возврат в очередь', 'Breaks and returning to the queue', 15, ['crm', 'tablet']), D('Уход на услугу и возврат', 'Leaving for a service and coming back', 19, ['crm', 'cash']), D('Ручная правка очереди', 'Manual queue edits', 11, ['crm'])] },
-    { n: ['Режимы сцены', 'Stage modes'], c: [D('Два пилона: такты 5 минут, цикл 10 минут', 'Two poles: 5-minute sets, 10-minute cycle', 11, ['dj', 'crm']), D('Один пилон: выступление 10 минут', 'One pole: 10-minute performance', 8, ['dj', 'crm']), D('Смена режима без сбоя очереди', 'Switching modes without breaking the queue', 11, ['dj'])] },
-    { n: ['Пульт DJ', 'DJ console'], c: [D('Кнопки START, PAUSE, RESUME, NEXT', 'START, PAUSE, RESUME, NEXT buttons', 9, ['dj']), D('Кто на сцене и кто следующий', 'Who is on stage and who is next', 8, ['dj']), D('Таймер выступления', 'Performance timer', 6, ['dj'])] },
-    { n: ['Экран очереди для менеджера', 'Queue screen for managers'], s: ['Очередь у менеджера', 'Manager’s queue'], c: [D('Вся очередь и статусы', 'Full queue and statuses', 9, ['crm']), D('Перестановки и исключения', 'Reordering and exceptions', 10, ['crm'])] },
-    { n: ['Общий планшет артисток', 'Performers’ shared tablet'], s: ['Планшет артисток', 'Performers’ tablet'], c: [D('Текущая ротация крупно', 'Current rotation in large type', 8, ['tablet']), D('Свой статус: готова, перерыв', 'Own status: ready, on a break', 8, ['tablet']), D('Вызов к сцене', 'Call to the stage', 4, ['tablet'])] }
-  ]},
-  { n: ['Службы клуба', 'Club departments'], d: ['Салон, костюмерная, ателье, охрана, хостес, сервис и вызовы сотрудников.', 'Salon, costume room, tailoring, security, hostesses, service and staff calls.'], c: [
-    { n: ['Салон красоты', 'Beauty salon'], s: ['Салон', 'Salon'], c: [D('Запись к мастерам', 'Booking the stylists', 12, ['departments']), D('Загрузка мастеров', 'Stylists’ workload', 6, ['departments'])] },
-    { n: ['Костюмерная и ателье', 'Costume room and tailoring'], s: ['Костюмерная', 'Costume room'], c: [D('Учёт костюмов', 'Costume inventory', 9, ['departments']), D('Выдача и возврат', 'Issue and return', 6, ['departments']), D('Заказы ателье', 'Tailoring orders', 6, ['departments'])] },
-    { n: ['Охрана', 'Security team'], c: [D('Журнал смены охраны', 'Security shift log', 6, ['security', 'departments']), D('Инциденты', 'Incidents', 6, ['security'])] },
-    { n: ['Хостес', 'Hostesses'], c: [D('Встреча и рассадка гостей', 'Greeting and seating guests', 12, ['departments', 'crm'])] },
-    { n: ['Сервисный отдел', 'Service department'], s: ['Сервис', 'Service'], c: [D('Заявки и их выполнение', 'Requests and their completion', 12, ['departments'])] },
-    { n: ['Уведомления и вызовы сотрудников', 'Notifications and staff calls'], s: ['Уведомления', 'Notifications'], c: [D('Вызов к столу или на сцену', 'Calling to a table or the stage', 9, ['crm', 'tablet', 'staff-app']), D('Внутренние сообщения', 'Internal messages', 9, ['staff-app', 'departments']), D('Push-уведомления', 'Push notifications', 6, ['staff-app'])] }
-  ]},
-  { n: ['Сверх программирования', 'Beyond coding'], s: ['Сверх программирования', 'Beyond coding'], extra: true, d: ['То, что обычно не включают в оценку: резерв на стабилизацию, поддержка запусков, управление проектом, ручное тестирование, дизайн, экраны настроек, перенос данных и документация.', 'What estimates usually leave out: a stabilisation reserve, launch support, project management, manual testing, design, settings screens, data migration and docs.'], c: [
-    { n: ['Резерв на стабилизацию (10%)', 'Stabilisation reserve (10%)'], s: ['Резерв на стабилизацию', 'Stabilisation reserve'], c: [D('Исправления и стыковка модулей', 'Fixes and joining modules together', 179, ['core'])] },
-    { n: ['Поддержка запусков на месте', 'On-site launch support'], s: ['Поддержка запусков', 'Launch support'], c: [D('Запуск сцены', 'Stage launch', 50, ['core']), D('Запуск денежной части', 'Money launch', 70, ['core']), D('Запуск всего клуба', 'Whole-club launch', 40, ['core'])] },
-    { n: ['Управление проектом (6%)', 'Project management (6%)'], s: ['Управление', 'Management'], c: [D('Демо, приёмка и оценка новых пожеланий', 'Demos, sign-off and quotes for new requests', 105, ['core'])] },
-    { n: ['Ручное тестирование (5%)', 'Manual testing (5%)'], s: ['Ручные тесты', 'Manual testing'], c: [D('Проверка каждого релиза', 'Checking every release', 85, ['core'])] },
-    { n: ['Дизайн экранов', 'Screen design'], s: ['Дизайн', 'Design'], c: [D('Этап «Сцена»', 'Stage phase', 40, ['core']), D('Этап «Деньги»', 'Money phase', 45, ['core']), D('Этап «Весь клуб»', 'Whole-club phase', 35, ['core'])] },
-    { n: ['Экраны настроек', 'Settings screens'], s: ['Настройки', 'Settings'], c: [D('Цены, пакеты, проценты и роли', 'Prices, packages, percentages and roles', 70, ['core'])] },
-    { n: ['Перенос данных', 'Data migration'], s: ['Перенос данных', 'Migration'], c: [D('Сотрудники, гости и долги из Excel', 'Staff, guests and debts from Excel', 50, ['core'])] },
-    { n: ['Документация и передача', 'Docs and handover'], s: ['Документация', 'Docs'], c: [D('Код, инструкции и передача проекта', 'Code, instructions and handover', 30, ['core'])] }
-  ]}
-]};
-
-const sumHours = n => (n.c ? n.c.reduce((s, c) => s + sumHours(c), 0) : n.h);
+// Her 59 modules from the audit of commit 509baf8d. s: w works (in the app that actually starts) · p partly (logic only in
+// tests, or only part of it) · b broken · a absent. f: differs from her brief. v: 1 in version 1 · 2 in version 1 with manual
+// confirmation until there is R-Keeper access · 0 after version 1. a: what exists today.
+const SECTIONS = [["Сотрудники и персонал", "Staff"], ["Сцена и ротация", "Stage and rotation"], ["Услуги и арт-касса", "Services and art cash desk"], ["Гости и залы", "Guests and halls"], ["Финансы и отчёты", "Finance and reports"], ["Службы клуба", "Club departments"], ["Интеграции", "Integrations"], ["Платформа", "Platform"]];
+const MODS = [{"sec": 0, "s": "p", "f": 0, "v": 1, "n": ["Единая база сотрудников, артисток и кандидатов", "One database of staff, performers and candidates"], "a": ["сотрудники — да; артистки и кандидаты — нет", "staff yes; performers and candidates no"]}, {"sec": 0, "s": "a", "f": 0, "v": 0, "n": ["Кастинг, стажировка, приём, увольнение", "Casting, trial, hiring, dismissal"], "a": ["нет", "no"]}, {"sec": 0, "s": "a", "f": 0, "v": 0, "n": ["Графики смен, замены, отпуска, больничные", "Shift schedules, swaps, leave, sick days"], "a": ["нет; открыть и закрыть смену — да", "no; opening and closing a shift, yes"]}, {"sec": 0, "s": "p", "f": 0, "v": 1, "n": ["Приход и уход через пост охраны", "Arrival and departure at the security post"], "a": ["сотрудники — да; артистки — только в тестах", "staff yes; performers only in tests"]}, {"sec": 0, "s": "p", "f": 0, "v": 1, "n": ["Условия: ставки, проценты, бонусы, удержания", "Terms: rates, percentages, bonuses, deductions"], "a": ["только в тестах", "only in tests"]}, {"sec": 0, "s": "w", "f": 0, "v": 1, "n": ["История изменений по сотруднику", "Change history per employee"], "a": ["да", "yes"]}, {"sec": 1, "s": "p", "f": 0, "v": 1, "n": ["Приход артисток и подтверждение готовности", "Performers’ arrival and readiness"], "a": ["только в тестах", "only in tests"]}, {"sec": 1, "s": "p", "f": 0, "v": 1, "n": ["Автоматическая очередь: перерывы, занятость, возврат", "Automatic queue: breaks, busy, back in rotation"], "a": ["только в тестах", "only in tests"]}, {"sec": 1, "s": "p", "f": 0, "v": 1, "n": ["Режим одного пилона", "One-pole mode"], "a": ["только в тестах", "only in tests"]}, {"sec": 1, "s": "p", "f": 0, "v": 1, "n": ["Режим двух пилонов", "Two-pole mode"], "a": ["только в тестах", "only in tests"]}, {"sec": 1, "s": "b", "f": 1, "v": 1, "n": ["Пульт DJ: START, PAUSE, RESUME, NEXT", "DJ console: START, PAUSE, RESUME, NEXT"], "a": ["нет; прототип считает очередь иначе, чем сервер", "no; the prototype orders the queue differently from the server"]}, {"sec": 1, "s": "p", "f": 0, "v": 1, "n": ["Управление очередью менеджерами", "Queue control by managers"], "a": ["только в тестах", "only in tests"]}, {"sec": 1, "s": "b", "f": 0, "v": 1, "n": ["Общий планшет артисток", "Performers’ shared tablet"], "a": ["прототип без сервера", "a prototype with no server"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Посиделки 30 и 60 минут", "Sit-downs, 30 and 60 minutes"], "a": ["логика есть, API не подключён", "the logic exists, the API isn’t connected"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Приваты: индивидуальные и групповые", "Private dances: individual and group"], "a": ["только в тестах", "only in tests"]}, {"sec": 2, "s": "p", "f": 1, "v": 1, "n": ["«Гулять» с пакетами", "“Gulyat” with packages"], "a": ["только в тестах", "only in tests"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["VIP-комнаты «Клетка»", "“Kletka” VIP rooms"], "a": ["только в тестах", "only in tests"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Продления, замена пакета, досрочное завершение", "Extensions, package swaps, early finish"], "a": ["только в тестах", "only in tests"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Таймеры", "Timers"], "a": ["только в тестах", "only in tests"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Допустимые и запрещённые сочетания", "Allowed and forbidden combinations"], "a": ["только в тестах", "only in tests"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Долги, пробитие, оплата", "Debts, ringing up, payment"], "a": ["только в тестах; «пробито» без R‑Keeper невозможно", "only in tests; “rung up” is impossible without R‑Keeper"]}, {"sec": 2, "s": "p", "f": 1, "v": 1, "n": ["Заработок артисток и доли сотрудников", "Performer earnings and staff shares"], "a": ["только в тестах; три расчёта зарплаты расходятся", "only in tests; three payroll engines disagree"]}, {"sec": 2, "s": "p", "f": 0, "v": 1, "n": ["Автор, время и история каждого действия", "Author, time and history of every action"], "a": ["в фундаменте — да; в услугах — только в тестах", "foundation yes; services only in tests"]}, {"sec": 3, "s": "a", "f": 0, "v": 0, "n": ["Схемы залов: основной, караоке, VIP", "Hall maps: main, karaoke, VIP"], "a": ["нет", "no"]}, {"sec": 3, "s": "a", "f": 0, "v": 0, "n": ["Бронирование и лист ожидания", "Bookings and the waiting list"], "a": ["нет", "no"]}, {"sec": 3, "s": "p", "f": 0, "v": 1, "n": ["Пересадка и передача стола", "Table moves and handover"], "a": ["только в тестах", "only in tests"]}, {"sec": 3, "s": "p", "f": 0, "v": 1, "n": ["Карточки гостей, визиты и покупки", "Guest cards, visits and purchases"], "a": ["только в тестах", "only in tests"]}, {"sec": 3, "s": "a", "f": 0, "v": 0, "n": ["Лояльность, скидки, депозиты", "Loyalty, discounts, deposits"], "a": ["нет", "no"]}, {"sec": 3, "s": "a", "f": 0, "v": 0, "n": ["Откуда приходят гости", "Where guests come from"], "a": ["нет", "no"]}, {"sec": 3, "s": "a", "f": 0, "v": 1, "n": ["Активность и траты по столу", "Activity and spend per table"], "a": ["нет", "no"]}, {"sec": 4, "s": "p", "f": 1, "v": 1, "n": ["Наличные и безналичные операции", "Cash and cashless operations"], "a": ["только в тестах", "only in tests"]}, {"sec": 4, "s": "p", "f": 0, "v": 1, "n": ["Кассовые смены", "Cash-register shifts"], "a": ["рабочая смена — да; кассовая — нет", "the working shift yes; the cash session no"]}, {"sec": 4, "s": "p", "f": 0, "v": 1, "n": ["Начисления и выплаты сотрудникам", "Staff accruals and payouts"], "a": ["только в тестах", "only in tests"]}, {"sec": 4, "s": "p", "f": 0, "v": 1, "n": ["Долги гостей и частичное погашение", "Guest debts and part payments"], "a": ["только в тестах", "only in tests"]}, {"sec": 4, "s": "p", "f": 0, "v": 1, "n": ["Распределение процентов", "Splitting percentages"], "a": ["только в тестах", "only in tests"]}, {"sec": 4, "s": "a", "f": 0, "v": 0, "n": ["Доходы и расходы", "Income and expenses"], "a": ["нет", "no"]}, {"sec": 4, "s": "a", "f": 0, "v": 1, "n": ["Отчёты за смену, месяц и период", "Reports for a shift, month or period"], "a": ["нет", "no"]}, {"sec": 4, "s": "a", "f": 0, "v": 0, "n": ["Загрузка из Excel", "Excel import"], "a": ["нет", "no"]}, {"sec": 5, "s": "a", "f": 0, "v": 0, "n": ["Салон красоты", "Beauty salon"], "a": ["нет", "no"]}, {"sec": 5, "s": "a", "f": 0, "v": 0, "n": ["Костюмерная", "Costume room"], "a": ["нет", "no"]}, {"sec": 5, "s": "a", "f": 0, "v": 0, "n": ["Ателье", "Tailoring"], "a": ["нет", "no"]}, {"sec": 5, "s": "p", "f": 0, "v": 1, "n": ["Охрана", "Security"], "a": ["только в тестах", "only in tests"]}, {"sec": 5, "s": "p", "f": 0, "v": 0, "n": ["Хостес", "Hostesses"], "a": ["только в тестах", "only in tests"]}, {"sec": 5, "s": "p", "f": 0, "v": 0, "n": ["Сервисный отдел", "Service department"], "a": ["только в тестах", "only in tests"]}, {"sec": 5, "s": "p", "f": 0, "v": 1, "n": ["Уведомления и вызовы сотрудников", "Notifications and staff calls"], "a": ["только в тестах; вызовов помощи нет нигде", "only in tests; help calls don’t exist anywhere"]}, {"sec": 6, "s": "a", "f": 0, "v": 0, "n": ["R‑Keeper: барная касса", "R‑Keeper: bar till"], "a": ["нет", "no"]}, {"sec": 6, "s": "p", "f": 0, "v": 2, "n": ["R‑Keeper: арт-касса", "R‑Keeper: art cash desk"], "a": ["заглушка: адаптер отвечает ошибкой", "a stub: the adapter returns an error"]}, {"sec": 6, "s": "p", "f": 0, "v": 2, "n": ["Сверка с R‑Keeper и повторные события", "R‑Keeper reconciliation and repeated events"], "a": ["нет", "no"]}, {"sec": 6, "s": "a", "f": 0, "v": 0, "n": ["Mango Office", "Mango Office"], "a": ["нет", "no"]}, {"sec": 6, "s": "a", "f": 0, "v": 0, "n": ["HandFlow", "HandFlow"], "a": ["нет", "no"]}, {"sec": 7, "s": "w", "f": 0, "v": 1, "n": ["Вход, сессии, пароли", "Sign-in, sessions, passwords"], "a": ["да", "yes"]}, {"sec": 7, "s": "w", "f": 1, "v": 1, "n": ["Роли и права доступа", "Roles and permissions"], "a": ["да; шесть прав не выданы никому", "yes; six permissions are granted to nobody"]}, {"sec": 7, "s": "w", "f": 0, "v": 1, "n": ["Данные и настройки каждого клуба", "Each club’s data and settings"], "a": ["изоляция — да; настройки — нет", "isolation yes; settings no"]}, {"sec": 7, "s": "w", "f": 0, "v": 1, "n": ["Журнал событий и действий", "Event and action log"], "a": ["да", "yes"]}, {"sec": 7, "s": "w", "f": 0, "v": 1, "n": ["Повтор без дублей и транзакции команд", "Duplicate-safe, transactional commands"], "a": ["да", "yes"]}, {"sec": 7, "s": "w", "f": 0, "v": 1, "n": ["Живое обновление и восстановление связи", "Live updates and reconnecting"], "a": ["да", "yes"]}, {"sec": 7, "s": "b", "f": 0, "v": 1, "n": ["Работа на компьютере, планшете и телефоне", "Computer, tablet and phone"], "a": ["нет: интерфейс — прототип в памяти вкладки", "no: the interface is an in-memory prototype"]}, {"sec": 7, "s": "p", "f": 0, "v": 1, "n": ["Резервные копии и восстановление", "Backups and restore"], "a": ["копий и учений пока нет", "no backups or drills yet"]}, {"sec": 7, "s": "p", "f": 0, "v": 1, "n": ["Развёртывание сервера", "Server deployment"], "a": ["только на ноутбуке", "only on the laptop"]}];
 
 // English copy. The Russian copy is the page's own text, read from the DOM on load.
 const EN = {
-  'pl.load': 'Let’s build the CRM',
-  'brand.sub': 'Proposal',
-  'nav.aria': 'Sections',
-  'dots.aria': 'Screens',
-  'g.offer': 'Proposal',
-  'g.project': 'Project',
-  'g.terms': 'Terms',
-  'g.demo': 'Demo',
-  'nav.overview': 'Overview',
-  'nav.scope': 'Scope',
-  'nav.plan': 'Plan',
-  'nav.steps': 'Steps',
-  'nav.demo': 'NOI interface',
-  'st.lead': 'A demo every two weeks. We start the next step only after you’ve checked the last one.',
-  'st.aria': 'Steps by phase',
-  'sd.get': 'What you get',
-  'sd.check': 'How you check it',
-  'sd.parts': 'What’s included',
-  'sd.note': 'A step’s hours include its share of design, testing, management and the reserve. Its price is its share of the ceiling by hours, and the audit can only lower it.',
-  'sd.prev': 'Previous step',
-  'sd.next': 'Next step',
-  'nav.safety': 'Reliability',
-  'nav.team': 'Team',
-  'nav.price': 'Price',
-  'nav.rights': 'Rights',
-  'nav.faq': 'Questions',
-  'side.note': 'Estimate of 5 November 2026, based on your brief. Prices in US dollars.',
-  'ov.h': 'A system you can trust with the club’s money',
-  'ov.lead': 'The full scope with no hidden extras. The price can only go down, and the first launch in the club is about 3 months away.',
-  'ql.aria': 'Sections of the proposal',
-  'qs.safety': 'How the money is protected',
-  'qs.team': 'Gio, Luka and an architect',
-  'qs.rights': 'The code and data are yours',
-  'sc.lead': 'Amber is what estimates usually skip: testing, on-site launches, management, design, data migration. About a third of the work.',
-  'roles.aria': 'Whose screens to show',
-  'roles.h': 'Show screens for',
-  'lens.panel': 'Contents at this level',
-  'lens.crumbs': 'Level',
-  'lens.aria': 'Map of the parts of NOI: bubble size shows hours of work',
-  'lens.back': 'Back',
-  'lens.fwd': 'Forward',
-  'lens.fail': 'The bubble map needs the d3 library, which didn’t load. Reload the page to try again.',
-  'lg.code': 'Coding',
-  'lgx': 'Beyond coding',
-  'pl.h': 'Three launches, not one big bang',
-  'pl.lead': 'Each phase ends with a launch in the club and your sign-off. You only commit to the next phase.',
-  'ac.b': 'How a phase is signed off',
-  'ac.s': 'Your scenarios from the brief and your regression tests move into the new code. A phase is done when they pass, a club night runs with no critical errors, and you sign off.',
-  'wy.b': 'Why money is the second phase',
-  'wy.s': 'Money needs a foundation: roles, permissions and the action log. Phase 1 builds it and proves it on the stage, where a mistake costs nothing. Want money first? We’ll swap the order, and the ceiling stays the same.',
-  'sf.h': 'A mistake can’t quietly lose money',
-  'sf.lead': 'The money rules live in the database and are proven by tests, the way your brief already started.',
-  'sf1.b': 'An append-only ledger',
-  'sf1.s': 'Every operation is a new entry and nothing is deleted. A correction is an entry of its own.',
-  'sf2.b': 'No double charges',
-  'sf2.s': 'Each operation has its own key, so a double click or a dropped connection can’t create a second payment.',
-  'sf3.b': 'Rules in the database itself',
-  'sf3.s': 'A balance can’t go negative and a shift can’t close twice: PostgreSQL forbids it, not the screen.',
-  'sf4.b': 'Daily reconciliation',
-  'sf4.s': 'Automatic reconciliation with R‑Keeper and the till. Any mismatch goes straight to the manager’s report.',
-  'sf5.b': 'Refunds and cancellations',
-  'sf5.s': 'In scope, each with a reason, an author and a senior’s approval.',
-  'sf6.b': 'You see who did what',
-  'sf6.s': 'Permissions on every action and a log of who changed what and when. It can’t be quietly edited.',
-  'rd.h': 'Ready for a real club night',
-  'rd1': 'A separate test environment',
-  'rd2': 'Backups with tested restores',
-  'rd3': 'Updates that never stop the club',
-  'rd4': 'Server monitoring',
-  'rd5': 'A load test for a peak night',
-  'rd6': 'Integrations that retry on failure',
-  'rd7': 'A pilot in one club',
-  'rd8': 'Two-factor sign-in',
-  'tm.h': 'Who builds it',
-  'tm.lead': 'Two of us on the product and front end, and a senior architect who reviews the money and the data.',
-  'cv.photo': 'Photo',
-  'cv.noi': 'On NOI',
-  'cv.xp': 'Experience',
-  'cv.gio.name': 'Gio Kheladze',
-  'cv.gio.role': 'Senior UX designer · NOI front end',
-  'cv.gio.sum': 'Designs interfaces for complex working systems (HR, government, finance) that people find easy to use every day.',
-  'cv.gio.noi': 'The design system in Storybook, every screen and interaction, on-site launches.',
-  'cv.gio.x1': 'UX design for an HR system',
-  'cv.gio.x2': 'UX design for a government CRM',
-  'cv.gio.x3': 'Finance products',
-  'sk.ux': 'UX design',
-  'sk.ds': 'Design systems',
-  'sk.erp': 'ERP and CRM',
-  'sk.fin': 'Finance products',
-  'sk.motion': 'Motion design',
-  'cv.luka.name': 'Luka Skhiladze',
-  'cv.luka.role': 'Product engineer · NOI front end',
-  'cv.luka.sum': 'Takes products from idea to release: design, interface, motion and code. Speaks Russian, Georgian and English.',
-  'cv.luka.noi': 'The React front end, interaction and interface motion, on-site launches.',
-  'cv.luka.x1b': 'Startup app · 2025–2026',
-  'cv.luka.x1': 'The whole app, from idea to the App Store',
-  'cv.luka.x2b': 'Independent developer · 2023–2025',
-  'cv.luka.x2': 'Sites and apps from idea to release',
-  'cv.luka.x3b': 'Post-production · 2019–2021',
-  'cv.luka.x3': 'Supervising editing, sound and motion design; film colour grading',
-  'cv.ar.name': 'Senior backend architect',
-  'cv.ar.role': 'Name and CV before you sign',
-  'cv.ar.sum': 'We’re hiring for NOI. You can talk to them before we start and turn the candidate down.',
-  'cv.ar.noi': 'Sets the data model and the money rules, and reviews R‑Keeper and every change that touches money.',
-  'cv.ar.h': 'Who we hire',
-  'cv.ar.x1b': 'Financial systems',
-  'cv.ar.x1': 'Payments, balances and reconciliation',
-  'cv.ar.x2b': 'Your stack',
-  'cv.ar.x2': 'PostgreSQL and Node.js in production',
-  'cv.ar.x3b': 'Checked before hiring',
-  'cv.ar.x3': 'A test task on your money logic',
-  'r3.b': 'AI, under review:',
-  'r3.s': 'ChatGPT, Codex and Claude take the routine work under the architect’s rules, and a person reviews every change.',
-  'pr.h': 'The price can only go down',
-  'pr.lead': 'You know the ceiling now, and the audit can only lower it.',
-  'pr.cap': 'ceiling for the whole system; it won’t go up',
-  'calc.label': 'Code the audit keeps',
-  'calc.after': 'Your price',
-  'calc.note': 'Kept parts come off at 70% of their price, fixed ones at 30%. The audit counts too.',
-  'pp.h': 'By phase',
-  'bf.h': 'As your brief asks',
-  'bf.note': 'The same hours, split into the three parts from your brief: a new foundation, not patches, solves the current problems. Project management is spread across the three.',
-  't1.b': 'Pay per phase',
-  't1.s': 'A deposit when a phase starts, the rest after your sign-off.',
-  't2.b': 'A 3-month warranty',
-  't2.s': 'After each launch we fix defects free, then support under a contract.',
-  't3.b': 'Estimate risk is ours',
-  't3.s': 'If we underestimate, the price holds. New requests are priced up front.',
-  't4.b': 'Not in the price',
-  't4.s': 'Servers, R‑Keeper licences, an external pentest, travel.',
-  'rt.h': 'Everything we build is yours',
-  'rt.lead': 'The code, data, design and product rights belong to you. We’re the contractor, not a co-owner.',
-  'rt1.b': 'The rights pass to you',
-  'rt1.s': 'Exclusive rights to the code, design and docs become yours as each phase is paid.',
-  'rt2.b': 'Your servers and accounts',
-  'rt2.s': 'The repository, database and access are in your name from day one. You can leave at any point, with all the code.',
-  'rt3.b': 'An NDA before access',
-  'rt3.s': 'We sign an NDA before we see the code, and develop on an anonymised copy of the data.',
-  'rt4.b': 'You can sell NOI',
-  'rt4.s': 'You may sell and license NOI to other clubs. We don’t reuse your code or design elsewhere.',
-  'rt5.b': 'Your stack',
-  'rt5.s': 'We stay on Node.js, PostgreSQL, React and Socket.IO, so any strong developer can carry on.',
-  'rt6.b': 'Docs with every phase',
-  'rt6.s': 'The data schema, decisions and how-tos sit next to the code. Nothing lives only in our heads.',
-  'fq.h': 'The short answers',
-  'q1': 'Why build again instead of continuing my code?',
-  'a1': 'We don’t decide that up front. The audit rates every part, and everything that stays comes off the price.',
-  'q2': 'How is this different from the first map?',
-  'a2': 'The first map counted coding the traditional way: 2,440 h. Now AI agents write the first drafts and a person reviews every change, so we plan 28% less coding. On top come testing, launches, management and a reserve: about a third of the work.',
-  'q3': 'Who will the senior architect be?',
-  'a3': 'We’re hiring for NOI: experience with financial systems, PostgreSQL and Node.js. We’ll introduce them with a CV before you sign, so you can talk to them and turn the candidate down.',
-  'q4': 'Can I keep working with ChatGPT and Codex?',
-  'a4': 'Yes. AI stays in the process; the architect sets the rules and reviews everything that touches money or access. The product logic and priorities stay with you.',
-  'q5': 'What about R-Keeper?',
-  'a5': 'It depends on your version and dealer. We confirm it during the audit, before it affects the price or the timeline.',
-  'q6': 'Who runs the audit, and how independent is it?',
-  'a6': 'A partner of ours, and we say so up front. That’s why every finding cites a file, function or test that any developer can re-check. You’re welcome to bring in a second, independent reviewer.',
-  'q7': 'How does the club run during development?',
-  'a7': 'As it does today. Each part goes live only after your sign-off, we move data while the club is closed, and we’re on site for the first night.',
-  'q8': 'What if one of you leaves?',
-  'a8': 'The work doesn’t stop: the code, docs and design system live in your repository, two of us know the front end, and the architect documents the back end. We agree any replacement with you.',
-  'fq.end': 'Anything else? Write to us in the chat where you got this link.'
+ "pl.load": "Let’s assemble NOI",
+ "brand.sub": "Proposal",
+ "nav.aria": "Sections",
+ "dots.aria": "Screens",
+ "g.offer": "Proposal",
+ "g.project": "Project",
+ "g.terms": "Terms",
+ "g.demo": "Demo",
+ "nav.overview": "Overview",
+ "nav.scope": "Your modules",
+ "nav.plan": "Plan",
+ "nav.steps": "Steps",
+ "nav.safety": "Reliability",
+ "nav.team": "Team",
+ "nav.price": "Price",
+ "nav.rights": "Rights",
+ "nav.faq": "Questions",
+ "nav.demo": "NOI interface",
+ "side.note": "Proposal of 10 November 2026, based on the audit. Prices in US dollars.",
+ "ov.h": "We keep your core and build the product on it",
+ "ov.lead": "The audit found the database and server core strong, so we keep them. What’s missing is assembly and an interface. We build the front end, help with the back end, and in about 13 weeks NOI runs in your club.",
+ "ql.aria": "Sections of the proposal",
+ "qs.safety": "12 of 16 money rules in the database",
+ "qs.team": "Gio, Luka and a back-end dev",
+ "qs.rights": "The code and data are yours",
+ "vw.aria": "What to show",
+ "vw.now": "Today",
+ "vw.v1": "After version 1",
+ "lens.panel": "Contents at this level",
+ "lens.back": "Back",
+ "lens.fwd": "Forward",
+ "lens.crumbs": "Level",
+ "lens.aria": "Map of the modules in your brief: colour shows what works",
+ "lens.fail": "The bubble map needs the d3 library, which didn’t load. Reload the page to try again.",
+ "pl.h": "A pilot in 13 weeks",
+ "pl.lead": "First we save what can’t be lost, then we assemble the back end and fix the API contract, and only after that come the screens and integrations.",
+ "dc.h": "Eight decisions only you can make",
+ "dc1": "Payment: cash, card or mixed",
+ "dc2": "Shared tablet: keep requests and calls, or drop them",
+ "dc3": "Restart mid-rotation: automatic or by hand",
+ "dc4": "Read access for security and the art manager",
+ "dc5": "Readiness after a private: confirm by hand?",
+ "dc6": "A written-off debt that’s paid later",
+ "dc7": "Hosting: a Linux server or the laptop",
+ "dc8": "Access to R‑Keeper, Mango Office and HandFlow",
+ "st.lead": "A demo every two weeks. We start the next step after you’ve checked the last one.",
+ "st.aria": "Steps by group",
+ "sd.prev": "Previous step",
+ "sd.next": "Next step",
+ "sd.get": "What you get",
+ "sd.check": "How you check it",
+ "sd.parts": "What’s included",
+ "sd.note": "Days are our work: Gio on design, Luka on the front end. Architecture review and DevOps (10–15 of Luka’s days) run through the whole project and aren’t counted in the steps.",
+ "sf.h": "The database itself guards the money",
+ "sf.lead": "The audit checked 16 money rules, and PostgreSQL already enforces 12. Four are held only by code, so we move them into the database in weeks 2–6.",
+ "sf1.b": "No double money",
+ "sf1.s": "40 cashiers at once and not one doubled or lost payment.",
+ "sf2.b": "Clubs can’t see each other",
+ "sf2.s": "79 access rules in the database itself. All 25 attempts to look into another club were refused.",
+ "sf3.b": "History that can’t be edited",
+ "sf3.s": "48 append-only tables, with money in whole kopecks. A correction is a new entry.",
+ "sf4.b": "Four rules into the database",
+ "sf4.s": "A share can’t go to another profile, a payout waits for the cash handover, a payment is tied to its command, swaps follow valid links.",
+ "sf5.b": "One payroll engine",
+ "sf5.s": "There are three today and their rules already differ. We keep one, inside the database, before the cash desk and R‑Keeper.",
+ "sf6.b": "Money goes past a person",
+ "sf6.s": "A person reviews every migration and every money change. CI is mandatory, and the audit tests run monthly.",
+ "rd.h": "Ready for the first shift",
+ "rd1": "Backups and a restore drill",
+ "rd2": "A Linux server, not the laptop",
+ "rd4": "Monitoring and logs",
+ "rd5": "No crash when the database drops",
+ "rd6": "A load run",
+ "rd7": "2–3 pilot shifts",
+ "tm.h": "Who does what",
+ "tm.lead": "We do the design and the front end, plus architecture review. The back end is a separate senior developer: yours or ours, your choice.",
+ "cv.photo": "Photo",
+ "cv.gio.name": "Gio Kheladze",
+ "cv.gio.role": "Senior UX designer",
+ "cv.gio.sum": "Designs interfaces for complex working systems: HR, government, finance.",
+ "cv.noi": "On NOI",
+ "cv.gio.noi": "The design system for computer, tablet and TV, and every screen in version 1. 19–31 days.",
+ "cv.xp": "Experience",
+ "cv.gio.x1": "UX design for an HR system",
+ "cv.gio.x2": "UX design for a government CRM",
+ "cv.gio.x3": "Finance products",
+ "sk.ux": "UX design",
+ "sk.ds": "Design systems",
+ "sk.erp": "ERP and CRM",
+ "sk.fin": "Finance products",
+ "cv.luka.name": "Luka Skhiladze",
+ "cv.luka.role": "Product engineer",
+ "cv.luka.sum": "Ran the audit of your code. Takes products from idea to release: interface, motion and code.",
+ "cv.luka.noi": "The React front end against the API contract, role screens and the pilot; architecture review and DevOps. 63–99 days.",
+ "cv.luka.x1b": "Startup app · 2025–2026",
+ "cv.luka.x1": "The whole app, from idea to the App Store",
+ "cv.luka.x2b": "Independent developer · 2023–2025",
+ "cv.luka.x2": "Sites and apps from idea to release",
+ "cv.luka.x3b": "Post-production · 2019–2021",
+ "cv.luka.x3": "Supervising editing, sound and motion design",
+ "sk.motion": "Motion design",
+ "cv.be.name": "Senior back-end developer",
+ "cv.be.role": "Yours or ours, your choice",
+ "cv.be.sum": "Full-time from week 2. If we find them, you see their CV before the start and can say no.",
+ "cv.be.noi": "Assembling the app, one payroll engine, money rules in the database, the API contract, integrations. 94–157 days.",
+ "cv.be.h": "Who we look for",
+ "cv.be.x1b": "Financial systems",
+ "cv.be.x1": "Payments, balances and reconciliation",
+ "cv.be.x2b": "Your stack",
+ "cv.be.x2": "PostgreSQL and Node.js in production",
+ "cv.be.x3b": "Checked before hiring",
+ "cv.be.x3": "A test task on your money logic",
+ "r3.b": "Your AI process stays:",
+ "r3.s": "ChatGPT and Codex write tests and drafts against the contract, and a person reviews migrations and money.",
+ "pr.h": "Our part, with a ceiling",
+ "pr.lead": "We price our own work: design, front end and architecture review. The back end and testing are priced separately, once you’ve chosen the people.",
+ "pr.cap": "ceiling for our part of version 1; it won’t go up",
+ "calc.label": "Screens in version 1",
+ "calc.after": "Our price",
+ "calc.note": "The fast path: DJ console, rotation, cash desk and the management dashboard. Approvals, debts and VIP come in the second release.",
+ "t1.b": "Pay per step",
+ "t1.s": "A deposit at the start of a step, the rest once you’ve checked it.",
+ "t2.b": "A 3-month warranty",
+ "t2.s": "We fix defects free after launch, then under a contract.",
+ "t3.b": "Estimate risk is ours",
+ "t3.s": "A back-end delay moves the calendar, not our days or price.",
+ "t4.b": "Not in the price",
+ "t4.s": "The back end, testing, servers, R‑Keeper licences, travel.",
+ "pp.h": "Our part, by work",
+ "bf.h": "All of version 1, per the audit",
+ "bf.note": "217–353 person-days in all: back end 94–157, front end 53–84, design 17–28, testing 39–61, DevOps 14.5–23.",
+ "rt.h": "Everything we build is yours",
+ "rt.lead": "The code, data, design and product rights are yours. We’re a contractor, not a co-owner, and not the only team you depend on.",
+ "rt1.b": "Everything in your repository",
+ "rt1.s": "The code and its whole history live in your repository from day one. You can leave at any point, with all the code.",
+ "rt2.b": "The design system is yours",
+ "rt2.s": "The components, tokens and Storybook pass to you, with the right to use them in any NOI product.",
+ "rt3.b": "Handover from day one",
+ "rt3.s": "Docs, Storybook and recorded screen walkthroughs are in the price, so any developer can carry on.",
+ "rt4.b": "You can sell NOI",
+ "rt4.s": "You may sell and license NOI to other clubs. We don’t reuse your code or design elsewhere.",
+ "rt5.b": "Your stack",
+ "rt5.s": "We stay on Node.js, PostgreSQL, React and Socket.IO and rewrite nothing without a reason.",
+ "rt6.b": "Docs in Russian",
+ "rt6.s": "Decisions, the data schema and how-tos, in Russian, next to the code.",
+ "fq.h": "The short answers",
+ "q1": "Why not rewrite from scratch?",
+ "a1": "The core and the SQL layer are your main asset: 930 checks pass three times without a single flake. Rewriting them would take 120–200 senior back-end days just to get back to where you already are.",
+ "q2": "What changed after the audit?",
+ "a2": "At first we estimated building everything from scratch: 2,545 h and 10 months. The audit showed you already have a server but no product: the modules aren’t assembled into one app, and the interface is a prototype with no server behind it. So now it’s assembly and an interface, with a pilot in about 13 weeks.",
+ "q3": "Who will the back-end developer be?",
+ "a3": "Your call: someone of yours or someone we find. If ours, we introduce them with a CV and a test task on your money logic, and you can say no. The back end is priced apart from our part, so you never depend on one contractor.",
+ "q4": "Can I keep working with ChatGPT and Codex?",
+ "a4": "Yes: your process already produced a good core. Three rules: done means visible in the running app; a person reviews every migration and money change; CI is mandatory.",
+ "q5": "What about R‑Keeper?",
+ "a5": "In version 1 the cashier confirms payments by hand. Live integration comes once there are API docs and a test till: another 33–55 back-end days. We won’t promise a date before that: today the adapter is an 11-line stub.",
+ "q6": "Can we go faster?",
+ "a6": "Yes: 12–15 screens (the DJ console, rotation, the cash desk and the management dashboard). Our part shrinks by 30–40% and the pilot comes sooner; approvals, debts and VIP come in the second release.",
+ "q7": "What do you need from me this week?",
+ "a7": "A remote repository with every branch, a commit of the ~100 uncommitted files to their own branch, a dump of the working database and a run of migrations 001–040 on a clean cluster. It costs nothing and protects everything else.",
+ "q8": "Who ran the audit, and how independent is it?",
+ "a8": "Luka, our partner, and we say so up front. Every finding cites a file, function or test that any developer can re-check. You’re welcome to bring in a second, independent reviewer.",
+ "q9": "What about several clubs and selling NOI?",
+ "a9": "The architecture already supports several clubs. Licensing readiness comes after 2–3 months of stable running: another 30–49 days. It’s not in the first version.",
+ "q10": "Will there be two-factor sign-in?",
+ "a10": "We design the sign-in screen for a second factor from the start. On the server it’s a small addition, and we’ll put it in version 1 if you decide it’s needed before the pilot.",
+ "fq.end": "Anything else? Write to us in the chat where you got this link."
 };
 const PANES = ['overview', 'scope', 'plan', 'steps', 'safety', 'team', 'price', 'rights', 'faq'];
 const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1232,112 +1193,31 @@ const onPane = f => paneListeners.push(f);
 
 const ruPlural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[a > 10 && a < 20 ? 2 : b === 1 ? 0 : b >= 2 && b <= 4 ? 1 : 2]; };
 const fmtNum = (v, lang) => Math.round(v).toLocaleString(lang === 'en' ? 'en-US' : 'ru-RU');
-const fmtHours = (v, lang) => fmtNum(v, lang) + (lang === 'en' ? ' h' : ' ч');
-const fmtMoney = (v, lang) => (lang === 'en' ? '$' + Math.round(v / 1000) + 'k' : '$' + fmtNum(Math.round(v / 1000) * 1000, lang));
-const fmtMonths = (n, lang) => (lang === 'en' ? n + (n === 1 ? ' month' : ' months') : n + ' ' + ruPlural(n, ['месяц', 'месяца', 'месяцев']));
+// Money: $16 400 in Russian; $16.4k in English. A range shares the sign and the unit: $16 400–26 000, $16.4–26k.
+const kUsd = v => { const k = Math.round(v / 100) / 10; return String(k); };
+const usd = (v, lang) => (lang === 'en' ? '$' + kUsd(v) + 'k' : '$' + fmtNum(Math.round(v / 100) * 100, lang));
+const usdRange = (lo, hi, lang) => (lang === 'en' ? '$' + kUsd(lo) + '–' + kUsd(hi) + 'k' : '$' + fmtNum(Math.round(lo / 100) * 100, lang) + '–' + fmtNum(Math.round(hi / 100) * 100, lang));
+const days = (d, lang) => d[0] + '–' + d[1] + (lang === 'en' ? ' days' : ' дн.');
+const weeksLabel = (w, lang, long) => (lang === 'en' ? (long ? (w[0] === w[1] ? 'week ' : 'weeks ') : 'wk ') : 'нед. ') + (w[0] === w[1] ? w[0] : w[0] + '–' + w[1]);
 
-const TOTAL = sumHours(DATA);
-const PER_MONTH = 250;   // two people full-time: productive hours a month together
-const PRICE = 68125;    // price ceiling for the full scope
-const KEEP_CREDIT = 0.7; // a part the audit keeps comes off at 70% of its price
-const SPAN = 10;
-const PHASES = [
-  { name: ['Сцена', 'Stage'], what: ['Платформа, роли, журнал действий, ротация, пульт DJ, планшет артисток', 'Platform, roles, action log, rotation, DJ console, performers’ tablet'], hours: 735 },
-  { name: ['Деньги', 'Money'], what: ['Услуги и арт-касса, финансы, R‑Keeper для арт-кассы', 'Services and the art cash desk, finance, R‑Keeper for the art desk'], hours: 1035 },
-  { name: ['Весь клуб', 'Whole club'], what: ['Гости и залы, кадры, службы клуба, Mango Office, HandFlow, бар в R‑Keeper', 'Guests and halls, HR, club departments, Mango Office, HandFlow, the R‑Keeper bar'], hours: 775 }
-];
-let acc = 0;
-PHASES.forEach(p => { p.start = acc; p.end = acc + p.hours / PER_MONTH; acc = p.end; });
-// Her brief asks for separate estimates for fixing the current problems, completing the MVP and preparing for production.
-// The same hours cut that way: the shared platform; the product sections with design and settings; testing, launches,
-// migration, docs, manual testing and the stabilisation reserve. Management is spread across the three in proportion.
-const BRIEF = [
-  { name: ['Исправить текущие проблемы', 'Fix the current problems'], what: ['фундамент: вход, роли, права, журнал, сервер', 'the foundation: sign-in, roles, log, server'], hours: 330 },
-  { name: ['Довести MVP', 'Complete the MVP'], what: ['все разделы, интеграции, настройки и дизайн', 'all sections, integrations, settings, design'], hours: 1545 },
-  { name: ['Подготовить к работе', 'Prepare for production'], what: ['тесты, перенос данных, запуски, резерв', 'testing, migration, launches, the reserve'], hours: 670 }
-];
-// The same phases cut into steps of a few weeks, each ending in something she can open and check.
-// A step's hours: the coding of its parts, its own launch, migration or handover work, and a share of the phase's
-// design, settings, testing, management and reserve in proportion to its coding. They add up to each phase's hours.
-// Parts are named as in the scope map (a Russian name is looked up there); a pair is a name of its own.
-const STEPS = [
-  { ph: 0, h: 135, name: ['Сервер и вход', 'Server and sign-in'],
-    get: ['NOI работает на вашем сервере с ежедневными копиями. Вход по своему логину, а там, где есть доступ к деньгам, — ещё и с кодом из приложения.', 'NOI runs on your server with daily backups. Everyone signs in with their own login, and wherever there’s access to money, with a code from an app as well.'],
-    check: ['Восстанавливаем базу из вчерашней копии при вас. Без кода из приложения бухгалтер не войдёт даже с верным паролем.', 'We restore yesterday’s backup while you watch. Without the app code, the accountant can’t sign in even with the right password.'],
-    parts: ['Сервер, резервные копии, обновления', 'Вход и сессии', 'Двухфакторная авторизация'] },
-  { ph: 0, h: 105, name: ['Роли и журнал', 'Roles and the log'],
-    get: ['Права на каждое действие: каждый отдел видит только своё. Журнал «кто, что и когда изменил», который нельзя править.', 'Permissions for every action: each department sees only its own work. A log of who changed what and when, which nobody can edit.'],
-    check: ['Заходите под разными ролями — каждая видит только своё. Любая правка сразу видна в журнале.', 'Sign in as different roles: each sees only its own. Every edit shows up in the log straight away.'],
-    parts: ['Роли и права доступа', 'Журнал действий'] },
-  { ph: 0, h: 195, name: ['Экраны и синхронизация', 'Screens and live sync'],
-    get: ['Единый дизайн для компьютера, планшета и телефона. Изменения сразу видны на всех экранах, у каждого клуба свои данные.', 'One design for computer, tablet and phone. Changes appear on every screen at once, and each club keeps its own data.'],
-    check: ['Меняете запись на одном экране — через секунду она на других. Связь пропадает — работа продолжается.', 'Change a record on one screen and it shows on the others within a second. Drop the connection and work carries on.'],
-    parts: ['Интерфейс для компьютера, планшета и телефона', 'Синхронизация в реальном времени', 'Несколько клубов'] },
-  { ph: 0, h: 180, name: ['Ротация и пульт DJ', 'Rotation and DJ console'],
-    get: ['Очередь строится сама — с одним пилоном и с двумя. Пульт DJ с кнопками START, PAUSE, NEXT и экран очереди у менеджера.', 'The queue builds itself, with one pole or two. A DJ console with START, PAUSE and NEXT, and a queue screen for the manager.'],
-    check: ['Проводим тестовую ночь на тестовом сервере в обоих режимах сцены.', 'We run a test night on the test server in both stage modes.'],
-    parts: ['Автоматическая очередь', 'Режимы сцены', 'Пульт DJ', 'Экран очереди для менеджера'] },
-  { ph: 0, h: 120, name: ['Планшет и запуск сцены', 'Tablet and stage launch'],
-    get: ['Артистки видят ротацию и свой статус на общем планшете. Обучаем сотрудников — и сцена работает в NOI в вашем клубе.', 'Performers see the rotation and their status on the shared tablet. We train your staff, and the stage runs on NOI in your club.'],
-    check: ['Сценарии из ТЗ проходят, ночь в клубе прошла без критических ошибок — и вы подписываете приёмку этапа.', 'The scenarios from your brief pass and a night in the club goes without critical errors, then you sign off the phase.'],
-    parts: ['Общий планшет артисток', 'Пилот в одном клубе', 'Запуск сцены'] },
-  { ph: 1, h: 90, name: ['Посиделки, приваты, VIP', 'Sit-downs, privates, VIP'],
-    get: ['Каждая услуга запускается со своим таймером и предупреждением. Свободные комнаты видны сразу.', 'Each service starts with its own timer and warning. Free rooms are visible at a glance.'],
-    check: ['Проходим каждую услугу от начала до конца на тестовом сервере.', 'We run every service from start to finish on the test server.'],
-    parts: ['Посиделки 30 и 60 минут', 'Приваты: индивидуальные и групповые', 'VIP-комнаты «Клетка»'] },
-  { ph: 1, h: 140, name: ['«Гулять» и продления', '“Gulyat” and extensions'],
-    get: ['Пакеты «Гулять» с заменой на ходу. Продление, замена и досрочное завершение любой услуги; недопустимые сочетания система не пропустит.', '“Gulyat” packages that can be changed mid-way. Extending, changing or ending any service early, and the system blocks combinations that aren’t allowed.'],
-    check: ['Сценарии из вашего ТЗ — замены, продления, досрочное завершение — считаются без ошибок.', 'The scenarios from your brief with changes, extensions and early endings are all charged correctly.'],
-    parts: ['Услуга «Гулять»', 'Продления и замены', 'Что можно совмещать'] },
-  { ph: 1, h: 145, name: ['Арт-касса и смены', 'Art cash desk and shifts'],
-    get: ['Все таймеры на одном экране, оплата наличными и картой, частичная оплата и долги. Смена закрывается со сверкой наличных.', 'All timers on one screen; cash and card payments, part payments and debts. A shift closes with a cash count.'],
-    check: ['Тестовая смена со смешанными оплатами закрывается без расхождений.', 'A test shift with mixed payments closes with no discrepancies.'],
-    parts: ['Таймеры, долги, оплата', 'Наличные и безналичные', 'Кассовые смены'] },
-  { ph: 1, h: 140, name: ['R-Keeper для арт-кассы', 'R-Keeper for the art desk'],
-    get: ['Оплаты арт-кассы уходят в R-Keeper, а NOI и R-Keeper сверяются каждый день. При обрыве связи платёж не теряется и не задваивается.', 'Art desk payments go into R-Keeper, and NOI and R-Keeper reconcile every day. If the connection drops, no payment is lost or doubled.'],
-    check: ['Обрываем связь посреди оплаты: ни потери, ни двойного списания, сверка сходится.', 'We cut the connection mid-payment: nothing lost, nothing charged twice, and the reconciliation matches.'],
-    parts: [['R-Keeper: арт-касса', 'R-Keeper: art cash desk'], 'Сверка NOI и R-Keeper', 'Повторы и сбои связи'] },
-  { ph: 1, h: 170, name: ['Заработок и выплаты', 'Earnings and payouts'],
-    get: ['Заработок артисток за каждую услугу, доли сотрудников и проценты по вашим правилам. Ведомости с защитой от двойной выплаты.', 'Performers’ earnings for every service, staff shares and percentages by your rules. Payout sheets that can’t pay anyone twice.'],
-    check: ['Выплаты за тестовую неделю совпадают с ручным расчётом вашего бухгалтера.', 'Payouts for a test week match your accountant’s own calculation.'],
-    parts: ['Заработок артисток и доли сотрудников', 'Начисления и выплаты сотрудникам', 'Распределение процентов'] },
-  { ph: 1, h: 165, name: ['Долги, расходы, отчёты', 'Debts, expenses, reports'],
-    get: ['Долги гостей со сроками, расходы и доходы по категориям. Отчёты за смену, месяц и любой период, выгрузка в Excel.', 'Guest debts with due dates, and expenses and income by category. Reports for a shift, a month or any period, with Excel export.'],
-    check: ['Отчёт за прошлый месяц из ваших данных сходится с вашими цифрами.', 'Last month’s report, built from your data, matches your own figures.'],
-    parts: ['Долги гостей', 'Расходы и доходы', 'Отчёты', 'Загрузка данных из Excel'] },
-  { ph: 1, h: 185, name: ['Перенос и запуск денег', 'Migration and money launch'],
-    get: ['Сотрудники, гости и долги перенесены из Excel, наша проверка защиты и нагрузочный тест пройдены. Деньги работают в NOI в вашем клубе.', 'Staff, guests and debts are moved over from Excel, and our own security review and load test are passed. The money side runs on NOI in your club.'],
-    check: ['Сценарии из ТЗ проходят, ночь в клубе — без критических ошибок, смена сходится с R-Keeper. Затем вы подписываете приёмку этапа.', 'The scenarios from your brief pass, a night in the club has no critical errors and the shift matches R-Keeper. Then you sign off the phase.'],
-    parts: ['Перенос данных', 'Нагрузочное тестирование', 'Защита', 'Запуск денежной части'] },
-  { ph: 2, h: 165, name: ['Залы и брони', 'Halls and bookings'],
-    get: ['Схемы основного зала, караоке и VIP со статусами столов в реальном времени. Брони, лист ожидания, пересадки и сумма по столу.', 'Maps of the main hall, karaoke and VIP with live table status. Bookings, a waiting list, table moves and each table’s running total.'],
-    check: ['Моделируем загруженную субботу: статусы столов и брони не расходятся.', 'We simulate a busy Saturday: table status and bookings never disagree.'],
-    parts: ['Интерактивные схемы залов', 'Бронирование и лист ожидания', 'Пересадки и передача менеджеру', 'Расходы и активность по столам'] },
-  { ph: 2, h: 135, name: ['Гости и звонки', 'Guests and calls'],
-    get: ['Карточка гостя с историей визитов и покупок, лояльность, скидки и депозиты. Входящий звонок открывает карточку звонящего.', 'A guest profile with visit and purchase history; loyalty, discounts and deposits. An incoming call opens the caller’s profile.'],
-    check: ['Звоните на номер клуба — у менеджера открывается карточка гостя.', 'Call the club’s number and the guest’s profile opens for the manager.'],
-    parts: ['Карточки гостей', 'Лояльность, скидки, депозиты', 'Откуда пришли гости', 'Телефония Mango Office'] },
-  { ph: 2, h: 120, name: ['Кадры и кастинг', 'Staff records and casting'],
-    get: ['Карточки сотрудников, артисток и кандидатов, кастинг и стажировка. Кандидаты приходят из HandFlow, история условий сохраняется.', 'Records for staff, performers and candidates; casting and trials. Candidates arrive from HandFlow, and every change to terms is kept.'],
-    check: ['Кандидат из HandFlow проходит кастинг и стажировку и попадает в штат.', 'A candidate from HandFlow goes through casting and a trial and joins the staff.'],
-    parts: ['База сотрудников, артисток и кандидатов', 'Кастинг, стажировка, приём, увольнение', 'Кастинг HandFlow', 'История изменений по сотруднику'] },
-  { ph: 2, h: 105, name: ['Графики и ставки', 'Schedules and pay rates'],
-    get: ['График смен с заменами, отпусками и больничными, отметки прихода и ухода на посту охраны. Ставки, бонусы и удержания.', 'Shift schedules with swaps, leave and sick days; clocking in and out at the security post. Pay rates, bonuses and deductions.'],
-    check: ['Неделя по графику с заменами: опоздания видны в отчёте, удержания — в выплатах.', 'A week on the schedule with swaps: late arrivals show in the report and deductions in the payouts.'],
-    parts: ['Графики, замены, отпуска, больничные', 'Приход и уход через пост охраны', 'Ставки, проценты, бонусы, удержания'] },
-  { ph: 2, h: 135, name: ['Службы и вызовы', 'Departments and calls'],
-    get: ['Салон, костюмерная, охрана, хостес и сервисный отдел работают в NOI. Вызов сотрудника к столу или на сцену, push-уведомления.', 'The salon, costume room, security, hostesses and service desk work in NOI. Calling staff to a table or the stage, with push notifications.'],
-    check: ['Каждая служба проводит в NOI полную смену.', 'Each department runs a full shift in NOI.'],
-    parts: ['Салон красоты', 'Костюмерная и ателье', 'Охрана', 'Хостес', 'Сервисный отдел', 'Уведомления и вызовы сотрудников'] },
-  { ph: 2, h: 115, name: ['Бар и запуск клуба', 'Bar and club launch'],
-    get: ['Барная касса R-Keeper связана с NOI, и весь клуб работает в NOI. Код, доступы и документация передаются вам.', 'The R-Keeper bar till is linked to NOI, and the whole club runs on NOI. Code, access and documentation are handed over to you.'],
-    check: ['Сценарии из ТЗ проходят, ночь в клубе прошла без критических ошибок — и вы подписываете финальную приёмку.', 'The scenarios from your brief pass and a night in the club goes without critical errors, then you give final sign-off.'],
-    parts: [['R-Keeper: барная касса', 'R-Keeper: bar cash desk'], 'Запуск всего клуба', 'Документация и передача'] }
-];
+// Our part, in person-days [low, high], as the audit estimates it; a day is 8 hours at $25.
+const DAY_RATE = 200;
+const FAST = 0.35;   // the 12–15-screen fast path cuts our part by 30–40%
+const OUR = [{"name": ["Дизайн", "Design"], "who": ["Гио", "Gio"], "d": [19, 31], "what": ["знакомство, дизайн-система, все экраны", "discovery, the design system, every screen"]}, {"name": ["Фронтенд", "Front end"], "who": ["Лука", "Luka"], "d": [53, 84], "what": ["каркас, экраны ролей, интеграции, пилот", "the foundation, role screens, integrations, the pilot"]}, {"name": ["Ревью архитектуры и DevOps", "Architecture review and DevOps"], "who": ["Лука", "Luka"], "d": [10, 15], "what": ["проверка бэкенда на каждом этапе, сервер и копии", "reviewing the back end at each stage, the server and backups"]}];
+const OUR_D = [OUR.reduce((a, x) => a + x.d[0], 0), OUR.reduce((a, x) => a + x.d[1], 0)];
+// The whole of version 1, split as her brief asks: fix the current problems, complete the MVP, prepare for production.
+const V1 = [{"name": ["Исправить текущие проблемы", "Fix the current problems"], "d": [45, 75], "what": ["сохранить, собрать, один расчёт зарплаты, правила денег, контракт API", "save, assemble, one payroll engine, money rules, the API contract"]}, {"name": ["Довести MVP", "Complete the MVP"], "d": [154, 248], "what": ["≈25 экранов, касса и смена, интеграции", "≈25 screens, the cash desk and shift, integrations"]}, {"name": ["Подготовить к работе", "Prepare for production"], "d": [18, 30], "what": ["сервер, копии, мониторинг, пилот", "the server, backups, monitoring, the pilot"]}];
+// Five stages over thirteen weeks; the API contract lands at the end of week 5 and gates the screens.
+const WEEKS = 13, GATE = 5;
+const STAGES = [{"n": 0, "w": [1, 1], "name": ["Сохранить", "Save"], "who": ["ты и бэкенд", "you and the back end"], "what": ["Репозиторий, коммит ~100 файлов, дамп базы, миграции 001–040.", "A repository, a commit of the ~100 files, a database dump, migrations 001–040."]}, {"n": 1, "w": [2, 6], "name": ["Собрать бэкенд", "Assemble the back end"], "who": ["бэкенд; Лука проверяет", "back end; Luka reviews"], "what": ["Одно приложение, один расчёт зарплаты, правила денег в базе, контракт API.", "One app, one payroll engine, money rules in the database, the API contract."]}, {"n": 2, "w": [3, 11], "name": ["Продукт", "Product"], "who": ["Гио и Лука; бэкенд", "Gio and Luka; back end"], "what": ["≈25 экранов для 9 ролей на компьютере, планшете и ТВ; касса и смена.", "≈25 screens for 9 roles on computer, tablet and TV; the cash desk and shift."]}, {"n": 3, "w": [6, 12], "name": ["Интеграции", "Integrations"], "who": ["бэкенд", "back end"], "what": ["Журнал событий и сверка; R‑Keeper — при доступе, иначе вручную.", "An event log and reconciliation; R‑Keeper with access, otherwise by hand."]}, {"n": 4, "w": [10, 13], "name": ["Запуск", "Launch"], "who": ["все", "everyone"], "what": ["Сервер, копии и учебное восстановление, мониторинг, пилот.", "The server, backups and a restore drill, monitoring, the pilot."]}];
+// Our steps, in three groups, each ending in something she can open and check. Days: Gio on design, Luka on the front end.
+const GROUPS = [["Основа", "Foundation"], ["Экраны", "Screens"], ["Запуск", "Launch"]];
+const STEPS = [{"g": 0, "w": [2, 3], "gio": [3, 5], "luka": [2, 3], "name": ["Знакомство и решения", "Discovery and decisions"], "get": ["Карта ролей и экранов версии 1, согласованная с тобой. Решения по общему планшету, правам охраны и готовности после привата — записаны.", "A map of the roles and screens in version 1, agreed with you. Decisions on the shared tablet, security’s access and readiness after a private, written down."], "check": ["Проходим ночь по ролям — от прихода артисток до закрытия смены — и отмечаем, что попадает в первую версию.", "We walk through a night role by role, from performers arriving to closing the shift, and mark what goes into the first version."], "parts": [["Роли и сценарии", "Roles and scenarios"], ["Решения 2, 4 и 5", "Decisions 2, 4 and 5"], ["Приоритеты версии 1", "Version 1 priorities"]]}, {"g": 0, "w": [2, 6], "gio": [8, 12], "luka": [0, 0], "name": ["Дизайн-система", "Design system"], "get": ["Тёмная тема под свет клуба, крупные кнопки для планшета, таймеры и статусы с одной логикой цвета — в Figma и Storybook.", "A dark theme for club lighting, big buttons for tablets, and timers and statuses with one colour logic, in Figma and Storybook."], "check": ["Смотришь компоненты на планшете и ТВ прямо в клубе, при рабочем свете.", "You look at the components on a tablet and the TV in the club itself, under working light."], "parts": [["Цвета, шрифты, компоненты", "Colours, type, components"], ["Таймеры и статусы", "Timers and statuses"], ["Компьютер · планшет · ТВ", "Computer · tablet · TV"]]}, {"g": 0, "w": [3, 5], "gio": [0, 0], "luka": [10, 15], "name": ["Каркас приложения", "App foundation"], "get": ["Вход, устройства и оболочка с ролями и живым обновлением — на твоём рабочем API. Ошибки — понятным русским текстом.", "Sign-in, devices and a role-aware shell with live updates, on your working API. Errors in plain Russian."], "check": ["Входишь под разными ролями. Выключаем сеть — появляется баннер; включаем — данные догоняют сами.", "Sign in as different roles. We turn the network off and a banner appears; we turn it on and the data catches up by itself."], "parts": [["Вход и устройства", "Sign-in and devices"], ["Оболочка и навигация", "Shell and navigation"], ["Живое обновление", "Live updates"], ["Контракт API", "The API contract"]]}, {"g": 1, "w": [5, 7], "gio": [2, 3], "luka": [10, 16], "name": ["Сцена", "Stage"], "get": ["Пульт DJ с START, PAUSE, RESUME и NEXT, доска ротации для менеджера, приход и готовность артисток, табло на ТВ.", "A DJ console with START, PAUSE, RESUME and NEXT, a rotation board for managers, performers’ arrival and readiness, and the TV board."], "check": ["Проводим тестовую ночь на рабочем сервере в обоих режимах сцены — с перерывами и выходом вне очереди.", "We run a test night on the working server in both stage modes, with breaks and an out-of-turn set."], "parts": [["Пульт DJ", "DJ console"], ["Доска ротации", "Rotation board"], ["Приход и готовность", "Arrival and readiness"], ["Душ и шоу", "Shower and show"], ["Табло на ТВ", "TV board"]]}, {"g": 1, "w": [7, 9], "gio": [2, 4], "luka": [13, 20], "name": ["Деньги", "Money"], "get": ["Посиделки, приваты, «Гулять» и «Клетка» с таймерами. Касса с ручным подтверждением оплаты, сдачей наличных и кассовой сменой. Начисления, выплаты, долги.", "Sit-downs, privates, “Gulyat” and “Kletka” with timers. The cash desk with manual payment confirmation, cash handover and a cash shift. Accruals, payouts, debts."], "check": ["Тестовая смена со смешанными оплатами закрывается без расхождений, а выплаты за неделю совпадают с расчётом твоего бухгалтера.", "A test shift with mixed payments closes with no discrepancies, and a week’s payouts match your accountant’s own calculation."], "parts": [["Услуги и таймеры", "Services and timers"], ["Арт-касса", "Art cash desk"], ["Кассовая смена", "Cash shift"], ["Начисления и выплаты", "Accruals and payouts"], ["Долги", "Debts"], ["Согласования", "Approvals"]]}, {"g": 1, "w": [9, 11], "gio": [2, 3], "luka": [12, 19], "name": ["Зал и руководитель", "Floor and management"], "get": ["Столы и гости для менеджеров, VIP-комнаты, пост охраны. Панель руководителя: смена, персонал, каталог и тарифы, устройства, отчёт за смену, уведомления.", "Tables and guests for managers, VIP rooms, the security post. A management dashboard: the shift, staff, the catalogue and tariffs, devices, the shift report, notifications."], "check": ["Руководитель открывает и закрывает смену и видит итог ночи на одном экране; охрана отмечает приход, не видя денег.", "The manager opens and closes the shift and sees the night’s result on one screen; security clocks people in without seeing any money."], "parts": [["Столы и гости", "Tables and guests"], ["VIP «Клетка»", "“Kletka” VIP"], ["Пост охраны", "Security post"], ["Панель руководителя", "Management dashboard"], ["Персонал и устройства", "Staff and devices"], ["Отчёт за смену", "Shift report"]]}, {"g": 2, "w": [10, 12], "gio": [1, 2], "luka": [3, 5], "name": ["Интеграции и сверка", "Integrations and reconciliation"], "get": ["Экран расхождений с решением по каждому и настройки интеграций. Если к 6-й неделе будет доступ к R‑Keeper — сверка арт-кассы; если нет — остаётся ручное подтверждение.", "A mismatch screen with a decision on each, and integration settings. If R‑Keeper access arrives by week 6, art desk reconciliation; if not, manual confirmation stays."], "check": ["Подаём повторное и неверное событие — система ловит его и показывает в расхождениях, ничего не задвоив.", "We send a repeated and a wrong event: the system catches it and lists it as a mismatch without doubling anything."], "parts": [["Расхождения", "Mismatches"], ["Настройки интеграций", "Integration settings"], ["R‑Keeper при доступе", "R‑Keeper with access"]]}, {"g": 2, "w": [12, 13], "gio": [1, 2], "luka": [3, 6], "name": ["Пилот в клубе", "Pilot in the club"], "get": ["2–3 пилотные смены с нами на связи, исправления по ходу, проверка на настоящих планшетах и ТВ. Код, Storybook и записи разборов — в твоём репозитории.", "2–3 pilot shifts with us on call, fixes as we go, and checks on real tablets and the TV. The code, Storybook and recorded walkthroughs are in your repository."], "check": ["Сценарии из ТЗ проходят, ночь в клубе — без критических ошибок, и ты подписываешь приёмку.", "The scenarios from your brief pass, a night in the club has no critical errors, and you sign off."], "parts": [["Пилотные смены", "Pilot shifts"], ["Проверка устройств", "Device checks"], ["Передача", "Handover"]]}];
+const stepDays = s => [s.gio[0] + s.luka[0], s.gio[1] + s.luka[1]];
+const MOD_WORKS = MODS.filter(m => m.s === 'w').length, MOD_AFTER = MODS.filter(m => m.s === 'w' || m.v === 1).length;
 
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const setText = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
-const monthsRange = (p, lang) => (lang === 'en' ? 'months ' : 'мес. ') + (Math.round(p.start) + 1) + '–' + Math.round(p.end);
 const isNarrow = () => window.matchMedia('(max-width: 900px)').matches;
 const DEMO = 'https://gilavi.github.io/noi-proposal/demo/';
 const demoUrl = () => DEMO + '?from=' + state.pane + (state.lang === 'en' ? '&lang=en' : '');
@@ -1364,58 +1244,52 @@ function countTo(id, to, fmt, animate) {
 
 function renderPlan(lang) {
   const i = lang === 'en' ? 1 : 0;
-  // One inner scale for labels and phases: 6px in from each end of the track, phases 6px apart and filling it exactly.
-  const INSET = 6, last = PHASES[PHASES.length - 1].end;
-  const at = f => INSET + 'px + (100% - ' + 2 * INSET + 'px) * ' + f.toFixed(5);
+  // Lanes sit 6px inside the track; week labels and the gate use the same inner scale.
+  const at = f => 'calc(6px + (100% - 12px) * ' + f.toFixed(5) + ')';
   const ticks = document.getElementById('ticks');
   ticks.replaceChildren();
-  for (let m = 0; m <= SPAN; m += 2) {
-    const t = el('span', null, String(m));
-    t.style.left = 'calc(' + at(m / SPAN) + ')';
+  for (let w = 1; w <= WEEKS; w++) {
+    const t = el('span', null, String(w));
+    t.style.left = at((w - 0.5) / WEEKS);
     ticks.append(t);
   }
   const track = document.getElementById('track');
   track.replaceChildren();
   const cols = document.getElementById('cols');
   cols.replaceChildren();
-  PHASES.forEach((p, n) => {
-    const seg = el('div', 'seg p' + (n + 1), (n + 1) + ' · ' + p.name[i]);
-    const s = p.start / last, e = p.end / last, gl = n ? INSET / 2 : 0, gr = n < PHASES.length - 1 ? INSET / 2 : 0;
-    seg.style.left = 'calc(' + at(s) + ' + ' + gl + 'px)';
-    seg.style.width = 'calc((100% - ' + 2 * INSET + 'px) * ' + (e - s).toFixed(5) + ' - ' + (gl + gr) + 'px)';
-    track.append(seg);
+  STAGES.forEach((p, n) => {
+    const lane = el('div', 'lane');
+    const wide = p.w[1] - p.w[0] >= 1;
+    const seg = el('div', 'seg p' + (n % 3 + 1), wide ? p.n + ' · ' + p.name[i] : String(p.n));
+    seg.style.left = ((p.w[0] - 1) / WEEKS * 100).toFixed(4) + '%';
+    seg.style.width = ((p.w[1] - p.w[0] + 1) / WEEKS * 100).toFixed(4) + '%';
+    seg.style.animationDelay = (n * 0.08) + 's';
+    lane.append(seg);
+    track.append(lane);
     const col = el('div', 'col');
-    col.append(
-      el('b', null, (n + 1) + ' · ' + p.name[i]),
-      el('span', 'when', monthsRange(p, lang) + ' · ≈ ' + fmtHours(p.hours, lang) + ' · ' + stepCount(STEPS.filter(x => x.ph === n).length, lang)),
-      el('span', 'what', p.what[i])
-    );
+    col.append(el('b', null, p.n + ' · ' + p.name[i]), el('span', 'when', weeksLabel(p.w, lang, true) + ' · ' + p.who[i]), el('span', 'what', p.what[i]));
     cols.append(col);
-    // A phase on the timeline and its column light up together.
+    // A stage on the chart and its column light up together.
     const link = on => { seg.classList.toggle('hl', on); col.classList.toggle('hl', on); };
     [seg, col].forEach(x => {
       x.addEventListener('mouseenter', () => link(true));
       x.addEventListener('mouseleave', () => link(false));
     });
   });
+  // The API contract: screens are built against it from here on.
+  const gate = el('div', 'gate');
+  gate.style.left = at(GATE / WEEKS);
+  gate.append(el('span', null, lang === 'en' ? 'API contract' : 'контракт API'));
+  track.append(gate);
 }
 
-// The steps screen: a column of steps per phase, and the chosen step's detail under them.
-const stepWeeks = s => Math.max(1, Math.round(s.h / (PER_MONTH * 12 / 52)));
+// The steps screen: a column of steps per group, and the chosen step's detail under them.
 const stepCount = (n, lang) => (lang === 'en' ? n + (n === 1 ? ' step' : ' steps') : n + ' ' + ruPlural(n, ['шаг', 'шага', 'шагов']));
-// A step's price to the nearest hundred, finer than the phase prices: $5 100, or $5.1k in English.
-const fmtMoneyFine = (v, lang) => (lang === 'en' ? '$' + Math.round(v / 100) / 10 + 'k' : '$' + fmtNum(Math.round(v / 100) * 100, lang));
-const partName = (() => {
-  const names = new Map();
-  const walk = n => { if (n.n) names.set(n.n[0], n.n); (n.c || []).forEach(walk); };
-  walk(DATA);
-  return p => (Array.isArray(p) ? p : names.get(p) || [p, p]);
-})();
 const steps = { sel: 0, rows: [], li: null };
 
 function renderSteps(lang) {
   const i = lang === 'en' ? 1 : 0, en = lang === 'en';
-  const wk = STEPS.map(stepWeeks), lo = Math.min(...wk), hi = Math.max(...wk);
+  const wk = STEPS.map(s => s.w[1] - s.w[0] + 1), lo = Math.min(...wk), hi = Math.max(...wk);
   setText('stH', en ? STEPS.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(STEPS.length, lang) + ' по ' + lo + '–' + hi + ' ' + ruPlural(hi, ['неделе', 'недели', 'недель']));
   setText('qsSteps', en ? STEPS.length + ' steps of ' + lo + '–' + hi + ' weeks' : stepCount(STEPS.length, lang) + ' по ' + lo + '–' + hi + ' нед.');
   setText('nvSteps', String(STEPS.length));
@@ -1424,19 +1298,22 @@ function renderSteps(lang) {
   const board = document.getElementById('board');
   board.replaceChildren();
   steps.rows = [];
-  PHASES.forEach((p, n) => {
+  GROUPS.forEach((g, n) => {
+    const mine = STEPS.filter(s => s.g === n);
+    const d = [mine.reduce((a, s) => a + stepDays(s)[0], 0), mine.reduce((a, s) => a + stepDays(s)[1], 0)];
+    const w = [Math.min(...mine.map(s => s.w[0])), Math.max(...mine.map(s => s.w[1]))];
     const card = el('section', 'sg'), head = el('div', 'sg-head'), bar = el('div', 'sg-bar'), list = el('ol', 'sg-list');
-    head.append(el('b', null, (n + 1) + ' · ' + p.name[i]), el('span', 'when', monthsRange(p, lang)),
-      el('span', 'sum', '≈ ' + fmtHours(p.hours, lang) + ' · ≈ ' + fmtMoney(PRICE * p.hours / TOTAL, lang)), bar);
+    head.append(el('b', null, (n + 1) + ' · ' + g[i]), el('span', 'when', weeksLabel(w, lang)),
+      el('span', 'sum', days(d, lang) + ' · ' + usdRange(d[0] * DAY_RATE, d[1] * DAY_RATE, lang)), bar);
     STEPS.forEach((s, k) => {
-      if (s.ph !== n) return;
-      // Each step is also a slice of its phase's bar, as wide as its hours; a row and its slice light up together.
+      if (s.g !== n) return;
+      // Each step is also a slice of its group's bar, as wide as its days; a row and its slice light up together.
       const seg = el('i');
-      seg.style.flexGrow = s.h;
+      seg.style.flexGrow = stepDays(s)[0] + stepDays(s)[1];
       bar.append(seg);
       const b = el('button', 'srow rip');
       b.type = 'button';
-      b.append(el('span', 'sn', String(k + 1)), el('span', 'snm', s.name[i]), el('span', 'sw', wk[k] + (en ? ' wk' : ' нед.')));
+      b.append(el('span', 'sn', String(k + 1)), el('span', 'snm', s.name[i]), el('span', 'sw', weeksLabel(s.w, lang)));
       b.addEventListener('click', () => pickStep(k));
       b.addEventListener('mouseenter', () => seg.classList.add('hl'));
       b.addEventListener('mouseleave', () => seg.classList.remove('hl'));
@@ -1453,18 +1330,21 @@ function renderSteps(lang) {
 
 function showStep(animate) {
   const lang = state.lang, i = lang === 'en' ? 1 : 0, en = lang === 'en';
-  const k = steps.sel, s = STEPS[k];
+  const k = steps.sel, s = STEPS[k], d = stepDays(s);
   steps.rows.forEach((r, n) => { r.b.setAttribute('aria-pressed', String(n === k)); r.seg.classList.toggle('on', n === k); });
-  const inPhase = STEPS.filter(x => x.ph === s.ph), pos = inPhase.indexOf(s) + 1;
+  const inGroup = STEPS.filter(x => x.g === s.g), pos = inGroup.indexOf(s) + 1;
   setText('sdN', String(k + 1));
   setText('sdName', s.name[i]);
-  setText('sdMeta', (en ? 'Phase ' : 'Этап ') + (s.ph + 1) + ' · ' + PHASES[s.ph].name[i] + ' · ' + (en ? 'step ' + pos + ' of ' + inPhase.length : 'шаг ' + pos + ' из ' + inPhase.length));
+  setText('sdMeta', GROUPS[s.g][i] + ' · ' + weeksLabel(s.w, lang, true) + ' · ' + (en ? 'step ' + pos + ' of ' + inGroup.length : 'шаг ' + pos + ' из ' + inGroup.length));
+  const who = [];
+  if (s.gio[1]) who.push((en ? 'Gio ' : 'Гио ') + s.gio[0] + '–' + s.gio[1]);
+  if (s.luka[1]) who.push((en ? 'Luka ' : 'Лука ') + s.luka[0] + '–' + s.luka[1]);
   document.getElementById('sdStats').replaceChildren(...[
-    '≈ ' + stepWeeks(s) + (en ? ' weeks' : ' нед.'), '≈ ' + fmtHours(s.h, lang), '≈ ' + fmtMoneyFine(PRICE * s.h / TOTAL, lang)
+    who.join(' · ') + (en ? ' days' : ' дн.'), '≈ ' + usdRange(d[0] * DAY_RATE, d[1] * DAY_RATE, lang)
   ].map(t => el('span', null, t)));
   setText('sdGet', s.get[i]);
   setText('sdCheck', s.check[i]);
-  document.getElementById('sdParts').replaceChildren(...s.parts.map(p => el('span', 'tag', partName(p)[i])));
+  document.getElementById('sdParts').replaceChildren(...s.parts.map(p => el('span', 'tag', p[i])));
   document.getElementById('sdPrev').disabled = k === 0;
   document.getElementById('sdNext').disabled = k === STEPS.length - 1;
   placeStep();
@@ -1491,37 +1371,49 @@ function pickStep(k, focus) {
   if (focus) steps.rows[k].b.focus();
 }
 
-function priceRows(id, rows, lang, line) {
+function priceRows(id, rows) {
   const list = document.getElementById(id);
   list.replaceChildren();
-  rows.forEach((r, n) => {
+  rows.forEach(r => {
     const row = el('div', 'pp');
-    row.append(el('b', null, line(r, n)), el('span', 'amt', '≈ ' + fmtMoney(PRICE * r.hours / TOTAL, lang)), el('span', 'when', r.when));
+    row.append(el('b', null, r.name), el('span', 'amt', r.amt), el('span', 'when', r.when));
     list.append(row);
   });
 }
 
+// A range that counts to its new ends instead of jumping.
+function countRange(id, lo, hi, fmt, animate) {
+  const e = document.getElementById(id);
+  const from = e.dataset.v ? e.dataset.v.split(',').map(Number) : [lo, hi];
+  e.dataset.v = lo + ',' + hi;
+  cancelAnimationFrame(counters[id]);
+  if (!animate || REDUCE || (from[0] === lo && from[1] === hi)) { e.textContent = fmt(lo, hi); return; }
+  const t0 = performance.now();
+  const tick = now => {
+    const k = Math.min(1, (now - t0) / 420), q = 1 - Math.pow(1 - k, 3);
+    e.textContent = fmt(from[0] + (lo - from[0]) * q, from[1] + (hi - from[1]) * q);
+    if (k < 1) counters[id] = requestAnimationFrame(tick);
+  };
+  counters[id] = requestAnimationFrame(tick);
+}
+
 function renderPrice(lang, animate) {
   const en = lang === 'en', i = en ? 1 : 0;
-  const input = document.getElementById('keep');
-  const keep = Number(input.value) / 100;
-  const after = PRICE * (1 - keep * KEEP_CREDIT);
-  input.style.setProperty('--p', (Number(input.value) / Number(input.max) * 100) + '%');
-  document.querySelectorAll('#keepTicks span').forEach((s, n) => s.classList.toggle('on', n * 10 === Number(input.value)));
-  setText('priceBig', fmtMoney(PRICE, lang));
-  setText('keepOut', Math.round(keep * 100) + '%');
-  countTo('priceAfter', after, v => '≈ ' + fmtMoney(v, lang), animate);
-  if (keep) countTo('priceSave', PRICE - after, v => (en ? 'you save ≈ ' : 'экономия ≈ ') + fmtMoney(v, lang), animate);
-  else {
-    const s = document.getElementById('priceSave');
-    s.dataset.v = '0';
-    s.textContent = en ? 'nothing kept: the ceiling applies' : 'ничего не осталось — действует потолок';
-  }
+  const input = document.getElementById('screens');
+  const n = Number(input.value), min = Number(input.min), max = Number(input.max);
+  // From the full version 1 (≈25 screens) down to the fast path (13 screens), our part shrinks by up to 35%.
+  const k = 1 - FAST * (max - n) / (max - min);
+  input.style.setProperty('--p', ((n - min) / (max - min) * 100) + '%');
+  document.querySelectorAll('#screensTicks span').forEach(s => s.classList.toggle('on', Number(s.textContent) === n));
+  setText('priceBig', usd(OUR_D[1] * DAY_RATE, lang));
+  setText('screensOut', n === max ? '≈ ' + n : String(n));
+  countRange('priceAfter', OUR_D[0] * DAY_RATE * k, OUR_D[1] * DAY_RATE * k, (a, b) => '≈ ' + usdRange(a, b, lang), animate);
+  const save = document.getElementById('priceSave');
+  save.textContent = n === max ? (en ? 'the full version 1: every role and device' : 'полная версия 1: все роли и устройства')
+    : (en ? 'fast path: −' : 'быстрый путь: −') + Math.round((1 - k) * 100) + (en ? '% and an earlier pilot' : '% и пилот раньше');
   if (animate && !REDUCE) replay(document.getElementById('priceAfter'), 'bump');
-  priceRows('ppList', PHASES.map(p => ({ hours: p.hours, name: p.name, when: monthsRange(p, lang) + (en ? ' · fixed price' : ' · фиксированная цена') })), lang,
-    (r, n) => (en ? 'Phase ' : 'Этап ') + (n + 1) + ' · ' + r.name[i]);
-  priceRows('bfList', BRIEF.map(b => ({ hours: b.hours, name: b.name, when: '≈ ' + fmtHours(b.hours, lang) + ' · ' + b.what[i] })), lang,
-    (r, n) => (n + 1) + ' · ' + r.name[i]);
+  priceRows('ppList', OUR.map(r => ({ name: r.name[i], amt: usdRange(r.d[0] * DAY_RATE, r.d[1] * DAY_RATE, lang), when: r.who[i] + ' · ' + days(r.d, lang) + ' · ' + r.what[i] })));
+  priceRows('bfList', V1.map((r, n2) => ({ name: (n2 + 1) + ' · ' + r.name[i], amt: days(r.d, lang), when: r.what[i] })));
 }
 
 function renderDots() {
@@ -1566,13 +1458,13 @@ function renderFoot() {
 function renderNumbers(lang) {
   const en = lang === 'en';
   const nq = document.querySelectorAll('.faq details').length;
-  setText('nvScope', fmtHours(TOTAL, lang));
-  setText('nvPlan', Math.round(TOTAL / PER_MONTH) + (en ? ' mo' : ' мес.'));
-  setText('nvPrice', fmtMoney(PRICE, lang));
+  setText('nvScope', MOD_WORKS + ' → ' + MOD_AFTER);
+  setText('nvPlan', WEEKS + (en ? ' wk' : ' нед.'));
+  setText('nvPrice', usd(OUR_D[1] * DAY_RATE, lang));
   setText('nvFaq', String(nq));
-  setText('qsScope', '≈ ' + fmtHours(TOTAL, lang) + (en ? ' of work' : ' работы'));
-  setText('qsPlan', en ? 'Live in ≈ ' + fmtMonths(Math.round(PHASES[0].end), lang) : 'Запуск через ≈ ' + Math.round(PHASES[0].end) + ' мес.');
-  setText('qsPrice', (en ? 'Ceiling: ' : 'Потолок ') + fmtMoney(PRICE, lang));
+  setText('qsScope', en ? MOD_WORKS + ' work today → ' + MOD_AFTER + ' after v1' : MOD_WORKS + ' ' + ruPlural(MOD_WORKS, ['работает', 'работают', 'работают']) + ' → ' + MOD_AFTER + ' после v1');
+  setText('qsPlan', en ? 'Pilot in ≈ ' + WEEKS + ' weeks' : 'Пилот через ≈ ' + WEEKS + ' нед.');
+  setText('qsPrice', (en ? 'Our part: ' : 'Наша часть ') + usdRange(OUR_D[0] * DAY_RATE, OUR_D[1] * DAY_RATE, lang));
   setText('qsFaq', en ? nq + ' short answers' : nq + ' ' + ruPlural(nq, ['короткий ответ', 'коротких ответа', 'коротких ответов']));
   renderPlan(lang);
   renderSteps(lang);
@@ -1673,7 +1565,7 @@ function canScrollFurther(node, dir) {
     const target = b.dataset.pane;
     showPane(target, PANES.indexOf(target) >= PANES.indexOf(state.pane) ? 1 : -1);
   }));
-  document.getElementById('keep').addEventListener('input', () => renderPrice(state.lang, true));
+  document.getElementById('screens').addEventListener('input', () => renderPrice(state.lang, true));
   document.getElementById('sdPrev').addEventListener('click', () => pickStep(steps.sel - 1));
   document.getElementById('sdNext').addEventListener('click', () => pickStep(steps.sel + 1));
   // While a step has focus, up and down move through the steps instead of changing screens.
@@ -1783,9 +1675,10 @@ function canScrollFurther(node, dir) {
   };
   grad('artBlue', [['0%', '#e6f0ff'], ['38%', '#7fb2f5'], ['100%', '#2a5fb8']]);
   grad('artAmber', [['0%', '#fff3cf'], ['38%', '#ffc943'], ['100%', '#b8760a']]);
-  // A planet and its moons, centred in the glass: work beyond coding in the middle, the product sections around it.
-  // Every sphere is sized by its hours; each moon keeps the same gap to the planet, and big and small alternate so the ring is balanced.
-  const secs = DATA.c.map(s => ({ v: sumHours(s), extra: !!s.extra }));
+  // A planet and its moons, centred in the glass: her core in the middle, the sections of her brief around it.
+  // Every moon is sized by its modules; each moon keeps the same gap to the planet, and big and small alternate so the ring is balanced.
+  const secs = SECTIONS.map((x, k) => ({ v: MODS.filter(m => m.sec === k).length }));
+  secs.push({ v: Math.max(...secs.map(x => x.v)) * 2.6, extra: true });
   const core = secs.find(s => s.extra) || secs.reduce((a, b) => (b.v > a.v ? b : a));
   const moons = secs.filter(s => s !== core).sort((a, b) => b.v - a.v);
   const ring = [];
@@ -1817,64 +1710,63 @@ function canScrollFurther(node, dir) {
     .style('animation-delay', (d, i) => (-i * 0.8) + 's');
 })();
 
-// The space lens, after CleanMyMac: one level at a time, as glass bubbles floating in space, sized by hours.
-// Click a bubble or a row to open it; the arrows, Esc or a click on empty space step out and back in.
+// Her 59 modules as a space lens, after CleanMyMac: one level at a time, glass bubbles floating in space. A module's
+// colour is its status, today or after version 1; the switch on the card flips between the two and the bubbles re-float.
+// Click a section to open it; the arrows, Esc or a click on empty space step out and back in.
 (function () {
   const svgEl = document.getElementById('lens');
   if (!window.d3) { document.getElementById('lensFail').hidden = false; return; }
   const UI = {
     ru: {
-      whole: 'Весь объём', root: 'Вся система', of: ' из ', h: 'ч', ofShown: '% от показанного', productsLbl: 'Продукты: ',
-      shared: ' Общие части системы учтены в каждом продукте целиком.', guess: 'предположение, нужно подтвердить',
-      hint: 'Нажмите на пузырь или строку, чтобы открыть.', partDesc: 'Конкретные задачи внутри этой части.', picked: 'Выбрано: ',
-      sect: ['раздел', 'раздела', 'разделов'], part: ['часть', 'части', 'частей'], task: ['задача', 'задачи', 'задач'], locale: 'ru-RU', dec: ','
+      title: '59 модулей ТЗ', root: 'Все модули', top: 'NOI', picked: 'Выбрано: ', diff: 'расходится с ТЗ', locale: 'ru-RU',
+      sect: ['раздел', 'раздела', 'разделов'], mod: ['модуль', 'модуля', 'модулей'], works: ['работает', 'работают', 'работают'],
+      hint: 'Нажми на раздел, чтобы открыть его модули.', inSect: 'Модули раздела и то, что есть в коде сейчас.', inSectV1: 'Модули раздела и их место в плане.',
+      now: 'Статусы — из аудита: «работает» значит есть в приложении, которое запускается, а не только в тестах. Звёздочка — расходится с ТЗ.',
+      v1: 'После версии 1 работает 41 модуль из 59. Два — с ручным подтверждением, пока нет доступа к R‑Keeper; 16 — в следующих релизах.',
+      v1note: ['после версии 1', 'в версии 1', 'в версии 1 — вручную, до доступа к R‑Keeper'],
+      label: { w: 'работает', p: 'частично', b: 'не работает', a: 'нет', m: 'вручную', l: 'после v1' },
+      legend: { w: 'Работает', p: 'Частично', b: 'Не работает', a: 'Нет', m: 'Вручную', l: 'После v1' }
     },
     en: {
-      whole: 'The whole scope', root: 'Whole system', of: ' of ', h: 'h', ofShown: '% of what’s shown', productsLbl: 'Products: ',
-      shared: ' Shared parts are counted in full in each product.', guess: 'a guess, needs confirming',
-      hint: 'Click a bubble or a row to open it.', partDesc: 'The specific tasks inside this part.', picked: 'Selected: ',
-      sect: ['section', 'sections'], part: ['part', 'parts'], task: ['task', 'tasks'], locale: 'en-US', dec: '.'
+      title: '59 modules in your brief', root: 'All modules', top: 'NOI', picked: 'Selected: ', diff: 'differs from the brief', locale: 'en-US',
+      sect: ['section', 'sections'], mod: ['module', 'modules'], works: ['works', 'work'],
+      hint: 'Click a section to open its modules.', inSect: 'The section’s modules and what exists in the code today.', inSectV1: 'The section’s modules and where they sit in the plan.',
+      now: 'Statuses from the audit: “works” means it’s in the app that actually starts, not only in tests. An asterisk marks a difference from your brief.',
+      v1: 'After version 1, 41 of the 59 modules work. Two run with manual confirmation until there’s R‑Keeper access; 16 come in later releases.',
+      v1note: ['after version 1', 'in version 1', 'in version 1, by hand until there’s R‑Keeper access'],
+      label: { w: 'works', p: 'partly', b: 'broken', a: 'missing', m: 'manual', l: 'after v1' },
+      legend: { w: 'Works', p: 'Partly', b: 'Broken', a: 'Missing', m: 'Manual', l: 'After v1' }
     }
   };
-  // Glyphs for each product in the role row.
-  const ROLE = {
-    all: '<rect x="3" y="3" width="6" height="6" rx="1.6" fill="currentColor"/><rect x="11" y="3" width="6" height="6" rx="1.6" fill="currentColor" opacity=".7"/><rect x="3" y="11" width="6" height="6" rx="1.6" fill="currentColor" opacity=".7"/><rect x="11" y="11" width="6" height="6" rx="1.6" fill="currentColor"/>',
-    crm: '<rect x="4" y="3" width="12" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7 7.5h6M7 10.5h6M7 13.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-    dj: '<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="10" r="2.2" fill="currentColor"/>',
-    tablet: '<rect x="5" y="2.5" width="10" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="14.5" r="1" fill="currentColor"/>',
-    security: '<path d="M10 2.8l5.5 2v4.4c0 3.6-2.4 6.3-5.5 7.6-3.1-1.3-5.5-4-5.5-7.6V4.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
-    cash: '<rect x="2.5" y="5.5" width="15" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>',
-    finance: '<path d="M4 16V11M10 16V5M16 16V8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
-    hr: '<rect x="3" y="4" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8" cy="9" r="1.8" fill="currentColor"/><path d="M5.5 13.2c.5-1.3 1.4-2 2.5-2s2 .7 2.5 2M12 8.5h3M12 11.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>',
-    departments: '<rect x="4" y="3" width="12" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.5 6.5h1M11.5 6.5h1M7.5 9.5h1M11.5 9.5h1M9 17v-3.5h2V17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-    'staff-app': '<rect x="6" y="2.5" width="8" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 15h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-    core: '<rect x="5.5" y="5.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 3v2.5M12 3v2.5M8 14.5V17M12 14.5V17M3 8h2.5M3 12h2.5M14.5 8H17M14.5 12H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
-  };
-  let lang = state.lang;
+  const ORDER = { now: ['w', 'p', 'b', 'a'], v1: ['w', 'm', 'l'] };
+  let lang = state.lang, view = 'now';
   const U = () => UI[lang];
   const L = x => (Array.isArray(x) ? x[lang === 'en' ? 1 : 0] : x);
-  const fmt = n => Math.round(n).toLocaleString(U().locale);
   const plural = (n, f) => {
     if (f.length === 2) return n === 1 ? f[0] : f[1];
     const a = Math.abs(n) % 100, b = a % 10;
     return f[a > 10 && a < 20 ? 2 : b === 1 ? 0 : b >= 2 && b <= 4 ? 1 : 2];
   };
-  const pName = id => L((PRODUCTS.find(p => p.id === id) || { name: id }).name);
-  const shortName = d => (d.data.s ? L(d.data.s) : L(d.data.n));
-  const inX = d => d.ancestors().some(a => a.data.extra);
-  const hoursFor = pid => {
-    let s = 0;
-    DATA.c.forEach(a => a.c.forEach(pt => pt.c.forEach(t => { if (pid === 'all' || t.p.includes(pid)) s += t.h; })));
-    return s;
-  };
+  // A module's status in the current view.
+  const st = m => (view === 'now' ? m.s : m.s === 'w' || m.v === 1 ? 'w' : m.v === 2 ? 'm' : 'l');
+  const works = list => list.filter(m => st(m) === 'w').length;
+  const modsOf = node => node.leaves().map(l => l.data.m);
 
-  // Icons, as in a file browser: a folder for anything that opens, a page for a single task; amber for work beyond coding.
-  const folder = (x, grad) => '<path d="M2 8A2.5 2.5 0 0 1 4.5 5.5h7.6l2.7 2.6h12.7A2.5 2.5 0 0 1 30 10.6V13H2z" fill="' + (x ? '#d8921a' : '#3a8ae4') + '"/>'
-    + '<rect x="2" y="10" width="28" height="17.5" rx="2.6" fill="' + (grad ? 'url(#' + (x ? 'fdA' : 'fdB') + ')' : (x ? '#f6be3e' : '#69b3f6')) + '"/>';
-  const PAGE = '<path d="M7.5 3h11.8L25 8.7V29H7.5z" fill="#f4f1fb"/><path d="M19.3 3v5.7H25z" fill="#d3cbe7"/><path d="M11.5 14.5h10M11.5 18.5h10M11.5 22.5h6.5" stroke="#b3aacb" stroke-width="1.6" stroke-linecap="round"/>';
+  // Icons, as in a file browser: a folder for a section; for a module, its status as a small badge.
+  const folder = grad => '<path d="M2 8A2.5 2.5 0 0 1 4.5 5.5h7.6l2.7 2.6h12.7A2.5 2.5 0 0 1 30 10.6V13H2z" fill="#3a8ae4"/>'
+    + '<rect x="2" y="10" width="28" height="17.5" rx="2.6" fill="' + (grad ? 'url(#fdB)' : '#69b3f6') + '"/>';
+  const BADGE = {
+    w: '<circle cx="16" cy="16" r="11" fill="#4fd18b"/><path d="M11 16.4l3.4 3.4 6.8-7.4" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    p: '<circle cx="16" cy="16" r="10" fill="none" stroke="#fab219" stroke-width="2.4"/><path d="M16 6a10 10 0 0 1 0 20z" fill="#fab219"/>',
+    b: '<circle cx="16" cy="16" r="11" fill="#ff6b6b"/><path d="M12 12l8 8M20 12l-8 8" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>',
+    a: '<circle cx="16" cy="16" r="10" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.2" stroke-dasharray="3.2 3.2"/>'
+  };
+  BADGE.m = BADGE.p;
+  BADGE.l = BADGE.a;
   const ORBS = '<circle cx="13" cy="15" r="8" fill="#ffffff"/><circle cx="23.5" cy="21.5" r="5" fill="#ffffff" fill-opacity="0.7"/><circle cx="23" cy="8" r="3.4" fill="#ffffff" fill-opacity="0.85"/>';
-  const icon = (n, grad) => (n.depth === 0 ? ORBS : n.children ? folder(inX(n), grad) : PAGE);
+  const icon = (n, grad) => (n.depth === 0 ? ORBS : n.children ? folder(grad) : BADGE[st(n.data.m)]);
   const svg32 = inner => '<svg viewBox="0 0 32 32" aria-hidden="true">' + inner + '</svg>';
+  const nameOf = n => (n.depth === 0 ? U().root : L(n.data.n) + (n.data.m && n.data.m.f ? ' *' : ''));
 
   // Names inside bubbles: measured, up to two lines, cut with an ellipsis when they still don't fit.
   const FONT = getComputedStyle(document.body).fontFamily;
@@ -1907,42 +1799,41 @@ function canScrollFurther(node, dir) {
     const g = defs.append('linearGradient').attr('id', id).attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 1);
     stops.forEach(s => g.append('stop').attr('offset', s[0]).attr('stop-color', s[1]).attr('stop-opacity', s[2] == null ? 1 : s[2]));
   };
-  // Glass: nearly clear in the middle and brighter towards the rim; warmer for work beyond coding.
-  radial('gl', [['0%', '#ffffff', 0.03], ['60%', '#cbb9ff', 0.07], ['88%', '#ddd0ff', 0.2], ['100%', '#f5f0ff', 0.42]], ['50%', '42%', '60%']);
-  radial('glX', [['0%', '#ffd27a', 0.08], ['60%', '#ffc251', 0.14], ['88%', '#ffd27a', 0.34], ['100%', '#fff0c8', 0.62]], ['50%', '42%', '60%']);
+  // Glass: nearly clear in the middle and brighter towards the rim, tinted by status.
+  const AT = ['50%', '42%', '60%'];
+  radial('gl', [['0%', '#ffffff', 0.03], ['60%', '#cbb9ff', 0.07], ['88%', '#ddd0ff', 0.2], ['100%', '#f5f0ff', 0.42]], AT);
+  radial('gW', [['0%', '#9dffc8', 0.05], ['60%', '#4fd18b', 0.12], ['88%', '#8ff0b8', 0.3], ['100%', '#e2fff0', 0.55]], AT);
+  radial('gP', [['0%', '#ffd27a', 0.06], ['60%', '#ffc251', 0.12], ['88%', '#ffd27a', 0.3], ['100%', '#fff0c8', 0.56]], AT);
+  radial('gB', [['0%', '#ffb0b0', 0.07], ['60%', '#ff6b6b', 0.14], ['88%', '#ff9a9a', 0.34], ['100%', '#ffe0e0', 0.6]], AT);
+  radial('gA', [['0%', '#ffffff', 0.01], ['60%', '#ffffff', 0.02], ['88%', '#ffffff', 0.06], ['100%', '#ffffff', 0.16]], AT);
+  const GLASS = { w: 'gW', p: 'gP', m: 'gP', b: 'gB', a: 'gA', l: 'gA' };
   radial('neb', [['0%', '#a77bff', 0.34], ['50%', '#7044dd', 0.14], ['100%', '#2a1270', 0]], ['50%', '50%', '50%']);
   linear('sheen', [['0%', '#ffffff', 0.1], ['100%', '#ffffff', 0]]);
   linear('fdB', [['0%', '#bfe4ff'], ['100%', '#5aa8f2']]);
-  linear('fdA', [['0%', '#ffe6a3'], ['100%', '#f1ab26']]);
   const gStars = svg.append('g').attr('aria-hidden', 'true');
   const neb = svg.append('circle').attr('r', 0).attr('fill', 'url(#neb)');
   const gB = svg.append('g');
 
-  let product = 'all', root, total, focus, selected = null, W = 600, H = 600;
+  let root, focus, selected = null, W = 600, H = 600;
   let bubbleOf = new Map(), rowOf = new Map();
   const fwd = [];
   const tip = document.getElementById('tip');
   const lensBox = document.querySelector('.lens');
-  const rolesBox = document.getElementById('roles');
+  const viewBox = document.getElementById('view');
   const backBtn = document.getElementById('lensBack');
   const fwdBtn = document.getElementById('lensFwd');
 
-  function filtered(pid) {
-    const keep = d => pid === 'all' || d.p.includes(pid);
-    return { n: DATA.n, c: DATA.c.map(a => ({ ...a, c: a.c.map(pt => ({ ...pt, c: pt.c.filter(keep) })).filter(pt => pt.c.length) })).filter(a => a.c.length) };
-  }
-
-  function build(fresh) {
-    root = d3.hierarchy(filtered(product), d => d.c).sum(d => (d.c ? 0 : d.h)).sort((a, b) => b.value - a.value);
-    total = root.value;
+  function build() {
+    const tree = { c: SECTIONS.map((sec, k) => ({ n: sec, k, c: MODS.filter(m => m.sec === k).map(m => ({ n: m.n, m })) })) };
+    root = d3.hierarchy(tree, d => d.c).sum(d => (d.c ? 0 : 1)).sort((a, b) => b.value - a.value);
     focus = root; selected = null; fwd.length = 0;
     renderCard();
     renderPanel();
     updateStats();
-    draw(0, null, false, fresh);
+    draw(0, null, false, true);
   }
 
-  // One level packed loosely in the middle of the lens. Sizes follow hours, softened so small parts stay readable.
+  // One level packed loosely in the middle of the lens. Sizes follow module counts, softened so small sections stay readable.
   function layout(node) {
     const n = node.children.length;
     const side = Math.max(220, Math.min(W, H) * (n <= 2 ? 0.58 : n <= 4 ? 0.76 : 0.92));
@@ -1966,18 +1857,25 @@ function canScrollFurther(node, dir) {
     }
   }
 
-  // A bubble: glass, a soft sheen on top, the icon, the name and the hours.
+  // The second line in a bubble: a module's status, or how many of a section's modules work.
+  const subLine = node => {
+    if (!node.children) return U().label[st(node.data.m)];
+    const list = modsOf(node), w = works(list);
+    return lang === 'en' ? w + ' of ' + list.length + ' work' : w + ' из ' + list.length + ' ' + plural(w, U().works);
+  };
+
+  // A bubble: glass tinted by status, a soft sheen on top, the icon, the name and the status.
   function dress(g, d) {
-    const r = d.r, x = inX(d.node);
+    const r = d.r, leaf = !d.node.children, s = leaf ? st(d.node.data.m) : null;
     const bi = g.select('.bi');
     bi.selectAll('*').remove();
-    bi.append('circle').attr('class', x ? 'body x' : 'body').attr('r', r).attr('fill', x ? 'url(#glX)' : 'url(#gl)');
+    bi.append('circle').attr('class', leaf ? 'body st-' + s : 'body').attr('r', r).attr('fill', 'url(#' + (leaf ? GLASS[s] : 'gl') + ')');
     bi.append('ellipse').attr('cy', -r * 0.7).attr('rx', r * 0.46).attr('ry', r * 0.17).attr('fill', 'url(#sheen)');
-    const s = Math.max(16, Math.min(70, r * 0.42));
+    const sz = Math.max(16, Math.min(70, r * (leaf ? 0.36 : 0.42)));
     // The name gets two lines in a roomy bubble and one in a small one; the type shrinks a little before anything is cut.
     let fs = Math.max(r < 44 ? 10.5 : 11.5, Math.min(17, r / 4.8)), lines = [];
     if (r >= 32) {
-      const name = shortName(d.node), room = r < 44 ? 1 : 2;
+      const name = nameOf(d.node), room = r < 44 ? 1 : 2;
       for (let f = fs; f >= 10.5; f -= 0.5) {
         fs = f;
         lines = fitName(name, r * 1.5, f);
@@ -1986,13 +1884,13 @@ function canScrollFurther(node, dir) {
       if (lines.length > room) lines = [clip(name, r * 1.5, fs)];
     }
     const hs = Math.round(fs * 9) / 10;
-    const hours = r >= 30;
-    const block = s + (lines.length ? 7 + lines.length * fs * 1.2 : 0) + (hours ? (lines.length ? 2 : 6) + hs * 1.2 : 0);
+    const sub = r >= 30;
+    const block = sz + (lines.length ? 7 + lines.length * fs * 1.2 : 0) + (sub ? (lines.length ? 2 : 6) + hs * 1.2 : 0);
     let y = -block / 2;
-    bi.append('g').attr('transform', 'translate(' + (-s / 2) + ',' + y + ') scale(' + (s / 32) + ')').html(icon(d.node, true));
-    y += s + (lines.length ? 7 : 6);
+    bi.append('g').attr('transform', 'translate(' + (-sz / 2) + ',' + y + ') scale(' + (sz / 32) + ')').html(icon(d.node, true));
+    y += sz + (lines.length ? 7 : 6);
     lines.forEach(t => { bi.append('text').attr('class', 'lbl-n').attr('y', y + fs * 0.9).attr('font-size', fs).text(t); y += fs * 1.2; });
-    if (hours) bi.append('text').attr('class', 'lbl-h').attr('y', y + (lines.length ? 2 : 0) + hs * 0.9).attr('font-size', hs).text(fmt(d.node.value) + ' ' + U().h);
+    if (sub) bi.append('text').attr('class', 'lbl-h').attr('y', y + (lines.length ? 2 : 0) + hs * 0.9).attr('font-size', hs).text(subLine(d.node));
   }
 
   // dir 1 opens `from` (it swells and fades as its children float in), -1 steps out, 0 redraws in place.
@@ -2027,7 +1925,7 @@ function canScrollFurther(node, dir) {
       .style('animation-delay', () => (-rnd() * 10).toFixed(2) + 's')
       .append('g').attr('class', 'bi');
     g.each(function (d) { dress(d3.select(this), d); });
-    if (!quick) g.transition().delay((d, i) => (dir ? 170 : 50) + i * 30).duration(620).ease(d3.easeBackOut.overshoot(1.2))
+    if (!quick) g.transition().delay((d, i) => (dir ? 170 : 50) + i * 22).duration(620).ease(d3.easeBackOut.overshoot(1.2))
       .attr('opacity', 1).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
     g.on('mouseenter', (e, d) => { hover(d.node, true); showTip(d); })
       .on('mouseleave', (e, d) => { hover(d.node, false); hideTip(); })
@@ -2070,55 +1968,35 @@ function canScrollFurther(node, dir) {
     setFocus(n, -1, null);
   }
 
-  // The card on top: what is shown, its share of the whole and how much of it is beyond coding.
+  // The card on top: how many modules work, a bar split by status, its legend and what the statuses mean.
   function renderCard() {
-    const u = U();
-    let code = 0, x = 0;
-    root.leaves().forEach(l => { if (inX(l)) x += l.data.h; else code += l.data.h; });
-    setText('dName', product === 'all' ? u.whole : pName(product));
-    setText('dHours', product === 'all' ? '≈ ' + fmt(TOTAL) + ' ' + u.h : '≈ ' + fmt(total) + u.of + fmt(TOTAL) + ' ' + u.h);
-    document.getElementById('barCode').style.width = (code / TOTAL * 100) + '%';
-    document.getElementById('barX').style.width = (x / TOTAL * 100) + '%';
-    setText('lgCode', fmt(code) + ' ' + u.h);
-    setText('lgX', fmt(x) + ' ' + u.h);
-  }
-
-  function renderRoles() {
-    rolesBox.replaceChildren();
-    PRODUCTS.forEach(p => {
-      const b = el('button', 'rl');
-      b.type = 'button';
-      b.dataset.id = p.id;
-      b.dataset.label = L(p.name) + ' · ≈ ' + fmt(hoursFor(p.id)) + ' ' + U().h + (p.guess ? ' · ' + U().guess : '');
-      b.setAttribute('aria-label', b.dataset.label);
-      b.setAttribute('aria-pressed', String(p.id === product));
-      b.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true">' + (ROLE[p.id] || '') + '</svg>';
-      if (p.guess) b.append(el('i', 'gq'));
-      b.addEventListener('click', () => {
-        if (p.id === product) return;
-        product = p.id;
-        rolesBox.querySelectorAll('.rl').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.id === product)));
-        hideTip();
-        build();
-      });
-      rolesBox.append(b);
-    });
+    const u = U(), all = MODS, keys = ORDER[view];
+    const count = k => all.filter(m => st(m) === k).length;
+    setText('dName', u.title);
+    const w = count('w');
+    setText('dHours', w + ' ' + (lang === 'en' ? (w === 1 ? 'works' : 'work') : plural(w, u.works)));
+    const bar = document.getElementById('dBar');
+    bar.replaceChildren(...keys.map(k => { const i = el('i', 'st-' + k); i.style.width = (count(k) / all.length * 100) + '%'; return i; }));
+    const legend = document.getElementById('dLegend');
+    legend.replaceChildren(...keys.map(k => {
+      const key = el('span', 'key');
+      key.append(el('i', 'dot st-' + k), el('span', null, u.legend[k]), el('b', null, String(count(k))));
+      return key;
+    }));
+    setText('dNote', view === 'now' ? u.now : u.v1);
+    viewBox.dataset.on = view;
+    viewBox.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
   }
 
   function renderPanel() {
     const u = U();
-    const p = PRODUCTS.find(x => x.id === product);
     const ico = document.getElementById('fIcon');
     ico.className = 'lp-ico' + (focus.depth === 0 ? ' root' : '');
     ico.innerHTML = svg32(icon(focus, false));
-    document.getElementById('fName').textContent = focus.depth === 0 ? (product === 'all' ? u.root : pName(product)) : L(focus.data.n);
-    const kids = focus.children.length;
-    document.getElementById('fMeta').textContent = '≈ ' + fmt(focus.value) + ' ' + u.h + '  |  ' + kids + ' ' + plural(kids, focus.depth === 0 ? u.sect : focus.depth === 1 ? u.part : u.task);
-    const desc = document.getElementById('fDesc');
-    if (focus.depth === 0) {
-      desc.textContent = (product === 'all' ? '' : L(p.note) + (product !== 'core' ? u.shared : '') + ' ') + u.hint;
-      if (p.guess) desc.append(el('span', 'q', u.guess));
-    } else desc.textContent = focus.depth === 1 ? (focus.data.d ? L(focus.data.d) : '') : u.partDesc;
+    document.getElementById('fName').textContent = nameOf(focus);
+    const list0 = modsOf(focus), w = works(list0);
+    document.getElementById('fMeta').textContent = list0.length + ' ' + plural(list0.length, u.mod) + '  |  ' + w + ' ' + (lang === 'en' ? (w === 1 ? 'works' : 'work') : plural(w, u.works));
+    setText('fDesc', focus.depth === 0 ? u.hint : view === 'now' ? u.inSect : u.inSectV1);
 
     const list = document.getElementById('list');
     list.replaceChildren();
@@ -2126,11 +2004,17 @@ function canScrollFurther(node, dir) {
     focus.children.forEach((c, n) => {
       const b = el('button', 'item rip' + (c === selected ? ' on' : ''));
       b.type = 'button';
-      b.style.animationDelay = (n * 0.025) + 's';
+      b.style.animationDelay = (n * 0.02) + 's';
       const ic = el('span', 'ri');
       ic.innerHTML = svg32(icon(c, false));
-      b.append(ic, el('span', 'nm', L(c.data.n)), el('span', 'hr', fmt(c.value) + ' ' + u.h));
-      if (!c.children) b.append(el('span', 'sub', c.data.p.map(pName).join(', ')));
+      if (c.children) {
+        const mods = modsOf(c);
+        b.append(ic, el('span', 'nm', L(c.data.n)), el('span', 'hr', works(mods) + '/' + mods.length));
+        b.append(el('span', 'sub', ORDER[view].map(k => [k, mods.filter(m => st(m) === k).length]).filter(x => x[1]).map(x => u.label[x[0]] + ' ' + x[1]).join(' · ')));
+      } else {
+        const m = c.data.m, s = st(m);
+        b.append(ic, el('span', 'nm', nameOf(c)), el('span', 'hr st-' + s, u.label[s]), el('span', 'sub', view === 'now' ? L(m.a) + (m.f ? ' · ' + u.diff : '') : u.v1note[m.s === 'w' ? 1 : m.v]));
+      }
       b.addEventListener('click', () => pick(c));
       b.addEventListener('mouseenter', () => hover(c, true));
       b.addEventListener('mouseleave', () => hover(c, false));
@@ -2150,42 +2034,37 @@ function canScrollFurther(node, dir) {
       const b = el('button', 'crumb');
       b.type = 'button';
       b.style.animationDelay = (i * 0.04) + 's';
-      b.innerHTML = svg32(n.depth === 0 ? ORBS : folder(inX(n), false));
-      b.append(n.depth === 0 ? (product === 'all' ? 'NOI' : pName(product)) : shortName(n));
+      b.innerHTML = svg32(n.depth === 0 ? ORBS : folder(false));
+      b.append(n.depth === 0 ? u.top : L(n.data.n));
       if (n === focus) b.setAttribute('aria-current', 'true');
       else b.addEventListener('click', () => goTo(n));
       crumbs.append(b);
     });
   }
 
-  // The line under the bubbles: what this view holds, or the task that is selected.
+  // The line under the bubbles: what this view holds, or the module that is selected.
   function updateStats() {
     const u = U(), box = document.getElementById('lensStats');
     box.replaceChildren();
     const add = t => { if (box.childNodes.length) box.append(el('i', 'sep')); box.append(el('span', null, t)); };
-    if (selected) { add(u.picked + L(selected.data.n)); add('≈ ' + fmt(selected.value) + ' ' + u.h); return; }
-    const areas = root.children ? root.children.length : 0;
-    const parts = root.descendants().filter(d => d.depth === 2).length;
-    const tasks = root.leaves().length;
-    add(areas + ' ' + plural(areas, u.sect));
-    add(parts + ' ' + plural(parts, u.part));
-    add(tasks + ' ' + plural(tasks, u.task));
+    if (selected) { add(u.picked + nameOf(selected)); add(u.label[st(selected.data.m)]); return; }
+    const mods = modsOf(focus), w = works(mods);
+    if (focus.depth === 0) add(SECTIONS.length + ' ' + plural(SECTIONS.length, u.sect));
+    add(mods.length + ' ' + plural(mods.length, u.mod));
+    add(w + ' ' + (lang === 'en' ? (w === 1 ? 'works' : 'work') : plural(w, u.works)));
   }
 
-  function describe(d) {
-    const u = U();
-    if (d.depth === 1) return d.data.d ? L(d.data.d) : '';
-    if (d.depth === 2) { const n = d.children.length; return n + ' ' + plural(n, u.task); }
-    return u.productsLbl + d.data.p.map(pName).join(', ');
-  }
   // The tooltip sits beside the bubble it describes, never over its label: to the right, else to the left, else below or above.
   function showTip(b) {
     const u = U(), d = b.node;
-    tip.replaceChildren(
-      el('b', null, L(d.data.n)),
-      el('div', null, '≈ ' + fmt(d.value) + ' ' + u.h + ' · ' + (d.value / total * 100).toFixed(1).replace('.', u.dec) + u.ofShown),
-      el('div', null, describe(d))
-    );
+    const lines = [el('b', null, nameOf(d))];
+    if (d.children) lines.push(el('div', null, subLine(d)));
+    else {
+      const m = d.data.m;
+      lines.push(el('div', null, u.label[st(m)] + (m.f ? ' · ' + u.diff : '')));
+      lines.push(el('div', null, view === 'now' ? L(m.a) : u.v1note[m.s === 'w' ? 1 : m.v]));
+    }
+    tip.replaceChildren(...lines);
     tip.hidden = false;
     const w = tip.offsetWidth, h = tip.offsetHeight, gap = 12;
     const cx = W / 2 + b.x, cy = H / 2 + b.y, r = b.r * 1.06;
@@ -2201,6 +2080,17 @@ function canScrollFurther(node, dir) {
   }
   function hideTip() { tip.hidden = true; }
 
+  // Today / after version 1: the card recounts and the bubbles re-float in their new colours.
+  viewBox.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.view === view) return;
+    view = b.dataset.view;
+    hideTip();
+    renderCard();
+    renderPanel();
+    updateStats();
+    draw(0, null, false, false);
+  }));
+
   svg.on('click', out);
   backBtn.addEventListener('click', out);
   fwdBtn.addEventListener('click', forward);
@@ -2209,7 +2099,7 @@ function canScrollFurther(node, dir) {
     lang = l;
     hideTip();
     if (!root) return;
-    renderRoles(); renderCard(); renderPanel(); updateStats();
+    renderCard(); renderPanel(); updateStats();
     gB.selectAll('g.bub').each(function (d) { dress(d3.select(this), d); });
   });
 
@@ -2229,8 +2119,7 @@ function canScrollFurther(node, dir) {
     if (root) draw(0, null, false, true);
   });
   measure();
-  renderRoles();
-  build(true);
+  build();
   if (window.ResizeObserver) new ResizeObserver(() => { if (measure() && root) draw(0, null, true); }).observe(lensBox);
   else window.addEventListener('resize', () => { if (measure() && root) draw(0, null, true); });
 })();
