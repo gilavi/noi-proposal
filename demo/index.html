@@ -1952,7 +1952,7 @@ function renderMap() {
   side(null, 'map'); topbar('<b>All screens</b>');
   const refs = [...new Set(NAV.map(x => x.ref))], relN = r => refs.filter(x => relOf(x) === r).length;
   const sum = [[['Products', 'Продукты'], PRODUCTS.length, ['From the floor to finance', 'От зала до финансов']], [['Screens', 'Экраны'], UNIQUE, ['Every one of them opens', 'Каждый открывается']],
-    [['In version 1', 'В версии 1'], relN(1), ['The first launch, in one club', 'Первый запуск, в одном клубе']], [['Devices', 'Устройства'], 4, ['Computer, tablet, TV and phone', 'Компьютер, планшет, телевизор и телефон']]];
+    [['In version 1', 'В версии 1'], relN(1), ['The audit counts ≈25, split finer here', 'В аудите ≈25 — здесь подробнее']], [['Devices', 'Устройства'], 4, ['Computer, tablet, TV and phone', 'Компьютер, планшет, телевизор и телефон']]];
   const devs = ['all', 'desktop', 'tablet', 'tv', 'phone'].map(d => [d, d === 'all' ? tx(['All', 'Все']) : DEV[d][1], PRODUCTS.filter(p => d === 'all' || p.device === d).length]);
   $('content').innerHTML = `<div class="head"><h1>All screens</h1><p>Eleven products on one system, with sample data. Every screen says whether it is in version 1.</p></div>`
     + `<div class="tiles sum-tiles">${sum.map(([l, v, n]) => `<div class="tile"><span>${tx(l)}</span><b>${v}</b><small>${tx(n)}</small></div>`).join('')}</div>`
