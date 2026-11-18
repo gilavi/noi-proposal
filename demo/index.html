@@ -722,6 +722,55 @@ a.zone:hover, a.srv:hover, a.trow:hover, a.mgr:hover { background: rgba(255, 255
   .aprow > :nth-child(4) { grid-column: 3; justify-self: start; }
 }
 /* end of version 1 styles */
+/* Phones: the tour's link back to the offer stays off, wide tables become a card per row, boards and calendars swipe
+   a column at a time, device frames fall away (the phone is the device), dialogs rise from the bottom, and everything is big enough to tap. */
+@media (max-width: 900px) { .ic-cta .btn.offer { display: none; } }
+@media (max-width: 640px) {
+  .top { gap: 8px; padding: 8px 12px; }
+  .crumb .cp { display: none; }
+  .crumb b { font-size: 14px; }
+  .content { padding: 16px 12px 40px; }
+  .head p { margin-bottom: 14px; }
+  .tiles, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tiles > :last-child:nth-child(odd), .kpis > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .tile { padding: 12px; }
+  .tile b { font-size: 20px; }
+  .toolbar .search { flex: 1 1 180px; min-width: 0; }
+  .tbl.stk, .tbl.stk tbody, .tbl.stk td { display: block; }
+  .tbl.stk thead { display: none; }
+  .tbl.stk tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 14px; padding: 13px 6px; border-bottom: 1px solid var(--line); }
+  .tbl.stk tbody tr:last-child { border-bottom: 0; }
+  .tbl.stk td { min-width: 0; padding: 0; border: 0; white-space: normal; overflow-wrap: anywhere; }
+  .tbl.stk td:empty { display: none; }
+  .tbl.stk td[data-th]::before { content: attr(data-th); display: block; margin-bottom: 2px; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .tbl.stk td:first-child { grid-column: 1 / -1; font-size: 15px; }
+  .tbl.stk td:first-child::before { display: none; }
+  .tbl.stk td:not([data-th]) { grid-column: 1 / -1; }
+  .tbl.stk tr.sel { background: rgba(242, 169, 59, 0.06); box-shadow: inset 2px 0 0 var(--amber); border-radius: 8px; }
+  .tbl.stk tr.sel td { background: none; box-shadow: none; }
+  .tbl.stk td:has(.stps) { grid-column: 1 / -1; }
+  .tbl.stk .stps { flex-wrap: wrap; }
+  .kan { grid-auto-columns: 84%; scroll-snap-type: x mandatory; scroll-padding: 0 12px; margin: 0 -12px; padding: 0 12px 6px; }
+  .kan > * { scroll-snap-align: start; }
+  .cal .c0 { position: sticky; left: 0; z-index: 1; background: var(--panel); box-shadow: 1px 0 0 var(--line-2); }
+  .cal .hd.c0 { background: var(--panel-2); }
+  .panel, .cal, .kan, .tabs { overscroll-behavior-x: contain; }
+  .device.phone, .device.tablet { max-width: none; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+  .device.phone .screen, .device.tablet .screen { min-height: 0; padding: 16px 12px; border: 1px solid var(--line-2); border-radius: 22px; }
+  .brow { gap: 10px; padding: 12px 14px; font-size: 17px; }
+  .brow .mut { font-size: 14px; text-align: right; }
+  .dlg-wrap { padding: 0; }
+  .dlg { margin: auto 0 0; width: 100%; max-height: 92vh; overflow-y: auto; border-radius: 20px 20px 0 0; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+  .btn { min-height: 40px; }
+  .btn.sm { min-height: 34px; }
+  .lang button { padding: 8px 10px; }
+  .fchip { padding: 8px 13px; }
+  .tabs span { padding: 10px 12px; }
+  .seg span { padding: 10px 7px; }
+  .dlg-x { width: 38px; height: 38px; }
+  .s-sec a, .s-all { padding: 9px 10px; font-size: 14px; }
+}
+/* end of phone styles */
 </style>
 </head>
 <body>
@@ -1963,7 +2012,7 @@ function render(n) {
   const p = PRODUCTS.find(x => x.id === n.pid);
   const s = SCREENS[n.ref];
   side(p, n.id);
-  topbar(`${p.name} <span>/</span> <b>${n.title}</b>`, NAV.indexOf(n));
+  topbar(`<span class="cp">${p.name} <span>/</span> </span><b>${n.title}</b>`, NAV.indexOf(n));
   let body = TPL[s.t](s);
   if (p.device !== 'desktop') body = `<div class="device ${p.device}"><div class="screen">${body}</div></div>` + (s.after ? s.after() : '');
   const mine = MENU.flatMap(g => g[1]).find(x => x[0] === n.id);
@@ -2027,7 +2076,38 @@ function paintStage(moved) {
   });
 }
 
+// Phones: every table cell carries its column's name, and a table wider than the phone stacks into a card per row;
+// each calendar's first column (names, rooms) stays put while the days scroll under it.
+const phone = matchMedia('(max-width: 640px)');
+function fitPhone() {
+  document.querySelectorAll('#content .tbl').forEach(t => {
+    const head = t.tHead && t.tHead.rows[t.tHead.rows.length - 1];
+    if (!head) return;
+    const labels = [];
+    for (const c of head.cells) { const l = c.textContent.replace(/\s+/g, ' ').trim(); for (let k = 0; k < (c.colSpan || 1); k++) labels.push(l); }
+    for (const b of t.tBodies) for (const r of b.rows) {
+      let i = 0;
+      for (const c of r.cells) { if (labels[i]) c.dataset.th = labels[i]; else delete c.dataset.th; i += c.colSpan || 1; }
+    }
+    t.classList.remove('stk');
+    if (phone.matches) {
+      const box = t.parentElement, cs = getComputedStyle(box);
+      if (t.offsetWidth > box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) + 1) t.classList.add('stk');
+    }
+  });
+  document.querySelectorAll('#content .cal').forEach(cal => {
+    const cols = getComputedStyle(cal).gridTemplateColumns.split(' ').length;
+    [...cal.children].forEach((k, i) => k.classList.toggle('c0', i % cols === 0));
+  });
+}
+let fitQ = 0;
+const fitSoon = () => { if (!fitQ) fitQ = setTimeout(() => { fitQ = 0; fitPhone(); }); };
+new MutationObserver(list => { if (list.some(m => [...m.addedNodes].some(n => n.nodeType === 1))) fitSoon(); })
+  .observe(document.getElementById('content'), { childList: true, subtree: true });
+phone.addEventListener('change', fitSoon);
+window.addEventListener('resize', fitSoon);
 function afterRender() {
+  fitSoon();
   shownAt = performance.now();
   document.querySelectorAll('.tile b, .kpi b').forEach(countUp);
   // On the owner's screen, revenue and guests keep moving.
@@ -2447,7 +2527,7 @@ function showModal(kind) {
   m.innerHTML = kind === 'end' ? endCard() : introCard();
   m.addEventListener('click', e => { if (e.target === m) closeModal(); });
   document.body.append(m);
-  const first = m.querySelector('[data-tour="start"], .btn.offer');
+  const first = [...m.querySelectorAll('[data-tour="start"], .btn.offer, [data-tour="explore"]')].find(b => b.offsetParent);
   if (first) first.focus({ preventScroll: true });
 }
 function introCard() {
